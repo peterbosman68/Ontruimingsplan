@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#1e3a5f" />
+  <title>Noodinstructie - Module 2</title>
+  <meta
+    name="description"
+    content="Module 2 noodinstructie: overzicht in een oogopslag bij calamiteiten."
+  />
+  <style>
+    :root {
+      --c-primary: #1e3a5f;
+      --c-primary-700: #16294a;
+      --c-primary-100: #e8eef5;
+      --c-accent: #e87722;
+      --c-accent-700: #c45f10;
+      --c-accent-100: #fdece0;
+      --c-bg: #ffffff;
+      --c-surface: #f6f8fb;
+      --c-border: #d9e1ec;
+      --c-text: #15233a;
+      --c-text-muted: #5b6b80;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 22px;
+
+      --shadow-sm: 0 1px 3px rgba(21, 35, 58, 0.06);
+      --max-w: 880px;
+      --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--c-bg);
+      color: var(--c-text);
+      font-family: var(--font-body);
+      font-size: 17px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .app {
+      flex: 1 1 auto;
+      width: 100%;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 2.25rem 1.25rem 3rem;
+    }
+
+    .screen {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .screen-module > h2 + .overview-list {
+      margin-top: 0;
+    }
+
+    .screen-module {
+      gap: 0.55rem;
+    }
+
+    .screen h1 {
+      font-size: clamp(1.7rem, 4.5vw, 2.4rem);
+      line-height: 1.15;
+      margin: 0;
+      color: var(--c-primary);
+      letter-spacing: -0.01em;
+    }
+
+    .screen h2 {
+      font-size: clamp(1.35rem, 3.5vw, 1.75rem);
+      line-height: 1.2;
+      margin: 0;
+      color: var(--c-primary);
+      letter-spacing: -0.01em;
+    }
+
+    .screen h2:focus,
+    .screen h1:focus {
+      outline: none;
+    }
+
+    .screen h3 {
+      font-size: 1.1rem;
+      margin: 0;
+      color: var(--c-primary);
+    }
+
+    .screen p { margin: 0; }
+
+    .module-paragraph {
+      font-size: 1.05rem;
+      max-width: 65ch;
+    }
+
+    .highlight-block {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+      background: var(--c-accent-100);
+      border-left: 5px solid var(--c-accent);
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.25rem;
+      color: var(--c-text);
+    }
+
+    .highlight-block p {
+      font-weight: 600;
+      font-size: 1.05rem;
+      color: var(--c-primary);
+    }
+
+    .highlight-icon {
+      font-size: 1.5rem;
+      line-height: 1.2;
+    }
+
+    .overview-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .overview-item {
+      display: flex;
+      gap: 0.85rem;
+      align-items: flex-start;
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-left: 4px solid var(--c-primary);
+      border-radius: var(--radius-md);
+      padding: 0.9rem 1.1rem;
+    }
+
+    .overview-icon {
+      font-size: 1.5rem;
+      line-height: 1.2;
+      flex-shrink: 0;
+    }
+
+    .overview-icon-crossed {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.5rem;
+      height: 1.5rem;
+      line-height: 1;
+    }
+
+    .overview-icon-crossed::before,
+    .overview-icon-crossed::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 1.65rem;
+      height: 2px;
+      background: #000;
+      transform-origin: center;
+      border-radius: 999px;
+    }
+
+    .overview-icon-crossed::before {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    .overview-icon-crossed::after {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    .overview-icon-img {
+      width: 1.5rem;
+      height: 1.5rem;
+      display: block;
+      object-fit: contain;
+    }
+
+    .overview-body {
+      flex: 1 1 auto;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .overview-title {
+      margin: 0;
+      font-size: 1.02rem;
+      color: var(--c-primary);
+    }
+
+    .overview-hint {
+      font-weight: 400;
+      color: var(--c-text-muted);
+      font-size: 0.92rem;
+    }
+
+    .overview-text {
+      margin: 0;
+      color: var(--c-text);
+    }
+
+    .overview-subitems {
+      list-style: none;
+      margin: 0.35rem 0 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .overview-subitems li {
+      margin: 0;
+      font-size: 0.97rem;
+      color: var(--c-text);
+    }
+
+    .overview-contact-emphasis {
+      font-size: 1.5rem;
+      line-height: 1;
+      vertical-align: baseline;
+    }
+
+    @media (max-width: 640px) {
+      body { font-size: 16px; }
+
+      .app { padding: 1.5rem 1rem 2.5rem; }
+
+      .overview-item { padding: 0.85rem 1rem; }
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    @media print {
+      html, body {
+        background: #fff;
+        font-size: 19.2px;
+        line-height: 1.52;
+      }
+
+      body {
+        padding: 0;
+      }
+
+      .app {
+        width: 210mm;
+        max-width: none;
+        min-height: 297mm;
+        padding: 11mm 10.2mm;
+      }
+
+      .screen {
+        gap: 1.02rem;
+      }
+
+      .screen-module {
+        gap: 0.5rem;
+      }
+
+      .screen h2 {
+        font-size: 2rem;
+      }
+
+      .overview-list {
+        gap: 0.56rem;
+      }
+
+      .overview-item {
+        gap: 0.8rem;
+        padding: 0.88rem 1.08rem;
+      }
+
+      .overview-icon {
+        font-size: 1.64rem;
+      }
+
+      .overview-icon-crossed,
+      .overview-icon-img {
+        width: 1.64rem;
+        height: 1.64rem;
+      }
+
+      .overview-title {
+        font-size: 1.14rem;
+      }
+
+      .overview-hint {
+        font-size: 1rem;
+      }
+
+      .overview-text,
+      .overview-subitems li {
+        font-size: 1.05rem;
+      }
+
+      .overview-contact-emphasis {
+        font-size: 1.64rem;
+      }
+
+      * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+    }
+
+    @media (prefers-contrast: more) {
+      :root {
+        --c-border: #1e3a5f;
+        --c-text-muted: #15233a;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main id="app" class="app" role="main" aria-live="polite"></main>
+
+  <script>
+    (function renderNoodinstructie() {
+      const STORAGE_KEY = "bhv-elearning-state-v3";
+      const STEP4_ALARM_DRAFT_STORAGE_KEY = "gbbc-step4-alarm-draft";
+
+      function el(tag, attrs = {}, ...children) {
+        const node = document.createElement(tag);
+        for (const [key, value] of Object.entries(attrs)) {
+          if (key === "class") node.className = value;
+          else if (value === true) node.setAttribute(key, "");
+          else if (value !== false && value != null) node.setAttribute(key, value);
+        }
+        for (const child of children.flat()) {
+          if (child == null || child === false) continue;
+          node.appendChild(typeof child === "string" ? document.createTextNode(child) : child);
+        }
+        return node;
+      }
+
+      function readConfig() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return {};
+          const parsed = JSON.parse(raw);
+          return parsed && parsed.config ? parsed.config : {};
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function readStep4AlarmDraft() {
+        try {
+          const raw = localStorage.getItem(STEP4_ALARM_DRAFT_STORAGE_KEY);
+          if (!raw) return {};
+          const parsed = JSON.parse(raw);
+          return parsed && typeof parsed === "object" ? parsed : {};
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function safeText(value, fallback) {
+        const text = String(value || "").trim();
+        return text || fallback;
+      }
+
+      const ICON_1124U_SVG =
+        "data:image/svg+xml;charset=UTF-8," +
+        encodeURIComponent(`
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="1124U app icoon">
+            <defs>
+              <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#56c7eb"/>
+                <stop offset="100%" stop-color="#74d6ef"/>
+              </linearGradient>
+            </defs>
+            <rect x="22" y="4" width="84" height="120" rx="20" fill="#d9d9d9"/>
+            <rect x="24" y="6" width="80" height="116" rx="18" fill="#2f4659"/>
+            <rect x="28" y="10" width="72" height="108" rx="14" fill="url(#bg)"/>
+            <rect x="50" y="16" width="28" height="4" rx="2" fill="#f6f8fb"/>
+            <rect x="48" y="108" width="32" height="4" rx="2" fill="#86a1b5"/>
+            <text x="64" y="56" text-anchor="middle" font-size="34" font-family="Arial, sans-serif" font-weight="700" fill="#ffffff">112</text>
+            <text x="64" y="86" text-anchor="middle" font-size="42" font-family="Arial, sans-serif" font-weight="800" fill="#0f3c8a">4U</text>
+          </svg>
+        `.trim());
+
+      function getModule2Data() {
+        const cfg = readConfig();
+        const step4Draft = readStep4AlarmDraft();
+        const haNaam = safeText(step4Draft.naamHuisartsenpraktijk, safeText((cfg.huisarts || {}).naam, "{naam_huisartsenpraktijk}"));
+        const haTel = safeText(step4Draft.telHuisartsenpraktijk, safeText((cfg.huisarts || {}).tel, "{tel_huisartsenpraktijk}"));
+        const hapTel = safeText(step4Draft.telefoonnummerHuisartsenspoedpost, safeText((cfg.hap || {}).tel, "{telefoonnummer_huisartsenspoedpost}"));
+        const verzamelplaats = safeText(cfg.verzamelplaats, "[verzamelplaats]");
+
+        return {
+          id: 2,
+          title: "Noodinstructie",
+          blocks: [
+            {
+              type: "overview-list",
+              sections: [
+                {
+                  icon: "📞 112",
+                  title: "Levensbedreigend of bij twijfel",
+                  text: "De centralist helpt je er doorheen."
+                },
+                {
+                  icon: "📞",
+                  title: "Spoedeisend",
+                  hint: "(geen levensbedreiging, maar kan niet wachten tot de volgende dag)",
+                  subitems: [
+                    {
+                      label: "werkdagen 08.00-17.00",
+                      textPrefix: "bel huisartsenpraktijk ",
+                      contact: haNaam + ",  " + haTel,
+                      textSuffix: "."
+                    },
+                    {
+                      label: "overige tijden",
+                      textPrefix: "bel huisartsenspoedpost ",
+                      contact: hapTel,
+                      textSuffix: "."
+                    }
+                  ]
+                },
+                {
+                  iconImage: ICON_1124U_SVG,
+                  iconAlt: "1124U app",
+                  title: "Niet-spoedeisend",
+                  hint: "(kan wachten tot de volgende dag)",
+                  text: "gebruik EHBO-app 112-4U"
+                },
+                {
+                  icon: "🔥",
+                  title: "Bij brand",
+                  text: "Doe één bluspoging met een handbrandblusser. Is hij leeg en de brand niet uit? Verlaat het pand en bel 112."
+                },
+                {
+                  icon: "🚨",
+                  title: "Bij ontruimingsalarm",
+                  text: "Ga naar verzamelplaats " + verzamelplaats + "."
+                }
+              ]
+            }
+          ]
+        };
+      }
+
+      function renderBlock(block) {
+        switch (block.type) {
+          case "paragraph":
+            return el("p", { class: "module-paragraph" }, block.text);
+
+          case "highlight":
+            return el(
+              "div",
+              { class: "highlight-block" },
+              el("span", { class: "highlight-icon", "aria-hidden": "true" }, "💡"),
+              el("p", {}, block.text)
+            );
+
+          case "overview-list": {
+            const list = el("ul", { class: "overview-list" });
+            for (const section of block.sections) {
+              const li = el("li", { class: "overview-item" });
+              const iconNode = el("span", {
+                class: section.crossedIcon ? "overview-icon overview-icon-crossed" : "overview-icon",
+                "aria-hidden": "true"
+              });
+              if (section.iconImage) {
+                iconNode.appendChild(
+                  el("img", { class: "overview-icon-img", src: section.iconImage, alt: section.iconAlt || "" })
+                );
+              } else {
+                iconNode.appendChild(document.createTextNode(section.icon || ""));
+              }
+              li.appendChild(iconNode);
+              const body = el("div", { class: "overview-body" });
+              const titleLine = el("h3", { class: "overview-title" }, section.title);
+              if (section.hint) {
+                titleLine.appendChild(el("span", { class: "overview-hint" }, " " + section.hint));
+              }
+              body.appendChild(titleLine);
+              if (section.text) {
+                body.appendChild(el("p", { class: "overview-text" }, section.text));
+              }
+              if (section.subitems && section.subitems.length) {
+                const sub = el("ul", { class: "overview-subitems" });
+                for (const it of section.subitems) {
+                  const content = [el("strong", {}, it.label + ": ")];
+                  if (it.contact) {
+                    content.push(document.createTextNode(it.textPrefix || ""));
+                    content.push(el("span", { class: "overview-contact-emphasis" }, it.contact));
+                    content.push(document.createTextNode(it.textSuffix || ""));
+                  } else {
+                    content.push(document.createTextNode(it.text || ""));
+                  }
+                  sub.appendChild(
+                    el("li", {}, content)
+                  );
+                }
+                body.appendChild(sub);
+              }
+              li.appendChild(body);
+              list.appendChild(li);
+            }
+            return list;
+          }
+
+          default:
+            return el("p", {}, "");
+        }
+      }
+
+      function renderModule(mod) {
+        const root = document.getElementById("app");
+        root.innerHTML = "";
+
+        const wrap = el("section", {
+          class: "screen screen-module",
+          "aria-labelledby": "module-2-title"
+        });
+
+        wrap.appendChild(el("h2", { id: "module-2-title" }, mod.title));
+
+        for (const block of mod.blocks) {
+          wrap.appendChild(renderBlock(block));
+        }
+
+        root.appendChild(wrap);
+
+        const heading = root.querySelector("h2");
+        if (heading) {
+          heading.setAttribute("tabindex", "-1");
+          heading.focus({ preventScroll: true });
+        }
+      }
+
+      renderModule(getModule2Data());
+    })();
+  </script>
+</body>
+</html>

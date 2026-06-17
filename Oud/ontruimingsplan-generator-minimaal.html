@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ontruimingsplan Generator Minimaal</title>
+  <style>
+    :root {
+      --bg: #eef3fa;
+      --card: #ffffff;
+      --line: #cdd9eb;
+      --text: #1f2f49;
+      --muted: #5a6e8f;
+      --accent: #1f4f8a;
+      --warn: #c26400;
+      --error: #b42318;
+      --radius: 14px;
+      --shadow: 0 14px 30px rgba(26, 48, 80, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 88% 8%, #d6e6ff 0, #d6e6ff00 31%),
+        radial-gradient(circle at 10% 88%, #dce9ff 0, #dce9ff00 28%),
+        linear-gradient(135deg, #eef3fb 0%, #f4f7fc 44%, #e9f1fb 100%);
+      color: var(--text);
+      font-family: "Segoe UI", Arial, sans-serif;
+      line-height: 1.45;
+    }
+
+    .wrap {
+      width: min(860px, 94vw);
+      margin: 22px auto 44px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 14px;
+    }
+
+    h1, h2 {
+      margin: 0;
+      letter-spacing: 0.1px;
+    }
+
+    h1 { font-size: clamp(1.45rem, 2.8vw, 2.1rem); }
+    h2 { font-size: 1.04rem; margin-bottom: 10px; }
+
+    .sub {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: #e8f0fb;
+      color: #1f4f8a;
+      border: 1px solid #c6d8f2;
+      margin-bottom: 10px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      font-weight: 600;
+      font-size: 0.92rem;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 11px;
+      font-size: 0.94rem;
+      color: var(--text);
+      background: #fff;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(31, 79, 138, 0.16);
+    }
+
+    .required::after {
+      content: " *";
+      color: var(--error);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .btn {
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: #fff;
+      border-radius: 10px;
+      padding: 9px 14px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .btn.secondary {
+      background: #fff;
+      color: var(--accent);
+    }
+
+    .status {
+      min-height: 22px;
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .status.warn { color: var(--warn); }
+    .status.error { color: var(--error); }
+
+    .hint {
+      margin: 0;
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+
+    .section {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 10px;
+      background: #f9fbff;
+    }
+
+    @media (max-width: 740px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <span class="pill">Minimale versie</span>
+      <h1>Ontruimingsplan Generator</h1>
+      <p class="sub">Alleen de basisvelden voor pagina 1 en datum rapport.</p>
+      <p id="templateInfo" class="sub"></p>
+    </div>
+
+    <div class="card">
+      <h2>Invoer</h2>
+      <div class="grid">
+        <div class="field">
+          <label for="datumRapport" class="required">Datum rapport ({datum_rapport})</label>
+          <input id="datumRapport" type="text" autocomplete="off" readonly>
+        </div>
+        <div class="field">
+          <label for="naamGebouw" class="required">Naam gebouw ({naam_gebouw})</label>
+          <input id="naamGebouw" type="text" autocomplete="off">
+        </div>
+        <div class="field full">
+          <label for="adres" class="required">Adres ({adres})</label>
+          <input id="adres" type="text" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="postcode" class="required">Postcode ({postcode})</label>
+          <input id="postcode" type="text" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="plaats" class="required">Plaats ({plaats})</label>
+          <input id="plaats" type="text" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="telefoon" class="required">Telefoon ({telefoon})</label>
+          <input id="telefoon" type="text" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="email" class="required">E-mail ({email})</label>
+          <input id="email" type="email" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="generateBtn" class="btn" type="button">Rapport maken</button>
+      </div>
+
+      <div id="status" class="status"></div>
+
+      <div id="fallbackTemplateWrap" class="section" style="display:none; margin-top:12px;">
+        <h2>Template handmatig kiezen</h2>
+        <p class="hint">Automatisch laden is niet gelukt. Kies het templatebestand handmatig.</p>
+        <input id="fallbackTemplateFile" type="file" accept=".docx" style="display:none;">
+        <div class="actions" style="margin-top:8px;">
+          <button id="fallbackTemplateBtn" class="btn secondary" type="button">Kies templatebestand</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script>
+    const P_REGEX = /<w:p[\s\S]*?<\/w:p>/g;
+    const DEFAULT_TEMPLATE_CANDIDATES = ["OntruimingsplanConformNEN8112 260610.v8.docx"];
+
+    const state = {
+      templateBuffer: null,
+      templateName: "",
+      scan: null
+    };
+
+    const statusEl = document.getElementById("status");
+    const templateInfoEl = document.getElementById("templateInfo");
+    const generateBtn = document.getElementById("generateBtn");
+    const fallbackTemplateWrap = document.getElementById("fallbackTemplateWrap");
+    const fallbackTemplateFile = document.getElementById("fallbackTemplateFile");
+    const fallbackTemplateBtn = document.getElementById("fallbackTemplateBtn");
+
+    const fields = {
+      datum_rapport: document.getElementById("datumRapport"),
+      naam_gebouw: document.getElementById("naamGebouw"),
+      adres: document.getElementById("adres"),
+      postcode: document.getElementById("postcode"),
+      plaats: document.getElementById("plaats"),
+      telefoon: document.getElementById("telefoon"),
+      email: document.getElementById("email")
+    };
+
+    function setStatus(message, kind) {
+      statusEl.textContent = message || "";
+      statusEl.className = "status" + (kind ? ` ${kind}` : "");
+    }
+
+    function normalizePlaceholderName(text) {
+      return String(text || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[_-]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function normalizeLookupKey(text) {
+      return normalizePlaceholderName(text);
+    }
+
+    function yymmdd(date) {
+      const yy = String(date.getFullYear()).slice(-2);
+      const mm = String(date.getMonth() + 1).padStart(2, "0");
+      const dd = String(date.getDate()).padStart(2, "0");
+      return `${yy}${mm}${dd}`;
+    }
+
+    function todayDateText() {
+      const d = new Date();
+      const dd = String(d.getDate()).padStart(2, "0");
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const yyyy = String(d.getFullYear());
+      return `${dd}-${mm}-${yyyy}`;
+    }
+
+    function xmlEscape(text) {
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&apos;");
+    }
+
+    function xmlUnescape(text) {
+      return String(text)
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, "\"")
+        .replace(/&apos;/g, "'")
+        .replace(/&amp;/g, "&");
+    }
+
+    function plainTextFromParagraph(paragraphXml) {
+      const withTabs = paragraphXml.replace(/<w:tab\s*\/?\s*>/g, "\t");
+      const noTags = withTabs.replace(/<[^>]+>/g, "");
+      return xmlUnescape(noTags).replace(/\s+/g, " ").trim();
+    }
+
+    function extractTags(text) {
+      const out = [];
+      const re = /\{([^{}]{1,140})\}/g;
+      let m;
+      while ((m = re.exec(text)) !== null) {
+        const name = (m[1] || "").trim();
+        if (!name) continue;
+        out.push({ name, raw: m[0] });
+      }
+      return out;
+    }
+
+    function parseParagraphs(xml) {
+      const paraXmls = xml.match(P_REGEX) || [];
+      return paraXmls.map((px, idx) => {
+        const text = plainTextFromParagraph(px);
+        const tags = extractTags(text);
+        return {
+          idx,
+          xml: px,
+          text,
+          tags,
+          removed: false
+        };
+      });
+    }
+
+    function escapeRegex(text) {
+      return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    function overwriteParagraphText(paragraphXml, text) {
+      let written = false;
+      const updated = paragraphXml.replace(/<w:t([^>]*)>[\s\S]*?<\/w:t>/g, (_, attrs) => {
+        if (written) return "";
+        written = true;
+        return `<w:t${attrs}>${xmlEscape(text)}</w:t>`;
+      });
+      return written ? updated : paragraphXml;
+    }
+
+    function replaceTagInParagraphXml(paragraphXml, rawTag, value) {
+      const encodedRaw = xmlEscape(rawTag);
+      const encodedValue = xmlEscape(value);
+      const re = new RegExp(escapeRegex(encodedRaw), "g");
+      const replaced = paragraphXml.replace(re, encodedValue);
+      if (replaced !== paragraphXml) return replaced;
+
+      const hasComplexStructure = /<w:txbxContent\b|<w:sdt\b|<w:fld/i.test(paragraphXml);
+      if (hasComplexStructure) return paragraphXml;
+
+      const plain = plainTextFromParagraph(paragraphXml);
+      if (!plain.includes(rawTag)) return paragraphXml;
+      const updatedPlain = plain.split(rawTag).join(String(value || ""));
+      return overwriteParagraphText(paragraphXml, updatedPlain);
+    }
+
+    function buildNormalizedValueMap(valueMap) {
+      const out = new Map();
+      for (const [k, v] of Object.entries(valueMap || {})) {
+        const nk = normalizeLookupKey(k);
+        if (!nk) continue;
+        if (!out.has(nk)) out.set(nk, v);
+      }
+      return out;
+    }
+
+    function replaceAllTags(paragraphs, valueMap) {
+      const normalizedMap = buildNormalizedValueMap(valueMap);
+      for (const p of paragraphs) {
+        if (p.removed) continue;
+        for (const tag of p.tags) {
+          let v = valueMap[tag.name];
+          if (typeof v === "undefined") {
+            v = normalizedMap.get(normalizeLookupKey(tag.name));
+          }
+          if (typeof v === "undefined" || v === null) v = "";
+          p.xml = replaceTagInParagraphXml(p.xml, tag.raw, v);
+        }
+      }
+    }
+
+    function paragraphsToXml(originalXml, paragraphs) {
+      let ix = 0;
+      return originalXml.replace(P_REGEX, () => {
+        const p = paragraphs[ix++];
+        if (!p || p.removed) return "";
+        return p.xml;
+      });
+    }
+
+    function validateXmlOrThrow(xml, partName) {
+      const doc = new DOMParser().parseFromString(xml, "application/xml");
+      const parserError = doc.querySelector("parsererror");
+      if (!parserError) return;
+      const raw = (parserError.textContent || "").replace(/\s+/g, " ").trim();
+      throw new Error(`Ongeldige XML in ${partName}: ${raw || "onbekende parserfout"}`);
+    }
+
+    function collectUnresolvedBraceTags(xml) {
+      const names = [];
+      const paragraphs = parseParagraphs(xml);
+      for (const p of paragraphs) {
+        if (p.removed) continue;
+        for (const tag of p.tags) names.push(tag.name);
+      }
+      return names;
+    }
+
+    function safeName(text) {
+      const normalized = (text || "Gebouw")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-zA-Z0-9_-]+/g, "")
+        .slice(0, 48);
+      return normalized || "Gebouw";
+    }
+
+    function getInputValues() {
+      const reportDate = todayDateText();
+      fields.datum_rapport.value = reportDate;
+      return {
+        datum_rapport: reportDate,
+        naam_gebouw: (fields.naam_gebouw.value || "").trim(),
+        adres: (fields.adres.value || "").trim(),
+        postcode: (fields.postcode.value || "").trim(),
+        plaats: (fields.plaats.value || "").trim(),
+        telefoon: (fields.telefoon.value || "").trim(),
+        email: (fields.email.value || "").trim()
+      };
+    }
+
+    function validateInputs() {
+      if (!state.templateBuffer) {
+        return { ok: false, message: "Template is nog niet geladen." };
+      }
+
+      const values = getInputValues();
+      const required = ["datum_rapport", "naam_gebouw", "adres", "postcode", "plaats", "telefoon", "email"];
+      for (const key of required) {
+        if (!values[key]) {
+          fields[key].focus();
+          return { ok: false, message: `Verplicht veld ontbreekt: ${key}` };
+        }
+      }
+
+      return { ok: true, values };
+    }
+
+    async function saveBlob(blob, fileName) {
+      if (window.showSaveFilePicker) {
+        try {
+          const handle = await window.showSaveFilePicker({
+            suggestedName: fileName,
+            types: [{
+              description: "Word document",
+              accept: {
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"]
+              }
+            }]
+          });
+          const writable = await handle.createWritable();
+          await writable.write(blob);
+          await writable.close();
+          return "saved";
+        } catch (err) {
+          if (err && err.name === "AbortError") return "cancelled";
+        }
+      }
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      return "downloaded";
+    }
+
+    async function scanTemplate() {
+      try {
+        if (!window.JSZip) {
+          setStatus("JSZip kon niet geladen worden (internet nodig voor CDN).", "error");
+          return;
+        }
+
+        fallbackTemplateWrap.style.display = "none";
+        setStatus("Template wordt gelezen...");
+        let loaded = null;
+        let hadFetchError = false;
+
+        for (const fileName of DEFAULT_TEMPLATE_CANDIDATES) {
+          try {
+            const fileUrl = `./${encodeURIComponent(fileName).replace(/%2F/g, "/")}`;
+            const response = await fetch(fileUrl, { cache: "no-store" });
+            if (!response.ok) continue;
+            const buffer = await response.arrayBuffer();
+
+            const probeZip = await JSZip.loadAsync(buffer);
+            const probeDocFile = probeZip.file("word/document.xml");
+            if (!probeDocFile) continue;
+            const probeDocXml = await probeDocFile.async("string");
+            validateXmlOrThrow(probeDocXml, `word/document.xml (${fileName})`);
+
+            loaded = {
+              templateName: fileName,
+              buffer
+            };
+            break;
+          } catch (fetchErr) {
+            hadFetchError = true;
+            console.warn(`Template kon niet worden opgehaald: ${fileName}`, fetchErr);
+          }
+        }
+
+        if (!loaded) {
+          if (hadFetchError && window.location.protocol === "file:") {
+            setStatus("Standaardtemplate kan niet via file:// worden geladen. Open via een lokale server of kies handmatig een template.", "error");
+          } else if (hadFetchError) {
+            setStatus("Standaardtemplate kon niet worden opgehaald (netwerk/toegang).", "error");
+          } else {
+            setStatus("Standaardtemplate kon niet worden geladen.", "error");
+          }
+          fallbackTemplateWrap.style.display = "block";
+          return;
+        }
+
+        state.templateBuffer = loaded.buffer;
+        state.templateName = loaded.templateName;
+        templateInfoEl.textContent = `Template: ${state.templateName}`;
+        setStatus("Template geladen. Vul de velden in en klik op Rapport maken.");
+      } catch (err) {
+        console.error(err);
+        setStatus(`Fout bij scannen: ${err && err.message ? err.message : err}`, "error");
+        fallbackTemplateWrap.style.display = "block";
+      }
+    }
+
+    async function scanFromFallbackFile(file) {
+      try {
+        if (!file) return;
+        setStatus("Templatebestand wordt ingelezen...");
+        state.templateBuffer = await file.arrayBuffer();
+        state.templateName = file.name;
+
+        const zip = await JSZip.loadAsync(state.templateBuffer);
+        const docFile = zip.file("word/document.xml");
+        if (!docFile) {
+          setStatus("word/document.xml niet gevonden in template.", "error");
+          return;
+        }
+        const documentXml = await docFile.async("string");
+        validateXmlOrThrow(documentXml, "word/document.xml");
+
+        fallbackTemplateWrap.style.display = "none";
+        templateInfoEl.textContent = `Template: ${state.templateName}`;
+        setStatus("Template geladen. Vul de velden in en klik op Rapport maken.");
+      } catch (err) {
+        console.error(err);
+        setStatus(`Fout bij inlezen fallback-template: ${err && err.message ? err.message : err}`, "error");
+      }
+    }
+
+    async function generateReport() {
+      try {
+        const validation = validateInputs();
+        if (!validation.ok) {
+          setStatus(validation.message, "error");
+          return;
+        }
+
+        setStatus("Rapport wordt gegenereerd...");
+
+        const zip = await JSZip.loadAsync(state.templateBuffer);
+        const docFile = zip.file("word/document.xml");
+        if (!docFile) {
+          setStatus("word/document.xml niet gevonden in template.", "error");
+          return;
+        }
+
+        let documentXml = await docFile.async("string");
+        const docParagraphs = parseParagraphs(documentXml);
+        replaceAllTags(docParagraphs, validation.values);
+        documentXml = paragraphsToXml(documentXml, docParagraphs);
+        validateXmlOrThrow(documentXml, "word/document.xml");
+
+        const headerPaths = Object.keys(zip.files).filter(p => /^word\/header\d+\.xml$/i.test(p));
+        for (const hp of headerPaths) {
+          let headerXml = await zip.file(hp).async("string");
+          const headerParagraphs = parseParagraphs(headerXml);
+          replaceAllTags(headerParagraphs, validation.values);
+          headerXml = paragraphsToXml(headerXml, headerParagraphs);
+          validateXmlOrThrow(headerXml, hp);
+          zip.file(hp, headerXml);
+        }
+
+        zip.file("word/document.xml", documentXml);
+
+        let unresolved = collectUnresolvedBraceTags(documentXml).length;
+        for (const hp of headerPaths) {
+          const hx = await zip.file(hp).async("string");
+          unresolved += collectUnresolvedBraceTags(hx).length;
+        }
+
+        const gebouw = validation.values.naam_gebouw;
+        const outName = `Ontruimingsplan_${safeName(gebouw)}_${yymmdd(new Date())}.docx`;
+        const blob = await zip.generateAsync({
+          type: "blob",
+          mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        });
+
+        const saveResult = await saveBlob(blob, outName);
+        if (saveResult === "cancelled") {
+          setStatus("Opslaan geannuleerd.", "warn");
+          return;
+        }
+
+        if (unresolved > 0) {
+          setStatus(`Klaar. Document opgeslagen als ${outName}. Let op: er zijn nog ${unresolved} onvervangen tags in de template.`, "warn");
+          return;
+        }
+
+        setStatus(`Klaar. Document opgeslagen als ${outName}.`);
+      } catch (err) {
+        console.error(err);
+        setStatus(`Fout bij genereren: ${err && err.message ? err.message : err}`, "error");
+      }
+    }
+
+    function initDefaults() {
+      fields.datum_rapport.value = todayDateText();
+    }
+
+    generateBtn.addEventListener("click", generateReport);
+    fallbackTemplateBtn.addEventListener("click", () => fallbackTemplateFile.click());
+    fallbackTemplateFile.addEventListener("change", () => {
+      const file = fallbackTemplateFile.files && fallbackTemplateFile.files[0];
+      scanFromFallbackFile(file);
+    });
+
+    initDefaults();
+    scanTemplate();
+  </script>
+</body>
+</html>

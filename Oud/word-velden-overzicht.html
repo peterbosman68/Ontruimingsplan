@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Overzicht Word-velden Ontruimingsplan</title>
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --card: #ffffff;
+      --line: #cfd9e8;
+      --text: #1f2f49;
+      --muted: #5d6f89;
+      --accent: #174a84;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top right, #dbe7fb 0, transparent 26%),
+        linear-gradient(180deg, #f6f9fd 0%, #eef3fa 100%);
+      color: var(--text);
+      font: 16px/1.45 "Segoe UI", Arial, sans-serif;
+    }
+
+    main {
+      width: min(1120px, 94vw);
+      margin: 28px auto 40px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 16px 34px rgba(24, 48, 86, 0.08);
+      padding: 24px;
+      margin-bottom: 18px;
+    }
+
+    h1, h2 {
+      margin: 0 0 10px;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+    }
+
+    caption {
+      caption-side: top;
+      text-align: left;
+      font-weight: 700;
+      color: var(--accent);
+      padding-bottom: 10px;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--line);
+      padding: 11px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    thead th {
+      background: #e9f0fa;
+    }
+
+    tbody tr.group-row th {
+      background: #f4f7fc;
+      color: var(--accent);
+      font-size: 0.98rem;
+    }
+
+    code {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.95em;
+    }
+
+    .note {
+      margin-top: 12px;
+      font-size: 0.93rem;
+    }
+
+    @media (max-width: 760px) {
+      .card {
+        padding: 18px;
+      }
+
+      th,
+      td {
+        padding: 9px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="card">
+      <h1>Overzicht Word-velden ontruimingsplan</h1>
+      <p>Linkerkolom: veldnaam zonder accolades en zonder underscores. Rechterkolom: Word-veld met accolades.</p>
+    </section>
+
+    <section class="card">
+      <div class="table-wrap">
+        <table>
+          <caption>Alle Word-velden gegroepeerd in één overzicht</caption>
+          <thead>
+            <tr>
+              <th>Veldnaam</th>
+              <th>Velden Word</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="group-row">
+              <th colspan="2">Logo</th>
+            </tr>
+            <tr>
+              <td>logo</td>
+              <td><code>{logo}</code></td>
+            </tr>
+
+            <tr class="group-row">
+              <th colspan="2">Organisatiegegevens</th>
+            </tr>
+            <tr><td>naam gebouw</td><td><code>{naam_gebouw}</code></td></tr>
+            <tr><td>adres</td><td><code>{adres}</code></td></tr>
+            <tr><td>postcode</td><td><code>{postcode}</code></td></tr>
+            <tr><td>plaats</td><td><code>{plaats}</code></td></tr>
+            <tr><td>telefoon</td><td><code>{telefoon}</code></td></tr>
+            <tr><td>email</td><td><code>{email}</code></td></tr>
+            <tr><td>naam hoogste manager</td><td><code>{naam_hoogste_manager}</code></td></tr>
+            <tr><td>functienaam hoogste manager</td><td><code>{functienaam_hoogste_manager}</code></td></tr>
+            <tr><td>naam hoofd bhv</td><td><code>{naam_hoofd_bhv}</code></td></tr>
+            <tr><td>naam ploegleider bhv</td><td><code>{naam_ploegleider_bhv}</code></td></tr>
+            <tr><td>namen bhv ers</td><td><code>{namen_bhv_ers}</code></td></tr>
+            <tr><td>naam beheerder bmi</td><td><code>{naam_beheerder_bmi}</code></td></tr>
+
+            <tr class="group-row">
+              <th colspan="2">Communicatiemiddelen</th>
+            </tr>
+            <tr><td>whatsapp groep</td><td><code>{whatsapp_groep}</code></td></tr>
+            <tr><td>portofoons</td><td><code>{portofoons}</code></td></tr>
+            <tr><td>bhv app</td><td><code>{bhv_app}</code></td></tr>
+            <tr><td>megafoon</td><td><code>{megafoon}</code></td></tr>
+            <tr><td>bhv hesjes</td><td><code>{bhv_hesjes}</code></td></tr>
+
+            <tr class="group-row">
+              <th colspan="2">Ontruimingsprocedure</th>
+            </tr>
+            <tr><td>naam verzamelplaats</td><td><code>{naam_verzamelplaats}</code></td></tr>
+            <tr><td>hoe alarmeren de verschillende organisatie elkaar bij een calamiteit</td><td><code>{hoe_alarmeren_de_verschillende_organisatie_elkaar_bij_een_calamiteit}</code></td></tr>
+
+            <tr class="group-row">
+              <th colspan="2">Datum rapport</th>
+            </tr>
+            <tr><td>datum rapport</td><td><code>{datum_rapport}</code></td></tr>
+
+            <tr class="group-row">
+              <th colspan="2">Gebouwgegevens</th>
+            </tr>
+            <tr><td>dagen en tijdstip</td><td><code>{dagen_en_tijdstip}</code></td></tr>
+            <tr><td>gemiddeld aantal personen</td><td><code>{gemiddeld_aantal_personen}</code></td></tr>
+            <tr><td>naam organisatie x</td><td><code>{naam_organisatie_x}</code></td></tr>
+
+            <tr class="group-row">
+              <th colspan="2">Technische installaties</th>
+            </tr>
+            <tr><td>bmi</td><td><code>{bmi}</code></td></tr>
+            <tr><td>bmi merk</td><td><code>{bmi_merk}</code></td></tr>
+            <tr><td>bmi type</td><td><code>{bmi_type}</code></td></tr>
+            <tr><td>naam beheerder bmi</td><td><code>{naam_beheerder_bmi}</code></td></tr>
+            <tr><td>sprinklerinstallatie</td><td><code>{sprinklerinstallatie}</code></td></tr>
+
+            <tr class="group-row">
+              <th colspan="2">Werking van de brandveiligheidsinstallaties</th>
+            </tr>
+            <tr><td>werking van de brandveiligheidsinstallaties</td><td><code>{werking_van_de_brandveiligheidsinstallaties}</code></td></tr>
+
+            <tr class="group-row">
+              <th colspan="2">Andere relevante technische dan wel bouwtechnische voorzieningen</th>
+            </tr>
+            <tr><td>bijzondere kenmerk x</td><td><code>{bijzondere_kenmerk_x}</code></td></tr>
+            <tr><td>andere relevante technische dan wel bouwtechnische voorzieningen</td><td><code>{andere_relevante_technische_dan_wel_bouwtechnische_voorzieningen}</code></td></tr>
+
+            <tr class="group-row">
+              <th colspan="2">Verantwoordelijken voor het dagelijks beheer van de voorkomende installaties</th>
+            </tr>
+            <tr><td>verantwoordelijken voor het dagelijks beheer van de voorkomende installaties</td><td><code>{verantwoordelijken_voor_het_dagelijks_beheer_van_de_voorkomende_installaties}</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Datum rapport is de datum waarop het rapport gegenereerd wordt.</p>
+    </section>
+  </main>
+</body>
+</html>

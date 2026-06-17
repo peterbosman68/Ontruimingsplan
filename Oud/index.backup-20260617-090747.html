@@ -1,0 +1,4142 @@
+﻿<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ontruimingsplan Generator - Stap 1 t/m 3</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap");
+
+    :root {
+      --bg-a: #eef4fb;
+      --bg-b: #f8fbff;
+      --card: rgba(255,255,255,.92);
+      --line: #d7e1ee;
+      --line-strong: #c3d0e4;
+      --text: #17304d;
+      --muted: #5b6f88;
+      --accent: #1b4f8a;
+      --accent-2: #123761;
+      --danger: #b03a2e;
+      --warning: #a46a00;
+      --shadow: 0 18px 40px rgba(24, 48, 77, .12);
+      --radius: 18px;
+      --filled-bg: #f2f8ff;
+      --filled-border: #3a76b4;
+      --check-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%231b4f8a' d='M9.2 16.6 4.9 12.3l1.4-1.4 2.9 2.9 8.5-8.5 1.4 1.4z'/%3E%3C/svg%3E");
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: "Manrope", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(208, 224, 247, .9) 0, rgba(208, 224, 247, 0) 28%),
+        radial-gradient(circle at 85% 10%, rgba(221, 234, 249, .8) 0, rgba(221, 234, 249, 0) 26%),
+        linear-gradient(135deg, var(--bg-a), #f4f8fc 42%, var(--bg-b));
+    }
+
+    .shell {
+      width: min(1120px, calc(100vw - 32px));
+      margin: 22px auto 40px;
+    }
+
+    .hero, .card, .info-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent), #2d71b7 60%, #e3952c);
+    }
+
+    .hero-top {
+      margin-top: 6px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: start;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
+    .brand-logo {
+      width: clamp(180px, 22vw, 280px);
+      max-width: 100%;
+      height: auto;
+      display: block;
+      padding: 8px 12px;
+      border-radius: 14px;
+      border: 2px solid #b7cae3;
+      background: linear-gradient(180deg, #ffffff, #eef5ff);
+      box-shadow: 0 10px 22px rgba(18, 55, 97, .18);
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      font-family: "Fraunces", Georgia, serif;
+      letter-spacing: .1px;
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 3vw, 2.7rem);
+      line-height: 1.04;
+      margin: 0;
+    }
+
+    .lead {
+      margin: 10px 0 0;
+      color: var(--muted);
+      max-width: 74ch;
+    }
+
+    .card {
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .section-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .grid .full {
+      grid-column: 1 / -1;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field[hidden] {
+      display: none !important;
+    }
+
+    label {
+      font-size: .76rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #33577f;
+    }
+
+    .required::after {
+      content: " *";
+      color: #c24e00;
+    }
+
+    input, select, textarea, button {
+      font: inherit;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px 12px;
+      background: #f9fbff;
+      color: var(--text);
+      outline: none;
+      transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+    }
+
+    input.is-filled,
+    textarea.is-filled {
+      border-color: var(--filled-border);
+      background-color: var(--filled-bg);
+      padding-right: 40px;
+      background-image: var(--check-icon);
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 16px 16px;
+    }
+
+    textarea {
+      min-height: 88px;
+      resize: vertical;
+      line-height: 1.42;
+    }
+
+    select {
+      appearance: none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #4f6f95 50%),
+        linear-gradient(135deg, #4f6f95 50%, transparent 50%),
+        linear-gradient(180deg, #f9fbff, #f9fbff);
+      background-position:
+        calc(100% - 18px) calc(50% - 2px),
+        calc(100% - 12px) calc(50% - 2px),
+        100% 0;
+      background-size: 6px 6px, 6px 6px, 2.8em 100%;
+      background-repeat: no-repeat;
+      padding-right: 44px;
+    }
+
+    select.is-filled {
+      border-color: var(--filled-border);
+      background-color: var(--filled-bg);
+      background-image:
+        var(--check-icon),
+        linear-gradient(45deg, transparent 50%, #4f6f95 50%),
+        linear-gradient(135deg, #4f6f95 50%, transparent 50%),
+        linear-gradient(180deg, var(--filled-bg), var(--filled-bg));
+      background-position:
+        calc(100% - 38px) 50%,
+        calc(100% - 18px) calc(50% - 2px),
+        calc(100% - 12px) calc(50% - 2px),
+        100% 0;
+      background-size: 16px 16px, 6px 6px, 6px 6px, 2.8em 100%;
+      background-repeat: no-repeat;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(27, 79, 138, .14);
+      background: #fff;
+    }
+
+    input.invalid,
+    select.invalid,
+    textarea.invalid {
+      border-color: var(--danger);
+      box-shadow: 0 0 0 3px rgba(176, 58, 46, .12);
+    }
+
+    .help {
+      margin: 0;
+      font-size: .84rem;
+      color: var(--muted);
+    }
+
+    .mt-8 { margin-top: 8px !important; }
+    .mt-20 { margin-top: 20px !important; }
+    .mb-8 { margin-bottom: 8px !important; }
+    .mb-4 { margin-bottom: 4px !important; }
+    .w-100 { width: 100% !important; }
+
+    .section-sub-top { margin-top: 0 !important; }
+
+    .section-icon {
+      display: inline-block;
+      margin-right: 8px;
+      filter: saturate(.95);
+    }
+
+    .logo-preview {
+      min-height: 170px;
+      border: 2px solid #b7cae3;
+      border-radius: 14px;
+      background: linear-gradient(180deg, #fbfdff, #edf4fe);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .75), 0 10px 22px rgba(18, 55, 97, .12);
+    }
+
+    .logo-preview img {
+      display: block;
+      max-width: 100%;
+      max-height: 140px;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 12px rgba(18, 55, 97, .22));
+    }
+
+    .empty {
+      color: var(--muted);
+      font-size: .92rem;
+      text-align: center;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .actions.top-nav {
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+
+    .actions.top-nav .btn {
+      padding: 8px 12px;
+      font-size: .92rem;
+      border-radius: 10px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 140ms ease, opacity 140ms ease, box-shadow 140ms ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(27, 79, 138, .18);
+    }
+
+    .btn-primary:hover { background: var(--accent-2); }
+
+    .btn-secondary {
+      background: #eaf1fb;
+      color: var(--accent);
+      border: 1px solid #c8d8ec;
+    }
+
+    .btn[disabled] {
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .status {
+      margin-top: 14px;
+      min-height: 48px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid #d4e0ef;
+      background: #f4f8ff;
+      color: #23446f;
+      white-space: pre-wrap;
+    }
+
+    .status.warn {
+      border-color: #ebd0a4;
+      background: #fff6ea;
+      color: var(--warning);
+    }
+
+    .status.error {
+      border-color: #ebb1ab;
+      background: #fff2f1;
+      color: var(--danger);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .info-card {
+      padding: 14px;
+    }
+
+    .info-card h3 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .info-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    .info-card li + li { margin-top: 4px; }
+
+    .footer-note {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: .84rem;
+    }
+
+
+    .tijdvak-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+    }
+    .tijdvak-table th {
+      text-align: left;
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--muted);
+      padding: 6px 8px;
+      border-bottom: 2px solid var(--line);
+    }
+    .tijdvak-table td {
+      padding: 4px 0 4px 0;
+      vertical-align: middle;
+    }
+    .tijdvak-table td:first-child { padding-left: 8px; }
+    .tijdvak-table td:last-child { width: 200px; }
+    .tijdvak-table input { border-radius: 8px; padding: 8px 10px; }
+    .section-sub {
+      margin-top: 18px;
+      padding: 16px;
+      border: 1px solid #d8e4f3;
+      border-radius: 14px;
+      background: linear-gradient(180deg, #fbfdff, #f3f8ff);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .7);
+    }
+    .section-sub + .section-sub {
+      margin-top: 14px;
+    }
+    .section-sub h3 {
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+      color: #1a4474;
+    }
+
+    .section-sub .help {
+      color: #607a9a;
+    }
+
+    .tijdvak-table {
+      background: rgba(255, 255, 255, .72);
+      border: 1px solid #d9e5f3;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    @media (max-width: 900px) {
+      .grid, .info-grid, .layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="hero-top">
+        <div>
+          <div class="brand">
+            <img class="brand-logo" src="Logo/GBBC-logo-blauw.png" alt="GBBC logo">
+            <h1>Ontruimingsplan Generator</h1>
+          </div>
+          <p id="heroLead" class="lead">Stap 1: vul de basisgegevens in en ga door met Volgende stap.</p>
+        </div>
+      </div>
+
+      <div style="display:none;" aria-hidden="true">
+        <span id="templateName">wordt geladen</span>
+        <span id="templateMode">automatisch laden of handmatig kiezen</span>
+      </div>
+    </section>
+
+    <section class="card" id="stap1Card">
+      <div class="actions top-nav">
+        <button id="topBackBtn1" class="btn btn-secondary" type="button" disabled>&#8592; Vorige stap</button>
+        <button id="topNextBtn1" class="btn btn-secondary" type="button">Volgende stap &rarr;</button>
+      </div>
+      <div class="section-head">
+        <div>
+          <h2>Stap 1 invoer</h2>
+          <p>Vul hier locatie- en persoonsgegevens in.</p>
+        </div>
+      </div>
+
+      <div class="layout">
+        <div>
+          <div class="grid">
+            <div class="field full">
+              <label for="logoFile">Logo</label>
+              <input id="logoFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+              <p class="help">Upload een logo om dit mee te nemen in het Word-document.</p>
+            </div>
+
+            <div class="field full">
+              <label for="naamGebouw" class="required">Naam gebouw</label>
+              <input id="naamGebouw" type="text" autocomplete="off" placeholder="Bijvoorbeeld Hotel GBBC" value="Bijvoorbeeld Hotel GBBC">
+            </div>
+
+            <div class="field full">
+              <label for="adres" class="required">Adres</label>
+              <input id="adres" type="text" autocomplete="off" placeholder="Straat en huisnummer" value="Voorbeeldstraat 1">
+            </div>
+
+            <div class="field">
+              <label for="postcode" class="required">Postcode</label>
+              <input id="postcode" type="text" autocomplete="off" placeholder="1234 AB" value="1234 AB">
+            </div>
+
+            <div class="field">
+              <label for="plaats" class="required">Plaats</label>
+              <input id="plaats" type="text" autocomplete="off" placeholder="Plaatsnaam" value="Tolkamer">
+            </div>
+
+            <div class="field">
+              <label for="telefoon" class="required">Telefoon</label>
+              <input id="telefoon" type="tel" autocomplete="off" placeholder="Telefoonnummer" value="0316-123456">
+            </div>
+
+            <div class="field">
+              <label for="email" class="required">E-mail</label>
+              <input id="email" type="email" autocomplete="off" placeholder="info@voorbeeld.nl" value="info@gbbc.nl">
+            </div>
+
+            <div class="field">
+              <label for="naamHoogsteManager" class="required">Naam hoogste manager</label>
+              <input id="naamHoogsteManager" type="text" autocomplete="off" placeholder="Naam hoogste manager" value="Jan de Vries">
+            </div>
+
+            <div class="field">
+              <label for="functieNaamHoogsteManager" class="required">Functienaam hoogste manager</label>
+              <input id="functieNaamHoogsteManager" type="text" autocomplete="off" placeholder="Bijvoorbeeld directeur" value="Directeur">
+            </div>
+
+            <div class="field">
+              <label for="naamHoofdBhv" class="required">Naam hoofd bhv</label>
+              <input id="naamHoofdBhv" type="text" autocomplete="off" placeholder="Naam hoofd BHV" value="Sanne Jansen">
+            </div>
+
+            <div class="field">
+              <label for="naamPloegleiderBhv" class="required">Naam ploegleider bhv</label>
+              <input id="naamPloegleiderBhv" type="text" autocomplete="off" placeholder="Naam ploegleider BHV" value="Mark Peters">
+            </div>
+
+            <div class="field full">
+              <label for="namenBhvErs" class="required">Namen bhv ers</label>
+              <input id="namenBhvErs" type="text" autocomplete="off" placeholder="Bijvoorbeeld: Anna van Dijk, Bram de Groot" value="Anna van Dijk, Bram de Groot">
+            </div>
+
+          </div>
+
+          <div class="actions">
+            <button id="backBtn1" class="btn btn-secondary" type="button" disabled>&#8592; Vorige stap</button>
+            <button id="nextBtn" class="btn btn-secondary" type="button">Volgende stap &rarr;</button>
+          </div>
+
+          <div id="status" class="status">Template wordt geladen...</div>
+          <div class="footer-note">Navigeer met Vorige/Volgende. Genereren doe je pas op de laatste stap.</div>
+        </div>
+
+        <div class="logo-preview" id="logoPreview">
+          <div class="empty">Geen logo gekozen</div>
+        </div>
+      </div>
+
+    </section>
+
+
+    <section class="card" id="stap2Card" style="display:none;">
+      <div class="actions top-nav">
+        <button id="topBackBtn2" class="btn btn-secondary" type="button">&#8592; Vorige stap</button>
+        <button id="topNextBtn2" class="btn btn-secondary" type="button" disabled>Volgende stap &rarr;</button>
+      </div>
+      <div class="section-head">
+        <div>
+          <h2>Stap 2 &#8212; Gebouwgegevens</h2>
+          <p>Vul de gegevens over het gebouw en de bezetting in.</p>
+        </div>
+      </div>
+
+      <div class="grid mb-4">
+        <div class="field full">
+          <label for="naamVerzamelplaats" class="required">Naam verzamelplaats</label>
+          <input id="naamVerzamelplaats" type="text" autocomplete="off" placeholder="Bijv. parkeerterrein west" value="Parkeerterrein westzijde">
+        </div>
+      </div>
+
+      <div class="section-sub">
+        <h3><span class="section-icon" aria-hidden="true">🏢</span>Aanwezig in het gebouw *</h3>
+        <p class="help mb-8">Hoeveel personen zijn er gemiddeld aanwezig, op welke dag en tijdstip?</p>
+        <table class="tijdvak-table">
+          <thead>
+            <tr>
+              <th>Dag / periode en tijdstip</th>
+              <th>Gem. aantal personen</th>
+            </tr>
+          </thead>
+          <tbody id="aanwezigRows">
+            <tr class="tijdvak-row">
+              <td><input type="text" data-field="aanwezig_dag" data-row="1" placeholder="Bijv. ma&#8211;vr 08:00&#8211;17:00" value="ma-vr 08:00-17:00"></td>
+              <td><input type="number" data-field="aanwezig_aantal" data-row="1" placeholder="Bijv. 45" min="0" class="w-100" value="45"></td>
+            </tr>
+          </tbody>
+        </table>
+        <button id="addAanwezigRowBtn" class="btn btn-secondary mt-8" type="button">Klik hier voor extra regel (max. 6)</button>
+      </div>
+
+      <div class="section-sub">
+        <h3><span class="section-icon" aria-hidden="true">🧍</span>Aantal niet of verminderd zelfredzame personen *</h3>
+        <p class="help mb-8">Bijvoorbeeld baby's, patienten, gevangenen e.d.</p>
+        <table class="tijdvak-table">
+          <thead>
+            <tr>
+              <th>Dag / periode en tijdstip</th>
+              <th>Gem. aantal personen</th>
+            </tr>
+          </thead>
+          <tbody id="zelfredzameRows">
+            <tr class="tijdvak-row">
+              <td><input type="text" data-field="zelfredzame_dag" data-row="1" placeholder="Bijv. ma-vr 08:00-17:00" value="ma-vr 08:00-17:00"></td>
+              <td><input type="number" data-field="zelfredzame_aantal" data-row="1" placeholder="Bijv. 5" min="0" class="w-100" value="5"></td>
+            </tr>
+          </tbody>
+        </table>
+        <button id="addZelfredzameRowBtn" class="btn btn-secondary mt-8" type="button">Klik hier voor extra regel (max. 6)</button>
+        <p class="help">Let wel: bovenstaande zijn schattingen.</p>
+      </div>
+
+      <div class="section-sub">
+        <h3><span class="section-icon" aria-hidden="true">⚠️</span>Bijzondere kenmerken bij ontruiming</h3>
+        <p class="help mb-8">Bijvoorbeeld gevaarlijke stoffen of gevaarlijke technische ruimten.</p>
+        <div class="grid">
+          <div class="field full" id="bijzonderKenmerkRow1">
+            <label for="bijzonderKenmerk1">Kenmerk 1</label>
+            <input id="bijzonderKenmerk1" type="text" autocomplete="off" placeholder="Bijv. Opslagruimte met gevaarlijke stoffen">
+          </div>
+          <div class="field full" id="bijzonderKenmerkRow2" hidden>
+            <label for="bijzonderKenmerk2">Kenmerk 2</label>
+            <input id="bijzonderKenmerk2" type="text" autocomplete="off" placeholder="Bijv. Technische ruimte met hoge spanning">
+          </div>
+          <div class="field full" id="bijzonderKenmerkRow3" hidden>
+            <label for="bijzonderKenmerk3">Kenmerk 3</label>
+            <input id="bijzonderKenmerk3" type="text" autocomplete="off" placeholder="Bijv. Keuken met gasinstallatie">
+          </div>
+          <div class="field full" id="bijzonderKenmerkRow4" hidden>
+            <label for="bijzonderKenmerk4">Kenmerk 4</label>
+            <input id="bijzonderKenmerk4" type="text" autocomplete="off" placeholder="Bijv. Opslag van zuurstofflessen">
+          </div>
+          <div class="field full" id="bijzonderKenmerkRow5" hidden>
+            <label for="bijzonderKenmerk5">Kenmerk 5</label>
+            <input id="bijzonderKenmerk5" type="text" autocomplete="off" placeholder="Bijv. Liftmachinekamer">
+          </div>
+        </div>
+        <button id="addBijzonderKenmerkRowBtn" class="btn btn-secondary mt-8" type="button">Klik hier voor extra regel (max. 5)</button>
+      </div>
+
+      <div class="section-sub">
+        <h3><span class="section-icon" aria-hidden="true">👥</span>Gebruikers van het gebouw</h3>
+        <p class="help mb-8">Het gebouw wordt door de volgende organisatie(s) gebruikt:</p>
+        <div class="grid">
+          <div class="field full" id="organisatieNaamRow1">
+            <label for="organisatieNaam1" class="required">Organisatie 1</label>
+            <input id="organisatieNaam1" type="text" autocomplete="off" placeholder="Bijv. Zorgorganisatie X" value="Test Organisatie">
+          </div>
+          <div class="field full" id="organisatieNaamRow2" hidden>
+            <label for="organisatieNaam2">Organisatie 2</label>
+            <input id="organisatieNaam2" type="text" autocomplete="off" placeholder="Bijv. Kinderopvang Y">
+          </div>
+          <div class="field full" id="organisatieNaamRow3" hidden>
+            <label for="organisatieNaam3">Organisatie 3</label>
+            <input id="organisatieNaam3" type="text" autocomplete="off" placeholder="Bijv. Praktijk Z">
+          </div>
+          <div class="field full" id="organisatieNaamRow4" hidden>
+            <label for="organisatieNaam4">Organisatie 4</label>
+            <input id="organisatieNaam4" type="text" autocomplete="off" placeholder="Bijv. Stichting A">
+          </div>
+          <div class="field full" id="organisatieNaamRow5" hidden>
+            <label for="organisatieNaam5">Organisatie 5</label>
+            <input id="organisatieNaam5" type="text" autocomplete="off" placeholder="Bijv. Bedrijf B">
+          </div>
+          <div class="field full" id="organisatieNaamRow6" hidden>
+            <label for="organisatieNaam6">Organisatie 6</label>
+            <input id="organisatieNaam6" type="text" autocomplete="off" placeholder="Bijv. Huurder C">
+          </div>
+        </div>
+        <button id="addOrganisatieRowBtn" class="btn btn-secondary mt-8" type="button">Klik hier voor extra regel (max. 6)</button>
+      </div>
+
+      <div class="actions mt-20">
+        <button id="backBtn2" class="btn btn-secondary" type="button">&#8592; Vorige stap</button>
+        <button id="nextBtn2" class="btn btn-secondary" type="button" disabled>Volgende stap &rarr;</button>
+      </div>
+      <div class="footer-note">Ga verder naar stap 3 voor technische installaties en het genereren van het document.</div>
+    </section>
+
+    <section class="card" id="stap3Card" style="display:none;">
+      <div class="actions top-nav">
+        <button id="topBackBtn3" class="btn btn-secondary" type="button">&#8592; Vorige stap</button>
+        <button id="topNextBtn3" class="btn btn-secondary" type="button">Volgende stap &rarr;</button>
+      </div>
+      <div class="section-head">
+        <div>
+          <h2>Stap 3 &#8212; Technische installaties en hulpmiddelen</h2>
+          <p>Vul hier de technische installatiegegevens en aanvullende gebouwinformatie in.</p>
+        </div>
+      </div>
+
+      <div class="section-sub section-sub-top">
+        <h3><span class="section-icon" aria-hidden="true">🚨</span>Brandmeldinstallatie</h3>
+        <div class="grid">
+          <div class="field full">
+            <label for="bmiKeuze">Brandmeldinstallatie (BMI)</label>
+            <select id="bmiKeuze">
+              <option value="nee">Nee</option>
+              <option value="ja" selected>Ja</option>
+            </select>
+          </div>
+        </div>
+        <div id="bmiDetails" hidden>
+          <div class="grid">
+            <div class="field">
+              <label for="bmiMerk" class="required">Merk BMI</label>
+              <input id="bmiMerk" type="text" autocomplete="off" placeholder="Bijv. Hertek" value="Hertek">
+            </div>
+            <div class="field">
+              <label for="bmiType" class="required">Type BMI</label>
+              <input id="bmiType" type="text" autocomplete="off" placeholder="Bijv. Penta 5000" value="Penta 5000">
+            </div>
+            <div class="field full">
+              <label for="naamBeheerderBmi" class="required">Naam beheerder BMI</label>
+              <input id="naamBeheerderBmi" type="text" autocomplete="off" placeholder="Naam beheerder BMI" value="Test Beheerder BMI">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-sub">
+        <h3><span class="section-icon" aria-hidden="true">🧯</span>Overige technische installaties</h3>
+        <div class="grid">
+          <div class="field">
+            <label for="sprinklerInstallatie">Sprinklerinstallatie</label>
+            <select id="sprinklerInstallatie">
+              <option value="niet aanwezig">Niet aanwezig</option>
+              <option value="ja" selected>Ja</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="automatischeBlusinstallatie">Automatische blusinstallatie</label>
+            <select id="automatischeBlusinstallatie">
+              <option value="niet aanwezig">Niet aanwezig</option>
+              <option value="ja" selected>Ja</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="klimaatbeheerssysteem">Klimaatbeheerssysteem</label>
+            <select id="klimaatbeheerssysteem">
+              <option value="niet aanwezig">Niet aanwezig</option>
+              <option value="ja" selected>Ja</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="personenzoekinstallatie">Personenzoekinstallatie (PZI)</label>
+            <select id="personenzoekinstallatie">
+              <option value="niet aanwezig">Niet aanwezig</option>
+              <option value="ja" selected>Ja</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="rookwarmteafvoerinstallatie">Rookwarmteafvoerinstallatie (RWA)</label>
+            <select id="rookwarmteafvoerinstallatie">
+              <option value="niet aanwezig">Niet aanwezig</option>
+              <option value="ja" selected>Ja</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="overigeTechnischeAndersKeuze">Anders</label>
+            <select id="overigeTechnischeAndersKeuze">
+              <option value="niet aanwezig">Niet aanwezig</option>
+              <option value="ja" selected>Ja</option>
+            </select>
+          </div>
+          <div class="field full" id="overigeTechnischeAndersTekstRow" hidden>
+            <label for="overigeTechnischeAndersTekst">Omschrijf anders</label>
+            <input id="overigeTechnischeAndersTekst" type="text" autocomplete="off" placeholder="Bijv. Noodstroomaggregaat" value="Noodstroomaggregaat">
+          </div>
+        </div>
+      </div>
+
+      <div class="section-sub">
+        <h3><span class="section-icon" aria-hidden="true">🏗️</span>Andere relevante technische dan wel bouwtechnische voorzieningen</h3>
+        <div class="grid">
+          <div class="field">
+            <label for="brandwerendeDeurenScheidingen">Brandwerende deuren en scheidingen</label>
+            <select id="brandwerendeDeurenScheidingen">
+              <option value="niet aanwezig">Niet aanwezig</option>
+              <option value="ja" selected>Ja</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="brandweerlift">Brandweerlift</label>
+            <select id="brandweerlift">
+              <option value="niet aanwezig">Niet aanwezig</option>
+              <option value="ja" selected>Ja</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="andereVoorzieningenAndersKeuze">Anders</label>
+            <select id="andereVoorzieningenAndersKeuze">
+              <option value="niet aanwezig">Niet aanwezig</option>
+              <option value="ja" selected>Ja</option>
+            </select>
+          </div>
+          <div class="field full" id="andereVoorzieningenAndersTekstRow" hidden>
+            <label for="andereVoorzieningenAndersTekst">Omschrijf anders</label>
+            <input id="andereVoorzieningenAndersTekst" type="text" autocomplete="off" placeholder="Bijv. Overdruksysteem trappenhuis" value="Overdruksysteem trappenhuis">
+          </div>
+        </div>
+      </div>
+
+      <div class="section-sub">
+        <h3><span class="section-icon" aria-hidden="true">📡</span>Communicatiemiddelen BHV-organisatie</h3>
+        <div class="grid">
+          <div class="field">
+            <label for="mobieleTelefonie112">Mobiele (telefoon) voor communicatie met 112/meldkamer</label>
+            <select id="mobieleTelefonie112" disabled>
+              <option value="ja" selected>Ja</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="roepenNaarElkaar">Roepen (hard schreeuwen) naar elkaar</label>
+            <select id="roepenNaarElkaar" disabled>
+              <option value="ja" selected>Ja</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="whatsappGroepBhv">Whatsappgroep voor BHV-communicatie</label>
+            <select id="whatsappGroepBhv">
+              <option value="niet aanwezig">Niet aanwezig</option>
+              <option value="ja" selected>Ja</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="portofoons">Portofoons</label>
+            <select id="portofoons">
+              <option value="niet aanwezig">Niet aanwezig</option>
+              <option value="ja" selected>Ja</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="bhvApp">BHV-app</label>
+            <select id="bhvApp">
+              <option value="niet aanwezig">Niet aanwezig</option>
+              <option value="ja" selected>Ja</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="megafoon">Megafoon</label>
+            <select id="megafoon">
+              <option value="niet aanwezig">Niet aanwezig</option>
+              <option value="ja" selected>Ja</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="bhvHesjes">BHV-hesjes</label>
+            <select id="bhvHesjes">
+              <option value="niet aanwezig">Niet aanwezig</option>
+              <option value="ja" selected>Ja</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="communicatiemiddelenAndersKeuze">Anders</label>
+            <select id="communicatiemiddelenAndersKeuze">
+              <option value="niet aanwezig">Niet aanwezig</option>
+              <option value="ja" selected>Ja</option>
+            </select>
+          </div>
+          <div class="field full" id="communicatiemiddelenAndersTekstRow" hidden>
+            <label for="communicatiemiddelenAndersTekst">Omschrijf anders</label>
+            <input id="communicatiemiddelenAndersTekst" type="text" autocomplete="off" placeholder="Bijv. DECT noodtoestellen" value="DECT noodtoestellen">
+          </div>
+        </div>
+      </div>
+
+      <div class="actions mt-20">
+        <button id="backBtn3" class="btn btn-secondary" type="button">&#8592; Vorige stap</button>
+        <button id="nextBtn3" class="btn btn-secondary" type="button">Volgende stap &rarr;</button>
+      </div>
+      <div class="footer-note">Ga verder naar stap 4 voor de alarmeringsprocedure en het genereren van het document.</div>
+    </section>
+
+    <section class="card" id="stap4Card" style="display:none;">
+      <div class="actions top-nav">
+        <button id="topBackBtn4" class="btn btn-secondary" type="button">&#8592; Vorige stap</button>
+        <button id="topNextBtn4" class="btn btn-secondary" type="button">Volgende stap &rarr;</button>
+      </div>
+      <div class="section-head">
+        <div>
+          <h2>Stap 4 &#8212; Alarmeringsprocedure</h2>
+          <p>Pas de tekst van de alarmeringsprocedure aan. Deze aangepaste tekst komt in het Word-document.</p>
+        </div>
+      </div>
+
+      <div class="section-sub section-sub-top">
+        <h3><span class="section-icon" aria-hidden="true">🏥</span>Medische contactgegevens (verplicht)</h3>
+        <div class="grid">
+          <div class="field">
+            <label for="naamHuisartsenpraktijk" class="required">Naam huisartsenpraktijk</label>
+            <input id="naamHuisartsenpraktijk" type="text" autocomplete="off" placeholder="Bijv. Huisartsenpraktijk Tolkamer" value="Huisartsenpraktijk Tolkamer">
+          </div>
+          <div class="field">
+            <label for="telHuisartsenpraktijk" class="required">Telefoonnummer huisartsenpraktijk</label>
+            <input id="telHuisartsenpraktijk" type="text" autocomplete="off" placeholder="Bijv. 0316-123456" value="0316-5894400">
+          </div>
+          <div class="field">
+            <label for="telefoonnummerHuisartsenspoedpost" class="required">Telefoonnummer huisartsenspoedpost</label>
+            <input id="telefoonnummerHuisartsenspoedpost" type="text" autocomplete="off" placeholder="Bijv. 0900-8888" value="0900-8888">
+          </div>
+        </div>
+      </div>
+
+      <div class="section-sub">
+        <h3><span class="section-icon" aria-hidden="true">📣</span>Interne en externe alarmering</h3>
+        <div class="grid">
+          <div class="field full">
+            <label for="alarmOngevalTekst">Ongeval</label>
+            <textarea id="alarmOngevalTekst" rows="6">Roep een of meerdere BHV-ers op.
+Bij levensbedreigend ongevallen of twijfel: bel 112.
+Bij spoedeisende ongevallen (geen levensbedreiging, maar kan niet wachten tot de volgende dag):
+** werkdagen 08.00-17.00: bel huisartsenpraktijk {naam_huisartsenpraktijk},  {tel_huisartsenpraktijk}
+** overige tijden: bel huisartsenspoedpost {telefoonnummer_huisartsenspoedpost}
+Bij niet-spoedeisende ongevallen (kan wachten tot de volgende dag): gebruik EHBO-app 112-4U.</textarea>
+          </div>
+          <div class="field full">
+            <label for="alarmBrandTekst">Brand</label>
+            <textarea id="alarmBrandTekst" rows="5">Roep een of meerdere BHV-ers op.
+Indien een Brandmeldinstallatie{Brandmeldinstallatie_(BMI)} aanwezig is: druk een handbrandmelder in, rookmelding gaat automatisch via een rookmelder. (*)
+Doe één bluspoging met een handbrandblusser. Als hij leeg is en de brand is niet uit: verlaat pand.
+Ga naar verzamelplaats.
+Bel 112 (of laat de BHV-er dit doen).</textarea>
+          </div>
+          <div class="field full">
+            <label for="alarmExterneTekst">Overige calamiteiten</label>
+            <textarea id="alarmExterneTekst" rows="3">Roep een of meerdere BHV-ers op.
+Bel 112 (of laat de BHV-er dit doen).</textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-sub">
+        <h3><span class="section-icon" aria-hidden="true">✅</span>Be&#235;indiging alarmtoestand</h3>
+        <div class="grid">
+          <div class="field full">
+            <textarea id="alarmBeeindigingTekst" rows="4">Als het pand door de brandweer veilig is verklaard na een brand met ontruiming, wordt door de ploegleider BHV aan de medewerkers medegedeeld dat men het pand weer kan betreden.</textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions mt-20">
+        <button id="backBtn4" class="btn btn-secondary" type="button">&#8592; Vorige stap</button>
+        <button id="nextBtn4" class="btn btn-secondary" type="button">Volgende stap &rarr;</button>
+      </div>
+      <div class="footer-note">Ga verder naar stap 5 voor de ontruimingsorganisatie.</div>
+    </section>
+
+    <section class="card" id="stap5Card" style="display:none;">
+      <div class="actions top-nav">
+        <button id="topBackBtn5" class="btn btn-secondary" type="button">&#8592; Vorige stap</button>
+      </div>
+      <div class="section-head">
+        <div>
+          <h2>Stap 5 &#8212; Ontruimingsorganisatie</h2>
+          <p>Geef aan welke situaties van toepassing zijn op uw gebouw.</p>
+        </div>
+      </div>
+
+      <div class="section-sub section-sub-top">
+        <h3><span class="section-icon" aria-hidden="true">🏢</span>Grote gebouwen en specifieke situaties</h3>
+        <div class="grid">
+
+          <div class="field full">
+            <label for="stap5BrandwerendeDeurenScheidingen">Brandwerende deuren/scheidingen aanwezig?</label>
+            <select id="stap5BrandwerendeDeurenScheidingen">
+              <option value="nee" selected>Nee</option>
+              <option value="ja">Ja</option>
+            </select>
+            <p class="help" id="stap5BrandwerendeHelpText" style="display:none;">Er zijn brandwerende deuren/scheidingen aanwezig. Er kan een gedeeltelijke of gefaseerde ontruiming worden gedaan indien nodig. De ploegleider beslist dit.</p>
+          </div>
+
+          <div class="field full">
+            <label for="stap5Verzamelgebouw">Verzamelgebouw?</label>
+            <select id="stap5Verzamelgebouw">
+              <option value="nee" selected>Nee</option>
+              <option value="ja">Ja</option>
+            </select>
+            <p class="help" id="stap5VerzamelgebouwHelpText" style="display:none;">Het gebouw is een verzamelgebouw, de taken van de BHV-organisatie zijn een gezamenlijke verantwoordelijkheid. Er is 1 BHV-organisatie.</p>
+          </div>
+
+          <div class="field full">
+            <label for="stap5MeerdereGebouwen">Meerdere gebouwen tegen elkaar aan?</label>
+            <p class="help">Ieder gebouw heeft een aparte ingang en er is geen doorgang.</p>
+            <select id="stap5MeerdereGebouwen">
+              <option value="nee" selected>Nee</option>
+              <option value="ja">Ja</option>
+            </select>
+          </div>
+
+          <div class="field full" id="stap5BmiGekoppeldRow" style="display:none;">
+            <label for="stap5BmiGekoppeld">Zijn de BMI&#8217;s met elkaar gekoppeld?</label>
+            <select id="stap5BmiGekoppeld">
+              <option value="ja" selected>Ja</option>
+              <option value="nee">Nee</option>
+            </select>
+          </div>
+
+          <div class="field full" id="stap5HoeAlarmataenRow" style="display:none;">
+            <label for="stap5HoeAlarmeren" class="required">Hoe alarmeren de organisaties elkaar bij een calamiteit?</label>
+            <textarea id="stap5HoeAlarmeren" rows="3" placeholder="Beschrijf de alarmeringsprocedure tussen de gebouwen..."></textarea>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="actions mt-20">
+        <button id="backBtn5" class="btn btn-secondary" type="button">&#8592; Vorige stap</button>
+        <button id="generateBtnFinal" class="btn btn-primary" type="button">Genereer Ontruimingsplan</button>
+      </div>
+      <div class="footer-note">Controleer stap 5 en genereer daarna het Word-document.</div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/pizzip@3.2.0/dist/pizzip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docxtemplater@3.68.7/build/docxtemplater.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="template-embedded.js"></script>
+  <script>
+    const TEMPLATE_FILE_NAME = "OntruimingsplanConformNEN8112 260610.docx";
+    const PRESENCE_TOKEN = "__GBBC_PRESENT__";
+    const ALARM_DRAFT_STORAGE_KEY = "gbbc-step4-alarm-draft";
+    const ALARM_DRAFT_CLEANUP_FLAG_KEY = "gbbc-step4-alarm-draft-cleared-v1";
+    const AUTO_FILL_STEP4_FROM_TEMPLATE = false;
+    const REQUIRED_FIELDS = [
+      "naamGebouw",
+      "adres",
+      "postcode",
+      "plaats",
+      "telefoon",
+      "email",
+      "naamHoogsteManager",
+      "functieNaamHoogsteManager",
+      "naamHoofdBhv",
+      "naamPloegleiderBhv",
+      "namenBhvErs"
+    ];
+
+    const elements = {
+      logoFile: document.getElementById("logoFile"),
+      logoPreview: document.getElementById("logoPreview"),
+      naamGebouw: document.getElementById("naamGebouw"),
+      adres: document.getElementById("adres"),
+      postcode: document.getElementById("postcode"),
+      plaats: document.getElementById("plaats"),
+      telefoon: document.getElementById("telefoon"),
+      email: document.getElementById("email"),
+      naamHoogsteManager: document.getElementById("naamHoogsteManager"),
+      functieNaamHoogsteManager: document.getElementById("functieNaamHoogsteManager"),
+      naamHoofdBhv: document.getElementById("naamHoofdBhv"),
+      naamPloegleiderBhv: document.getElementById("naamPloegleiderBhv"),
+      namenBhvErs: document.getElementById("namenBhvErs"),
+      generateBtnFinal: document.getElementById("generateBtnFinal"),
+      nextBtn: document.getElementById("nextBtn"),
+      status: document.getElementById("status"),
+      templateFileAuto: document.getElementById("templateFileAuto"),
+      templateName: document.getElementById("templateName"),
+      templateMode: document.getElementById("templateMode")
+    };
+
+    const state = {
+      templateBuffer: null,
+      logo: null,
+      pendingGenerateAfterTemplatePick: false
+    };
+
+    function setStatus(message, type) {
+      elements.status.textContent = message;
+      elements.status.className = `status${type ? ` ${type}` : ""}`;
+    }
+
+    function setTemplateLabel(label, isDefault) {
+      if (elements.templateName) {
+        elements.templateName.textContent = label;
+      }
+      if (elements.templateMode) {
+        elements.templateMode.textContent = isDefault ? "standaardtemplate uit de workspace" : "handmatig gekozen template";
+      }
+    }
+
+    function setFieldInvalid(input, invalid) {
+      input.classList.toggle("invalid", !!invalid);
+    }
+
+    function isFieldFilled(input) {
+      if (!input || input.disabled || input.type === "hidden") return false;
+      if (input.tagName === "INPUT") {
+        const kind = (input.type || "text").toLowerCase();
+        if (["file", "button", "submit", "reset", "image", "checkbox", "radio", "range"].includes(kind)) {
+          return false;
+        }
+      }
+      if (input.tagName === "SELECT") {
+        return !!String(input.value || "").trim();
+      }
+      return !!String(input.value || "").trim();
+    }
+
+    function updateFilledFieldStates(scope = document) {
+      if (!scope || !scope.querySelectorAll) return;
+      const fields = scope.querySelectorAll("input, select, textarea");
+      fields.forEach((field) => {
+        field.classList.toggle("is-filled", isFieldFilled(field));
+      });
+    }
+
+    function setActiveStep(stepNumber) {
+      const heroLead = document.getElementById("heroLead");
+      if (!heroLead) return;
+      if (stepNumber === 1) {
+        heroLead.textContent = "Stap 1: vul de basisgegevens in en ga door met Volgende stap.";
+        return;
+      }
+      if (stepNumber === 2) {
+        heroLead.textContent = "Stap 2: vul de gebouwgegevens en bezetting in.";
+        return;
+      }
+      if (stepNumber === 3) {
+        heroLead.textContent = "Stap 3: vul technische installaties in.";
+        return;
+      }
+      if (stepNumber === 4) {
+        heroLead.textContent = "Stap 4: pas de alarmeringsprocedure aan.";
+        return;
+      }
+      heroLead.textContent = "Stap 5: geef de situaties van toepassing op het gebouw aan en genereer het ontruimingsplan.";
+    }
+
+    function clearValidation() {
+      for (const id of REQUIRED_FIELDS) {
+        setFieldInvalid(elements[id], false);
+      }
+    }
+
+    function clearOldAlarmDraftFromLocalStorage() {
+      try {
+        if (localStorage.getItem(ALARM_DRAFT_CLEANUP_FLAG_KEY) === "1") return;
+        localStorage.removeItem(ALARM_DRAFT_STORAGE_KEY);
+        localStorage.setItem(ALARM_DRAFT_CLEANUP_FLAG_KEY, "1");
+      } catch (_) {
+        // Ignore storage failures.
+      }
+    }
+
+    function pad2(value) {
+      return String(value).padStart(2, "0");
+    }
+
+    function todayLabel() {
+      const now = new Date();
+      return `${pad2(now.getDate())}-${pad2(now.getMonth() + 1)}-${now.getFullYear()}`;
+    }
+
+    function readData() {
+      const toTemplatePresenceValue = (rawValue) => {
+        const normalized = String(rawValue || "").toLowerCase().trim();
+        if (normalized === "ja") return PRESENCE_TOKEN;
+        return "niet aanwezig";
+      };
+
+      const bmiKeuze = document.getElementById("bmiKeuze")?.value || "nee";
+      const bmiEnabled = bmiKeuze === "ja";
+      const bmiMerk = bmiEnabled ? (document.getElementById("bmiMerk")?.value.trim() || "") : "";
+      const bmiType = bmiEnabled ? (document.getElementById("bmiType")?.value.trim() || "") : "";
+      const naamBeheerderBmi = bmiEnabled ? (document.getElementById("naamBeheerderBmi")?.value.trim() || "") : "";
+
+      const sprinklerInstallatie = toTemplatePresenceValue(document.getElementById("sprinklerInstallatie")?.value);
+      const automatischeBlusinstallatie = toTemplatePresenceValue(document.getElementById("automatischeBlusinstallatie")?.value);
+      const klimaatbeheerssysteem = toTemplatePresenceValue(document.getElementById("klimaatbeheerssysteem")?.value);
+      const personenzoekinstallatie = toTemplatePresenceValue(document.getElementById("personenzoekinstallatie")?.value);
+      const rookwarmteafvoerinstallatie = toTemplatePresenceValue(document.getElementById("rookwarmteafvoerinstallatie")?.value);
+      const brandwerendeDeurenScheidingen = toTemplatePresenceValue(document.getElementById("brandwerendeDeurenScheidingen")?.value);
+      const brandweerlift = toTemplatePresenceValue(document.getElementById("brandweerlift")?.value);
+
+      const whatsappGroepBhv = toTemplatePresenceValue(document.getElementById("whatsappGroepBhv")?.value);
+      const portofoons = toTemplatePresenceValue(document.getElementById("portofoons")?.value);
+      const bhvApp = toTemplatePresenceValue(document.getElementById("bhvApp")?.value);
+      const megafoon = toTemplatePresenceValue(document.getElementById("megafoon")?.value);
+      const bhvHesjes = toTemplatePresenceValue(document.getElementById("bhvHesjes")?.value);
+      const overigeTechnischeAndersKeuze = document.getElementById("overigeTechnischeAndersKeuze")?.value || "niet aanwezig";
+      const overigeTechnischeAndersTekst = document.getElementById("overigeTechnischeAndersTekst")?.value.trim() || "";
+      const andereVoorzieningenAndersKeuze = document.getElementById("andereVoorzieningenAndersKeuze")?.value || "niet aanwezig";
+      const andereVoorzieningenAndersTekst = document.getElementById("andereVoorzieningenAndersTekst")?.value.trim() || "";
+      const communicatiemiddelenAndersKeuze = document.getElementById("communicatiemiddelenAndersKeuze")?.value || "niet aanwezig";
+      const communicatiemiddelenAndersTekst = document.getElementById("communicatiemiddelenAndersTekst")?.value.trim() || "";
+      const alarmProcedureData = getAlarmProcedureData();
+
+      return {
+        // Keep logo tag reserved in XML and inject image after render.
+        logo: "",
+        naam_gebouw: elements.naamGebouw.value.trim(),
+        adres: elements.adres.value.trim(),
+        postcode: elements.postcode.value.trim(),
+        plaats: elements.plaats.value.trim(),
+        telefoon: elements.telefoon.value.trim(),
+        email: elements.email.value.trim(),
+        naam_hoogste_manager: elements.naamHoogsteManager.value.trim(),
+        functienaam_hoogste_manager: elements.functieNaamHoogsteManager.value.trim(),
+        naam_hoofd_bhv: elements.naamHoofdBhv.value.trim(),
+        naam_ploegleider_bhv: elements.naamPloegleiderBhv.value.trim(),
+        namen_bhv_ers: elements.namenBhvErs.value.trim(),
+        bmi: bmiEnabled ? "Brandmeldinstallatie (BMI)" : "",
+        bmi_merk: bmiMerk,
+        bmi_type: bmiType,
+        naam_beheerder_bmi: naamBeheerderBmi,
+        sprinklerinstallatie: sprinklerInstallatie,
+        automatische_blusinstallatie: automatischeBlusinstallatie,
+        klimaatbeheerssysteem: klimaatbeheerssysteem,
+        personenzoekinstallatie: personenzoekinstallatie,
+        rookwarmteafvoerinstallatie: rookwarmteafvoerinstallatie,
+        rookwarmteafvoerinstallatie_rwa: rookwarmteafvoerinstallatie,
+        brandwerende_deuren_scheidingen: brandwerendeDeurenScheidingen,
+        brandweerlift: brandweerlift,
+        whatsappgroep_voor_onderlinge_communicatie_met_mobiele_telefoons_tussen_bhv_ers: whatsappGroepBhv,
+        "whatsappgroep_voor_onderlinge_communicatie_met_mobiele_telefoons_tussen_bhv-ers": whatsappGroepBhv,
+        portofoons: portofoons,
+        "bhv-app": bhvApp,
+        bhv_app: bhvApp,
+        megafoon: megafoon,
+        bhv_hesjes: bhvHesjes,
+        anders_overige_technische_installaties:
+          overigeTechnischeAndersKeuze === "ja" && overigeTechnischeAndersTekst
+            ? overigeTechnischeAndersTekst
+            : "",
+        anders_andere_relevante_voorzieningen:
+          andereVoorzieningenAndersKeuze === "ja" && andereVoorzieningenAndersTekst
+            ? andereVoorzieningenAndersTekst
+            : "",
+        anders_communicatiemiddelen_bhv:
+          communicatiemiddelenAndersKeuze === "ja" && communicatiemiddelenAndersTekst
+            ? communicatiemiddelenAndersTekst
+            : "",
+        naam_verzamelplaats: (document.getElementById('naamVerzamelplaats')?.value.trim() || ''),
+        naam_organisatie_1: (document.getElementById('organisatieNaam1')?.value.trim() || ''),
+        naam_organisatie_2: (document.getElementById('organisatieNaam2')?.value.trim() || ''),
+        naam_organisatie_3: (document.getElementById('organisatieNaam3')?.value.trim() || ''),
+        naam_organisatie_4: (document.getElementById('organisatieNaam4')?.value.trim() || ''),
+        naam_organisatie_5: (document.getElementById('organisatieNaam5')?.value.trim() || ''),
+        naam_organisatie_6: (document.getElementById('organisatieNaam6')?.value.trim() || ''),
+        bijzondere_kenmerk_1: (document.getElementById('bijzonderKenmerk1')?.value.trim() || ''),
+        bijzondere_kenmerk_2: (document.getElementById('bijzonderKenmerk2')?.value.trim() || ''),
+        bijzondere_kenmerk_3: (document.getElementById('bijzonderKenmerk3')?.value.trim() || ''),
+        bijzondere_kenmerk_4: (document.getElementById('bijzonderKenmerk4')?.value.trim() || ''),
+        bijzondere_kenmerk_5: (document.getElementById('bijzonderKenmerk5')?.value.trim() || ''),
+        naam_huisartsenpraktijk: alarmProcedureData.naamHuisartsenpraktijk,
+        tel_huisartsenpraktijk: alarmProcedureData.telHuisartsenpraktijk,
+        telefoonnummer_huisartsenspoedpost: alarmProcedureData.telefoonnummerHuisartsenspoedpost,
+        alarm_ongeval_tekst: alarmProcedureData.ongevalTekstResolved,
+        alarm_brand_tekst: alarmProcedureData.brandTekst,
+        alarm_externe_alarmering: alarmProcedureData.externeTekst,
+        alarm_beeindiging_alarmtoestand: alarmProcedureData.beeindigingAlarmtoestand,
+        grote_gebouwen_brandwerende_deuren: document.getElementById("stap5BrandwerendeDeurenScheidingen")?.value || "nee",
+        grote_gebouwen_verzamelgebouw: document.getElementById("stap5Verzamelgebouw")?.value || "nee",
+        grote_gebouwen_meerdere_gebouwen: document.getElementById("stap5MeerdereGebouwen")?.value || "nee",
+        grote_gebouwen_bmi_gekoppeld: document.getElementById("stap5BmiGekoppeld")?.value || "ja",
+        hoe_alarmeren_de_verschillende_organisaties_elkaar_bij_een_calamiteit: document.getElementById("stap5HoeAlarmeren")?.value.trim() || "",
+        ...getTijdvakData()
+      };
+    }
+
+    function getStep2RequiredInputs() {
+      return [
+        document.getElementById("naamVerzamelplaats"),
+        document.querySelector('#aanwezigRows .tijdvak-row [data-field="aanwezig_dag"]'),
+        document.querySelector('#aanwezigRows .tijdvak-row [data-field="aanwezig_aantal"]'),
+        document.querySelector('#zelfredzameRows .tijdvak-row [data-field="zelfredzame_dag"]'),
+        document.querySelector('#zelfredzameRows .tijdvak-row [data-field="zelfredzame_aantal"]'),
+        document.getElementById("organisatieNaam1")
+      ].filter(Boolean);
+    }
+
+    function hasTijdvakRowsIncomplete() {
+      const rows = document.querySelectorAll("#aanwezigRows .tijdvak-row, #zelfredzameRows .tijdvak-row");
+      for (const row of rows) {
+        const dagInput = row.querySelector('[data-field="aanwezig_dag"], [data-field="zelfredzame_dag"]');
+        const aantalInput = row.querySelector('[data-field="aanwezig_aantal"], [data-field="zelfredzame_aantal"]');
+        if (!dagInput || !aantalInput) continue;
+        if (dagInput.value.trim() && !aantalInput.value.trim()) return true;
+      }
+      return false;
+    }
+
+    function isStep1Complete() {
+      return REQUIRED_FIELDS.every((id) => {
+        const input = elements[id];
+        return !!input && !!input.value.trim();
+      });
+    }
+
+    function isStep2Complete() {
+      const allRequiredFilled = getStep2RequiredInputs().every((input) => !!input.value.trim());
+      if (!allRequiredFilled) return false;
+      return !hasTijdvakRowsIncomplete();
+    }
+
+    function getAndersRequirements() {
+      return [
+        {
+          select: document.getElementById("overigeTechnischeAndersKeuze"),
+          input: document.getElementById("overigeTechnischeAndersTekst")
+        },
+        {
+          select: document.getElementById("andereVoorzieningenAndersKeuze"),
+          input: document.getElementById("andereVoorzieningenAndersTekst")
+        },
+        {
+          select: document.getElementById("communicatiemiddelenAndersKeuze"),
+          input: document.getElementById("communicatiemiddelenAndersTekst")
+        }
+      ];
+    }
+
+    function isStep3Complete() {
+      const bmiJa = (document.getElementById("bmiKeuze")?.value || "nee") === "ja";
+      const bmiMerk = document.getElementById("bmiMerk");
+      const bmiType = document.getElementById("bmiType");
+      const naamBeheerderBmi = document.getElementById("naamBeheerderBmi");
+
+      const bmiComplete = !bmiJa || (
+        !!bmiMerk && !!bmiMerk.value.trim() &&
+        !!bmiType && !!bmiType.value.trim() &&
+        !!naamBeheerderBmi && !!naamBeheerderBmi.value.trim()
+      );
+
+      const andersComplete = getAndersRequirements().every(({ select, input }) => {
+        if (!select || !input) return true;
+        if (select.value !== "ja") return true;
+        return !!input.value.trim();
+      });
+
+      return bmiComplete && andersComplete;
+    }
+
+    function isStep5Complete() {
+      const meerdereGebouwen = document.getElementById("stap5MeerdereGebouwen")?.value || "nee";
+      if (meerdereGebouwen !== "ja") return true;
+      const bmiGekoppeld = document.getElementById("stap5BmiGekoppeld")?.value || "ja";
+      if (bmiGekoppeld !== "nee") return true;
+      const hoeAlarmeren = document.getElementById("stap5HoeAlarmeren")?.value.trim() || "";
+      return !!hoeAlarmeren;
+    }
+
+    function isStep4Complete() {
+      const alarm = getAlarmProcedureData();
+      const hasHuisartsenpraktijk = !!alarm.naamHuisartsenpraktijk.trim();
+      const hasTelHuisarts = !!alarm.telHuisartsenpraktijk.trim();
+      const hasTelSpoed = !!alarm.telefoonnummerHuisartsenspoedpost.trim();
+      const hasOngeval = !!alarm.ongevalTekst.trim();
+      const hasBrand = !!alarm.brandTekst.trim();
+      const hasExterne = !!alarm.externeTekst.trim();
+      const hasBeeindiging = !!alarm.beeindigingAlarmtoestand.trim();
+      return hasHuisartsenpraktijk && hasTelHuisarts && hasTelSpoed && hasOngeval && hasBrand && hasExterne && hasBeeindiging;
+    }
+
+    function updateNextButtonsState() {
+      if (elements.nextBtn) {
+        elements.nextBtn.disabled = !isStep1Complete();
+      }
+      const nextBtn2 = document.getElementById("nextBtn2");
+      if (nextBtn2) {
+        nextBtn2.disabled = !isStep2Complete();
+      }
+      const topNextBtn2 = document.getElementById("topNextBtn2");
+      if (topNextBtn2) {
+        topNextBtn2.disabled = !isStep2Complete();
+      }
+      const nextBtn3 = document.getElementById("nextBtn3");
+      if (nextBtn3) {
+        nextBtn3.disabled = !isStep3Complete();
+      }
+      const topNextBtn3 = document.getElementById("topNextBtn3");
+      if (topNextBtn3) {
+        topNextBtn3.disabled = !isStep3Complete();
+      }
+      const nextBtn4 = document.getElementById("nextBtn4");
+      if (nextBtn4) {
+        nextBtn4.disabled = !isStep4Complete();
+      }
+      const topNextBtn4 = document.getElementById("topNextBtn4");
+      if (topNextBtn4) {
+        topNextBtn4.disabled = !isStep4Complete();
+      }
+      if (elements.generateBtnFinal) {
+        elements.generateBtnFinal.disabled = !(isStep1Complete() && isStep2Complete() && isStep3Complete() && isStep4Complete() && isStep5Complete());
+      }
+      updateFilledFieldStates();
+    }
+
+    function validateStep1Required() {
+      let firstInvalid = null;
+      for (const id of REQUIRED_FIELDS) {
+        const input = elements[id];
+        const invalid = id === "logoFile" ? !state.logo : !input.value.trim();
+        if (id !== "logoFile") {
+          setFieldInvalid(input, invalid);
+        }
+        if (invalid && !firstInvalid) {
+          firstInvalid = id === "logoFile" ? elements.logoFile : input;
+        }
+      }
+
+      if (firstInvalid) {
+        firstInvalid.focus();
+        return false;
+      }
+      return true;
+    }
+
+    function validateStep2Required() {
+      let firstInvalid = null;
+
+      const requiredInputs = getStep2RequiredInputs();
+
+      requiredInputs.forEach((input) => {
+        const invalid = !input.value.trim();
+        setFieldInvalid(input, invalid);
+        if (invalid && !firstInvalid) {
+          firstInvalid = input;
+        }
+      });
+
+      if (firstInvalid) {
+        firstInvalid.focus();
+        return false;
+      }
+      return true;
+    }
+
+    function validateStep3Required() {
+      let firstInvalid = null;
+
+      const bmiJa = (document.getElementById("bmiKeuze")?.value || "nee") === "ja";
+      const bmiMerk = document.getElementById("bmiMerk");
+      const bmiType = document.getElementById("bmiType");
+      const naamBeheerderBmi = document.getElementById("naamBeheerderBmi");
+      if (bmiJa) {
+        const bmiMerkInvalid = !bmiMerk || !bmiMerk.value.trim();
+        const bmiTypeInvalid = !bmiType || !bmiType.value.trim();
+        const naamBeheerderInvalid = !naamBeheerderBmi || !naamBeheerderBmi.value.trim();
+        if (bmiMerk) setFieldInvalid(bmiMerk, bmiMerkInvalid);
+        if (bmiType) setFieldInvalid(bmiType, bmiTypeInvalid);
+        if (naamBeheerderBmi) setFieldInvalid(naamBeheerderBmi, naamBeheerderInvalid);
+        if (bmiMerkInvalid && !firstInvalid && bmiMerk) firstInvalid = bmiMerk;
+        if (bmiTypeInvalid && !firstInvalid && bmiType) firstInvalid = bmiType;
+        if (naamBeheerderInvalid && !firstInvalid && naamBeheerderBmi) firstInvalid = naamBeheerderBmi;
+      } else {
+        if (bmiMerk) setFieldInvalid(bmiMerk, false);
+        if (bmiType) setFieldInvalid(bmiType, false);
+        if (naamBeheerderBmi) setFieldInvalid(naamBeheerderBmi, false);
+      }
+
+      for (const { select, input } of getAndersRequirements()) {
+        if (!select || !input) continue;
+        const required = select.value === "ja";
+        const invalid = required && !input.value.trim();
+        setFieldInvalid(input, invalid);
+        if (invalid && !firstInvalid) firstInvalid = input;
+      }
+
+      if (firstInvalid) {
+        firstInvalid.focus();
+        return false;
+      }
+      return true;
+    }
+
+    function validateStep4Required() {
+      let firstInvalid = null;
+      const alarm = getAlarmProcedureData();
+
+      const naamHuisartsenpraktijkInput = document.getElementById("naamHuisartsenpraktijk");
+      const telHuisartsenpraktijkInput = document.getElementById("telHuisartsenpraktijk");
+      const telefoonnummerHuisartsenspoedpostInput = document.getElementById("telefoonnummerHuisartsenspoedpost");
+      const ongevalInput = document.getElementById("alarmOngevalTekst");
+      const brandInput = document.getElementById("alarmBrandTekst");
+      const externeInput = document.getElementById("alarmExterneTekst");
+      const beeindigingInput = document.getElementById("alarmBeeindigingTekst");
+
+      const naamHuisartsenpraktijkInvalid = !alarm.naamHuisartsenpraktijk.trim();
+      const telHuisartsenpraktijkInvalid = !alarm.telHuisartsenpraktijk.trim();
+      const telefoonnummerHuisartsenspoedpostInvalid = !alarm.telefoonnummerHuisartsenspoedpost.trim();
+      const ongevalInvalid = !alarm.ongevalTekst.trim();
+      const brandInvalid = !alarm.brandTekst.trim();
+      const externeInvalid = !alarm.externeTekst.trim();
+      const beeindigingInvalid = !alarm.beeindigingAlarmtoestand.trim();
+
+      if (naamHuisartsenpraktijkInput) {
+        setFieldInvalid(naamHuisartsenpraktijkInput, naamHuisartsenpraktijkInvalid);
+        if (naamHuisartsenpraktijkInvalid && !firstInvalid) firstInvalid = naamHuisartsenpraktijkInput;
+      }
+
+      if (telHuisartsenpraktijkInput) {
+        setFieldInvalid(telHuisartsenpraktijkInput, telHuisartsenpraktijkInvalid);
+        if (telHuisartsenpraktijkInvalid && !firstInvalid) firstInvalid = telHuisartsenpraktijkInput;
+      }
+
+      if (telefoonnummerHuisartsenspoedpostInput) {
+        setFieldInvalid(telefoonnummerHuisartsenspoedpostInput, telefoonnummerHuisartsenspoedpostInvalid);
+        if (telefoonnummerHuisartsenspoedpostInvalid && !firstInvalid) firstInvalid = telefoonnummerHuisartsenspoedpostInput;
+      }
+
+      if (ongevalInput) {
+        setFieldInvalid(ongevalInput, ongevalInvalid);
+        if (ongevalInvalid && !firstInvalid) firstInvalid = ongevalInput;
+      }
+
+      if (brandInput) {
+        setFieldInvalid(brandInput, brandInvalid);
+        if (brandInvalid && !firstInvalid) firstInvalid = brandInput;
+      }
+
+      if (externeInput) {
+        setFieldInvalid(externeInput, externeInvalid);
+        if (externeInvalid && !firstInvalid) firstInvalid = externeInput;
+      }
+
+      if (beeindigingInput) {
+        setFieldInvalid(beeindigingInput, beeindigingInvalid);
+        if (beeindigingInvalid && !firstInvalid) firstInvalid = beeindigingInput;
+      }
+
+      if (firstInvalid) {
+        firstInvalid.focus();
+        return false;
+      }
+      return true;
+    }
+
+    function validateStep5Required() {
+      const meerdereGebouwen = document.getElementById("stap5MeerdereGebouwen")?.value || "nee";
+      if (meerdereGebouwen !== "ja") return true;
+      const bmiGekoppeld = document.getElementById("stap5BmiGekoppeld")?.value || "ja";
+      if (bmiGekoppeld !== "nee") return true;
+      const hoeAlarmInput = document.getElementById("stap5HoeAlarmeren");
+      const invalid = !hoeAlarmInput?.value.trim();
+      if (hoeAlarmInput) setFieldInvalid(hoeAlarmInput, invalid);
+      if (invalid) {
+        hoeAlarmInput?.focus();
+        return false;
+      }
+      return true;
+    }
+
+    function validateTijdvakRows() {
+      let firstInvalid = null;
+
+      function validateTableRows(tbodySelector, dagField, aantalField) {
+        const rows = document.querySelectorAll(`${tbodySelector} .tijdvak-row`);
+        rows.forEach((row) => {
+          const dagInput = row.querySelector(`[data-field="${dagField}"]`);
+          const aantalInput = row.querySelector(`[data-field="${aantalField}"]`);
+          if (!dagInput || !aantalInput) return;
+
+          const dag = dagInput.value.trim();
+          const aantal = aantalInput.value.trim();
+          const invalid = !!dag && !aantal;
+          setFieldInvalid(aantalInput, invalid);
+          if (invalid && !firstInvalid) {
+            firstInvalid = aantalInput;
+          }
+        });
+      }
+
+      validateTableRows("#aanwezigRows", "aanwezig_dag", "aanwezig_aantal");
+      validateTableRows("#zelfredzameRows", "zelfredzame_dag", "zelfredzame_aantal");
+
+      if (firstInvalid) {
+        firstInvalid.focus();
+        return false;
+      }
+      return true;
+    }
+
+    function dataUrlToArrayBuffer(dataURL) {
+      const match = /^data:image\/(png|jpg|jpeg|webp|gif);base64,/i;
+      if (!match.test(dataURL)) return false;
+      const base64 = dataURL.replace(match, "");
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+      return bytes.buffer;
+    }
+
+    function fitBox(width, height, maxWidth, maxHeight) {
+      if (!width || !height) return [maxWidth, maxHeight];
+      const scale = Math.min(maxWidth / width, maxHeight / height, 1);
+      return [Math.max(1, Math.round(width * scale)), Math.max(1, Math.round(height * scale))];
+    }
+
+    function fileToDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(reader.error || new Error("Bestand kon niet worden gelezen"));
+        reader.onload = () => resolve(String(reader.result || ""));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function loadLogoMeta(file) {
+      const dataUrl = await fileToDataUrl(file);
+      const image = await new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = dataUrl;
+      });
+      return {
+        dataUrl,
+        width: image.naturalWidth,
+        height: image.naturalHeight
+      };
+    }
+
+    function renderLogoPreview() {
+      elements.logoPreview.innerHTML = "";
+      if (!state.logo) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "Geen logo gekozen";
+        elements.logoPreview.appendChild(empty);
+        return;
+      }
+
+      const img = document.createElement("img");
+      img.alt = "Logo preview";
+      img.src = state.logo.dataUrl;
+      elements.logoPreview.appendChild(img);
+    }
+
+    function base64ToArrayBuffer(base64) {
+      const binary = atob(base64);
+      const len = binary.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i += 1) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      return bytes.buffer;
+    }
+
+    async function loadTemplateBuffer(fileUrl) {
+      try {
+        const response = await fetch(fileUrl, { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error(`Template laden mislukt (${response.status})`);
+        }
+        return await response.arrayBuffer();
+      } catch (_) {
+        // Fallback for strict file:// environments where fetch to local files is blocked.
+        return await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("GET", fileUrl, true);
+          xhr.responseType = "arraybuffer";
+          xhr.onload = () => {
+            if ((xhr.status >= 200 && xhr.status < 300) || xhr.status === 0) {
+              if (xhr.response) {
+                resolve(xhr.response);
+                return;
+              }
+            }
+            reject(new Error(`Template laden mislukt (${xhr.status})`));
+          };
+          xhr.onerror = () => reject(new Error("Template laden mislukt (xhr error)"));
+          xhr.send();
+        });
+      }
+    }
+
+    async function loadDefaultTemplate() {
+      setStatus("Template wordt geladen...");
+      const isFileProtocol = window.location.protocol === "file:";
+      const baseName = TEMPLATE_FILE_NAME;
+      const encodedComponent = encodeURIComponent(TEMPLATE_FILE_NAME).replace(/%2F/g, "/");
+      const encodedUri = encodeURI(TEMPLATE_FILE_NAME);
+      const cacheSuffix = isFileProtocol ? "" : `?v=${Date.now()}`;
+
+      const candidateUrls = [
+        `./${baseName}${cacheSuffix}`,
+        `./${encodedComponent}${cacheSuffix}`,
+        `./${encodedUri}${cacheSuffix}`
+      ];
+
+      try {
+        let loadedBuffer = null;
+        let lastError = null;
+
+        for (const templateUrl of candidateUrls) {
+          try {
+            loadedBuffer = await loadTemplateBuffer(templateUrl);
+            break;
+          } catch (error) {
+            lastError = error;
+          }
+        }
+
+        if (!loadedBuffer) {
+          throw lastError || new Error("Template laden mislukt");
+        }
+
+        state.templateBuffer = loadedBuffer;
+        if (AUTO_FILL_STEP4_FROM_TEMPLATE) {
+          applyAlarmDefaultsFromTemplate(state.templateBuffer);
+        }
+        setTemplateLabel(TEMPLATE_FILE_NAME, true);
+        setStatus(`Standaardtemplate geladen: ${TEMPLATE_FILE_NAME}`);
+      } catch (error) {
+        if (window.EMBEDDED_TEMPLATE_BASE64) {
+          state.templateBuffer = base64ToArrayBuffer(window.EMBEDDED_TEMPLATE_BASE64);
+          if (AUTO_FILL_STEP4_FROM_TEMPLATE) {
+            applyAlarmDefaultsFromTemplate(state.templateBuffer);
+          }
+          setTemplateLabel(`${TEMPLATE_FILE_NAME} (embedded)`, true);
+          setStatus(`Standaardtemplate geladen (embedded): ${TEMPLATE_FILE_NAME}`);
+          return;
+        }
+
+        state.templateBuffer = null;
+        setTemplateLabel("geen template geladen", false);
+        setStatus("Automatisch laden van de template is mislukt. Bij genereren op de laatste stap kun je het template eenmalig kiezen.", "warn");
+      }
+    }
+
+    async function prepareZip(buffer) {
+      const zip = new PizZip(buffer);
+      const logoSlotParts = Object.keys(zip.files).filter((name) => /^word\/(document|header\d+)\.xml$/.test(name));
+      for (const partPath of logoSlotParts) {
+        const partFile = zip.file(partPath);
+        if (!partFile) continue;
+        const xml = partFile.asText();
+        if (xml.includes("{logo}")) {
+          zip.file(partPath, xml.replaceAll("{logo}", "__GBBC_LOGO_SLOT__"));
+        }
+      }
+      return zip;
+    }
+
+    function harmonizePage8Communicatiemiddelen(zip) {
+      const documentFile = zip.file("word/document.xml");
+      if (!documentFile) return;
+
+      const parser = new DOMParser();
+      const xml = documentFile.asText();
+      const xmlDoc = parser.parseFromString(xml, "application/xml");
+      if (xmlDoc.getElementsByTagName("parsererror").length) return;
+
+      const wNs = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+      const paragraphs = Array.from(xmlDoc.getElementsByTagName("w:p"));
+      const getText = (paragraph) =>
+        Array.from(paragraph.getElementsByTagName("w:t"))
+          .map((n) => n.textContent || "")
+          .join("")
+          .replace(/\s+/g, " ")
+          .trim();
+
+      const setParagraphText = (paragraph, text) => {
+        const pPr = paragraph.getElementsByTagName("w:pPr")[0]?.cloneNode(true) || null;
+        const firstRun = paragraph.getElementsByTagName("w:r")[0] || null;
+        const firstRunRPr = firstRun ? firstRun.getElementsByTagName("w:rPr")[0]?.cloneNode(true) : null;
+
+        while (paragraph.firstChild) {
+          paragraph.removeChild(paragraph.firstChild);
+        }
+
+        if (pPr) {
+          paragraph.appendChild(pPr);
+        }
+
+        const run = xmlDoc.createElementNS(wNs, "w:r");
+        if (firstRunRPr) {
+          run.appendChild(firstRunRPr);
+        }
+        const textNode = xmlDoc.createElementNS(wNs, "w:t");
+        textNode.textContent = text;
+        run.appendChild(textNode);
+        paragraph.appendChild(run);
+      };
+
+      const lines = [
+        {
+          detect: /\{whatsappgroep_voor_onderlinge_communicatie_met_mobiele_telefoons_tussen_bhv[-_]ers\}/i,
+          text: "Whatsappgroep voor onderlinge communicatie met mobiele telefoons tussen bhv-ers {whatsappgroep_voor_onderlinge_communicatie_met_mobiele_telefoons_tussen_bhv-ers} (*)"
+        },
+        {
+          detect: /\{portofoons\}/i,
+          text: "Portofoons{portofoons} (*)"
+        },
+        {
+          detect: /\{bhv[-_]app\}/i,
+          text: "Bhv-app{bhv-app} (*)"
+        },
+        {
+          detect: /\{megafoon\}/i,
+          text: "Megafoon{megafoon} (*)"
+        },
+        {
+          detect: /\{bhv_hesjes\}/i,
+          text: "Bhv-hesjes{bhv_hesjes} (*)"
+        }
+      ];
+
+      for (const paragraph of paragraphs) {
+        const paragraphText = getText(paragraph);
+        for (const line of lines) {
+          if (line.detect.test(paragraphText)) {
+            setParagraphText(paragraph, line.text);
+            break;
+          }
+        }
+      }
+
+      zip.file("word/document.xml", new XMLSerializer().serializeToString(xmlDoc));
+    }
+
+    function applyAlarmDefaultsFromTemplate(templateBuffer, options = {}) {
+      if (!templateBuffer) return;
+      try {
+        const includeOngeval = options.includeOngeval !== false;
+        const applyDraftAfterLoad = options.applyDraftAfterLoad !== false;
+        const zip = new PizZip(templateBuffer);
+        const docFile = zip.file("word/document.xml");
+        if (!docFile) return;
+
+        const xml = docFile.asText();
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xml, "application/xml");
+        if (xmlDoc.getElementsByTagName("parsererror").length) return;
+
+        const paragraphs = Array.from(xmlDoc.getElementsByTagName("w:p"));
+        const getParagraphText = (paragraph) =>
+          Array.from(paragraph.getElementsByTagName("w:t"))
+            .map((n) => n.textContent || "")
+            .join("")
+            .replace(/\u00a0/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+
+        const lines = paragraphs.map(getParagraphText).filter(Boolean);
+        const findLastIndex = (regex) => {
+          for (let i = lines.length - 1; i >= 0; i -= 1) {
+            if (regex.test(lines[i])) return i;
+          }
+          return -1;
+        };
+
+        const idxInterne = findLastIndex(/interne en externe alarmering|interne alarmering/i);
+        const idxExterne = findLastIndex(/externe alarmering|overige calamiteiten/i);
+        const idxBeeindiging = findLastIndex(/be.?indiging alarmtoestand/i);
+        if (idxInterne < 0 || idxBeeindiging < 0) return;
+
+        let idxAfterBeeindiging = lines.length;
+        for (let i = idxBeeindiging + 1; i < lines.length; i += 1) {
+          if (/ontruimingsorganisatie|bijlagen/i.test(lines[i])) {
+            idxAfterBeeindiging = i;
+            break;
+          }
+        }
+
+        const idxExterneEffective = idxExterne >= 0 ? idxExterne : idxBeeindiging;
+        const interneLines = lines.slice(idxInterne + 1, idxExterneEffective).filter((line) => !/^\(\*\*\)$/.test(line));
+        let externeLines = idxExterne >= 0
+          ? lines.slice(idxExterne + 1, idxBeeindiging).filter((line) => !/^\(\*\*\)$/.test(line))
+          : [];
+        const beeindigingLines = lines.slice(idxBeeindiging + 1, idxAfterBeeindiging).filter((line) => !/^\(\*\*\)$/.test(line));
+
+        const idxBrand = interneLines.findIndex((line) => /^brand$/i.test(line) || /brand en explosie/i.test(line));
+        const idxOngeval = interneLines.findIndex((line) => /ongeval/i.test(line));
+        const ongevalLines = idxOngeval >= 0
+          ? interneLines.slice(idxOngeval + 1, idxBrand >= 0 ? idxBrand : interneLines.length)
+          : [];
+        let brandLines = idxBrand >= 0
+          ? interneLines.slice(idxBrand + 1)
+          : [];
+
+        // Some templates place the external alarm sentence at the end of the Brand block.
+        if (idxExterne < 0 && externeLines.length === 0 && brandLines.length > 0) {
+          const lastBrandLine = brandLines[brandLines.length - 1] || "";
+          if (/\bbel\s*112\b|meldkamer|externe\s+alarmering/i.test(lastBrandLine)) {
+            externeLines = [lastBrandLine];
+            brandLines = brandLines.slice(0, -1);
+          }
+        }
+
+        const ongevalInput = document.getElementById("alarmOngevalTekst");
+        if (includeOngeval && ongevalInput && ongevalLines.length > 0) {
+          ongevalInput.value = ongevalLines.join("\n");
+        }
+
+        const brandInput = document.getElementById("alarmBrandTekst");
+        if (brandInput && brandLines.length > 0) {
+          brandInput.value = brandLines.join("\n");
+        }
+
+        const externeInput = document.getElementById("alarmExterneTekst");
+        if (externeInput && externeLines.length > 0) {
+          externeInput.value = externeLines.join("\n");
+        }
+
+        const beeindigingInput = document.getElementById("alarmBeeindigingTekst");
+        if (beeindigingInput && beeindigingLines.length > 0) {
+          beeindigingInput.value = beeindigingLines.join("\n");
+        }
+
+        if (applyDraftAfterLoad) {
+          try {
+            const draftRaw = localStorage.getItem(ALARM_DRAFT_STORAGE_KEY);
+            if (draftRaw) {
+              applyAlarmDraft(JSON.parse(draftRaw));
+            }
+          } catch (_) {
+            // ignore invalid saved draft
+          }
+        }
+
+        if (includeOngeval) {
+          syncOngevalMedicalLines();
+        }
+        renderAlarmWordPreview();
+        updateNextButtonsState();
+      } catch (_) {
+        // Keep existing defaults when template parsing is not possible.
+      }
+    }
+
+    function preprocessConditionalMarkers(zip, data) {
+      const partPaths = Object.keys(zip.files).filter((name) => /^word\/(document|header\d+)\.xml$/.test(name));
+      const tagRegex = /\{([^{}]+)\}/g;
+      const inlineTagRegex = /\{([^{}]+)\}/g;
+      const normalizeTagKey = (key) => String(key || "")
+        .toLowerCase()
+        .replace(/[\u2010-\u2015]/g, "-")
+        .replace(/-/g, "_")
+        .trim();
+      const dataValueByNormalizedKey = (() => {
+        const map = new Map();
+        Object.keys(data || {}).forEach((key) => {
+          map.set(normalizeTagKey(key), data[key]);
+        });
+        return map;
+      })();
+      const getDataValue = (name) => {
+        if (Object.prototype.hasOwnProperty.call(data, name)) {
+          return data[name];
+        }
+        const normalized = normalizeTagKey(name);
+        if (dataValueByNormalizedKey.has(normalized)) {
+          return dataValueByNormalizedKey.get(normalized);
+        }
+        return undefined;
+      };
+      const isNonApplicableValue = (rawValue) => {
+        const normalized = String(rawValue || "")
+          .toLowerCase()
+          .replace(/\u00a0/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+        return normalized === "" || [
+          "nee",
+          "niet aanwezig",
+          "niet-aanwezig",
+          "nvt",
+          "n.v.t",
+          "n.v.t.",
+          "niet van toepassing"
+        ].includes(normalized);
+      };
+      const bijzondereKenmerkenAllEmpty = [1, 2, 3, 4, 5].every(
+        (i) => !String(data[`bijzondere_kenmerk_${i}`] || "").trim()
+      );
+
+      for (const partPath of partPaths) {
+        const partFile = zip.file(partPath);
+        if (!partFile) continue;
+        const xml = partFile.asText();
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xml, "application/xml");
+        if (xmlDoc.getElementsByTagName("parsererror").length) continue;
+
+        const getParagraphText = (paragraph) => {
+          const textNodes = Array.from(paragraph.getElementsByTagName("w:t"));
+          return textNodes.map((n) => n.textContent || "").join("");
+        };
+
+        const getTagNamesFromText = (text) => {
+          const names = [];
+          tagRegex.lastIndex = 0;
+          let localMatch;
+          while ((localMatch = tagRegex.exec(text)) !== null) {
+            names.push(localMatch[1]);
+          }
+          return names;
+        };
+
+        const isEmptyParagraph = (paragraph) => {
+          const text = getParagraphText(paragraph).replace(/\u00a0/g, " ").trim();
+          return text === "";
+        };
+
+        // Block-level (**) handling: when a standalone (**) closes a block and all
+        // placeholders in that block are non-applicable, remove the entire block.
+        const blockParagraphs = Array.from(xmlDoc.getElementsByTagName("w:p"));
+        for (let i = 0; i < blockParagraphs.length; i += 1) {
+          const markerParagraph = blockParagraphs[i];
+          if (!markerParagraph.parentNode) continue;
+
+          const markerText = getParagraphText(markerParagraph);
+          if (!markerText.includes("(**)")) continue;
+
+          const markerTagNames = getTagNamesFromText(markerText);
+          if (markerTagNames.length > 0) continue;
+
+          let blockStart = i;
+          while (blockStart > 0) {
+            const prevParagraph = blockParagraphs[blockStart - 1];
+            if (!prevParagraph || !prevParagraph.parentNode) {
+              blockStart -= 1;
+              continue;
+            }
+            if (isEmptyParagraph(prevParagraph)) break;
+            blockStart -= 1;
+          }
+
+          const blockTagNamesSet = new Set();
+          for (let j = blockStart; j <= i; j += 1) {
+            const p = blockParagraphs[j];
+            if (!p || !p.parentNode) continue;
+            const tags = getTagNamesFromText(getParagraphText(p));
+            tags.forEach((name) => blockTagNamesSet.add(name));
+          }
+
+          if (blockTagNamesSet.size === 0) {
+            markerParagraph.parentNode?.removeChild(markerParagraph);
+            continue;
+          }
+
+          const blockAllNonApplicable = Array.from(blockTagNamesSet).every((name) =>
+            isNonApplicableValue(getDataValue(name))
+          );
+          const names = Array.from(blockTagNamesSet);
+          const hasOverigeTechnischeTags = names.some((name) => [
+            "sprinklerinstallatie",
+            "automatische_blusinstallatie",
+            "klimaatbeheerssysteem",
+            "rookwarmteafvoerinstallatie",
+            "rookwarmteafvoerinstallatie_rwa",
+            "personenzoekinstallatie"
+          ].includes(name));
+          const hasAndereVoorzieningenTags = names.some((name) => [
+            "brandwerende_deuren_scheidingen",
+            "brandweerlift"
+          ].includes(name));
+          const hasCommunicatieTags = names.some((name) => [
+            "whatsappgroep_voor_onderlinge_communicatie_met_mobiele_telefoons_tussen_bhv_ers",
+            "whatsappgroep_voor_onderlinge_communicatie_met_mobiele_telefoons_tussen_bhv-ers",
+            "portofoons",
+            "bhv-app",
+            "bhv_app",
+            "megafoon",
+            "bhv_hesjes"
+          ].includes(name));
+          const keepMeerdereGebouwen =
+            names.includes("hoe_alarmeren_de_verschillende_organisaties_elkaar_bij_een_calamiteit") &&
+            (data.grote_gebouwen_meerdere_gebouwen || "nee") === "ja";
+          const keepSectionContainer = hasOverigeTechnischeTags || hasAndereVoorzieningenTags || hasCommunicatieTags || keepMeerdereGebouwen;
+
+          if (!blockAllNonApplicable || keepSectionContainer) continue;
+
+          const nextAfterBlock = markerParagraph.nextSibling;
+          for (let j = blockStart; j <= i; j += 1) {
+            const p = blockParagraphs[j];
+            if (p && p.parentNode) {
+              p.parentNode.removeChild(p);
+            }
+          }
+
+          const hasPageBreak = (p) =>
+            Array.from(p.getElementsByTagName("w:br")).some(
+              (br) => (br.getAttribute("w:type") || "") === "page"
+            );
+          if (
+            nextAfterBlock &&
+            nextAfterBlock.nodeName === "w:p" &&
+            isEmptyParagraph(nextAfterBlock) &&
+            !hasPageBreak(nextAfterBlock)
+          ) {
+            nextAfterBlock.parentNode?.removeChild(nextAfterBlock);
+          }
+        }
+
+        const paragraphs = Array.from(xmlDoc.getElementsByTagName("w:p"));
+        for (const paragraph of paragraphs) {
+          const textNodes = Array.from(paragraph.getElementsByTagName("w:t"));
+          const paragraphText = textNodes.map((n) => n.textContent || "").join("");
+          const normalizedText = paragraphText.toLowerCase().replace(/\s+/g, " ").trim();
+
+          // If all bijzondere kenmerken are empty, remove the heading line of that block as well.
+          if (
+            bijzondereKenmerkenAllEmpty &&
+            normalizedText.includes("bijzondere kenmerken") &&
+            normalizedText.includes("ontruiming")
+          ) {
+            const prev = paragraph.previousSibling;
+            if (prev && prev.nodeName === "w:p") {
+              const prevTextNodes = Array.from(prev.getElementsByTagName("w:t"));
+              const prevText = prevTextNodes.map((n) => n.textContent || "").join("").replace(/\u00a0/g, " ").trim();
+              if (!prevText) {
+                prev.parentNode?.removeChild(prev);
+              }
+            }
+            paragraph.parentNode?.removeChild(paragraph);
+            continue;
+          }
+
+          const tagNames = [];
+          tagRegex.lastIndex = 0;
+          let match;
+          while ((match = tagRegex.exec(paragraphText)) !== null) {
+            tagNames.push(match[1]);
+          }
+
+          const bmiTagNames = ["bmi", "bmi_merk", "bmi_type", "naam_beheerder_bmi"];
+          const hasBmiTags = tagNames.some((name) => bmiTagNames.includes(name));
+          if (hasBmiTags) {
+            const allBmiEmpty = bmiTagNames.every((name) => isNonApplicableValue(data[name]));
+            if (allBmiEmpty) {
+              const next = paragraph.nextSibling;
+              paragraph.parentNode?.removeChild(paragraph);
+              if (next && next.nodeName === "w:p") {
+                const nextTextNodes = Array.from(next.getElementsByTagName("w:t"));
+                const nextText = nextTextNodes.map((n) => n.textContent || "").join("").replace(/\u00a0/g, " ").trim();
+                if (!nextText) {
+                  next.parentNode?.removeChild(next);
+                }
+              }
+              continue;
+            }
+          }
+
+          // Remove rows that would resolve to punctuation only (like ":")
+          // so empty step-2 bullet lines never appear in the generated document.
+          if (tagNames.length > 0) {
+            const resolvedText = paragraphText.replace(inlineTagRegex, (_, name) => String(getDataValue(name) || "").trim());
+            const compactResolvedText = resolvedText
+              .replace(/\(\*\)|\(\*\*\)/g, "")
+              .replace(/\u00a0/g, " ")
+              .replace(/\s+/g, "")
+              .trim();
+            if (compactResolvedText && /^[\:;,\.\-]+$/.test(compactResolvedText)) {
+              paragraph.parentNode?.removeChild(paragraph);
+              continue;
+            }
+          }
+
+          const hasSingleMarker = paragraphText.includes("(*)");
+          const hasDoubleMarker = paragraphText.includes("(**)");
+          if (!hasSingleMarker && !hasDoubleMarker) continue;
+
+          const allEmpty =
+            tagNames.length > 0 &&
+            tagNames.every((name) => isNonApplicableValue(getDataValue(name)));
+
+          // Standalone (**) lines are control markers and should never appear in output.
+          if (hasDoubleMarker && tagNames.length === 0) {
+            paragraph.parentNode?.removeChild(paragraph);
+            continue;
+          }
+
+          // (*) and (**) are template control markers; remove paragraph when all mapped fields are empty.
+          if (allEmpty) {
+            paragraph.parentNode?.removeChild(paragraph);
+            continue;
+          }
+
+          for (const node of textNodes) {
+            if (!node.textContent) continue;
+            node.textContent = node.textContent.replaceAll("(*)", "").replaceAll("(**)", "");
+          }
+        }
+
+        // Safety cleanup: markers should never remain in output.
+        const remainingTextNodes = Array.from(xmlDoc.getElementsByTagName("w:t"));
+        for (const node of remainingTextNodes) {
+          if (!node.textContent) continue;
+          if (node.textContent.includes("(*)") || node.textContent.includes("(**)")) {
+            node.textContent = node.textContent.replaceAll("(*)", "").replaceAll("(**)", "");
+          }
+        }
+
+        zip.file(partPath, new XMLSerializer().serializeToString(xmlDoc));
+      }
+    }
+
+    function stripPresenceTokenFromZip(zip) {
+      const wordXmlParts = Object.keys(zip.files).filter((name) => /^word\/.*\.xml$/.test(name));
+      for (const partPath of wordXmlParts) {
+        const partFile = zip.file(partPath);
+        if (!partFile) continue;
+        const xml = partFile.asText();
+        if (!xml.includes(PRESENCE_TOKEN)) continue;
+        zip.file(partPath, xml.replaceAll(PRESENCE_TOKEN, ""));
+      }
+    }
+
+    function injectCustomAndersBullets(zip, data) {
+      const documentFile = zip.file("word/document.xml");
+      if (!documentFile) return;
+
+      const xml = documentFile.asText();
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xml, "application/xml");
+      if (xmlDoc.getElementsByTagName("parsererror").length) return;
+
+      const wNs = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+      const paragraphs = Array.from(xmlDoc.getElementsByTagName("w:p"));
+
+      const getParagraphText = (paragraph) => {
+        const textNodes = Array.from(paragraph.getElementsByTagName("w:t"));
+        return textNodes.map((n) => n.textContent || "").join("").replace(/\s+/g, " ").trim();
+      };
+      const hasNumbering = (paragraph) =>
+        paragraph.getElementsByTagName("w:numPr").length > 0 ||
+        paragraph.getElementsByTagName("numPr").length > 0 ||
+        paragraph.getElementsByTagNameNS(wNs, "numPr").length > 0;
+
+      const findParagraphIndex = (test) => paragraphs.findIndex((p) => test(getParagraphText(p)));
+      const communicationHeadingRegex = /communicatiemiddelen bhv-organisatie|aanwezige communicatiemiddelen|aanwezige hulpmiddelen/i;
+      const communicationIndexForBullet = findParagraphIndex((t) => communicationHeadingRegex.test(t));
+      const communicationBulletPrototype =
+        communicationIndexForBullet >= 0
+          ? (paragraphs.slice(communicationIndexForBullet + 1).find((p) => hasNumbering(p) && getParagraphText(p)) || null)
+          : null;
+      const defaultBulletPrototype = communicationBulletPrototype ||
+        paragraphs.find((p) => hasNumbering(p) && getParagraphText(p)) || null;
+
+      const createParagraphLike = (prototype, text, options = {}) => {
+        const bulletPrototype = options.bulletPrototype || null;
+        const forceNonBold = !!options.forceNonBold;
+        const forceBullet = !!options.forceBullet;
+        const paragraph = xmlDoc.createElementNS(wNs, "w:p");
+        const paragraphStyleSource = bulletPrototype || prototype;
+        const prototypePPr = paragraphStyleSource ? paragraphStyleSource.getElementsByTagName("w:pPr")[0] : null;
+        if (prototypePPr) {
+          paragraph.appendChild(prototypePPr.cloneNode(true));
+        }
+
+        const run = xmlDoc.createElementNS(wNs, "w:r");
+        const prototypeRun = prototype ? prototype.getElementsByTagName("w:r")[0] : null;
+        const prototypeRPr = prototypeRun ? prototypeRun.getElementsByTagName("w:rPr")[0] : null;
+        if (prototypeRPr && !forceNonBold) {
+          run.appendChild(prototypeRPr.cloneNode(true));
+        }
+
+        const textNode = xmlDoc.createElementNS(wNs, "w:t");
+        textNode.textContent = forceBullet && !bulletPrototype ? `• ${text}` : text;
+        run.appendChild(textNode);
+        paragraph.appendChild(run);
+        return paragraph;
+      };
+
+      const sectionSpecs = [
+        {
+          title: "Overige technische installaties",
+          text: String(data.anders_overige_technische_installaties || "").trim(),
+          start: (t) => /overige technische installaties/i.test(t),
+          end: (t) => /andere relevante technische/i.test(t)
+        },
+        {
+          title: "Andere relevante technische dan wel bouwtechnische voorzieningen",
+          text: String(data.anders_andere_relevante_voorzieningen || "").trim(),
+          start: (t) => /andere relevante technische/i.test(t),
+          end: (t) => /verantwoordelijken voor het dagelijks beheer/i.test(t) || communicationHeadingRegex.test(t)
+        },
+        {
+          title: "Communicatiemiddelen BHV-organisatie",
+          text: String(data.anders_communicatiemiddelen_bhv || "").trim(),
+          start: (t) => communicationHeadingRegex.test(t),
+          end: (t) => /alarmeringsprocedure|verzamelplaats\s*:|verslag ontruimingsoefening/i.test(t),
+          matchAllStarts: true
+        }
+      ];
+
+      for (const spec of sectionSpecs) {
+        if (!spec.text) continue;
+
+        const startIndexes = spec.matchAllStarts
+          ? paragraphs
+              .map((paragraph, index) => (spec.start(getParagraphText(paragraph)) ? index : -1))
+              .filter((index) => index >= 0)
+          : [findParagraphIndex(spec.start)].filter((index) => index >= 0);
+
+        if (startIndexes.length === 0) {
+          const communicationIndex = findParagraphIndex((t) => communicationHeadingRegex.test(t));
+          if (communicationIndex < 0) continue;
+          const communicationParagraph = paragraphs[communicationIndex];
+          if (!communicationParagraph || !communicationParagraph.parentNode) continue;
+
+          const sectionBulletPrototype =
+            paragraphs.slice(communicationIndex + 1).find((p) => {
+              const text = getParagraphText(p);
+              if (!text) return false;
+              return hasNumbering(p) || /mobiele|roepen|whatsapp|portofoon|bhv-app|megafoon|hesjes/i.test(text);
+            }) || communicationParagraph;
+
+          const headingParagraph = createParagraphLike(communicationParagraph, spec.title);
+          const bulletParagraph = createParagraphLike(sectionBulletPrototype, spec.text, {
+            bulletPrototype: hasNumbering(sectionBulletPrototype) ? sectionBulletPrototype : defaultBulletPrototype,
+            forceNonBold: true,
+            forceBullet: true
+          });
+          const spacerParagraph = createParagraphLike(communicationParagraph, "");
+          communicationParagraph.parentNode.insertBefore(spacerParagraph, communicationParagraph);
+          communicationParagraph.parentNode.insertBefore(headingParagraph, communicationParagraph);
+          communicationParagraph.parentNode.insertBefore(bulletParagraph, communicationParagraph);
+          continue;
+        }
+
+        for (const startIndex of startIndexes) {
+          let endIndex = paragraphs.length;
+          for (let i = startIndex + 1; i < paragraphs.length; i += 1) {
+            if (spec.end(getParagraphText(paragraphs[i]))) {
+              endIndex = i;
+              break;
+            }
+          }
+
+          let prototype = null;
+          let insertAfter = paragraphs[startIndex];
+          for (let i = startIndex + 1; i < endIndex; i += 1) {
+            const paragraph = paragraphs[i];
+            if (!hasNumbering(paragraph)) continue;
+            if (!prototype) prototype = paragraph;
+            insertAfter = paragraph;
+          }
+
+          if (!prototype) {
+            for (let i = startIndex + 1; i < endIndex; i += 1) {
+              const paragraph = paragraphs[i];
+              const text = getParagraphText(paragraph);
+              if (!text) continue;
+              if (!prototype && text !== "(**)") {
+                prototype = paragraph;
+              }
+              if (text !== "(**)") {
+                insertAfter = paragraph;
+              }
+            }
+          }
+
+          if (!prototype) {
+            prototype = paragraphs[startIndex];
+            insertAfter = paragraphs[startIndex];
+          }
+
+          if (!prototype || !insertAfter || !insertAfter.parentNode) continue;
+
+          const newParagraph = createParagraphLike(prototype, spec.text, {
+            bulletPrototype: defaultBulletPrototype,
+            forceNonBold: true,
+            forceBullet: true
+          });
+
+          insertAfter.parentNode.insertBefore(newParagraph, insertAfter.nextSibling);
+        }
+      }
+
+      const ensureBlankLineBeforeCommunicationHeading = () => {
+        const headings = paragraphs.filter((p) => communicationHeadingRegex.test(getParagraphText(p)));
+        for (const heading of headings) {
+          if (!heading.parentNode) continue;
+          let prev = heading.previousSibling;
+          while (prev && prev.nodeType !== 1) {
+            prev = prev.previousSibling;
+          }
+          if (!prev || prev.nodeName !== "w:p") continue;
+          const prevText = getParagraphText(prev);
+          if (!prevText) continue;
+          const spacer = createParagraphLike(heading, "");
+          heading.parentNode.insertBefore(spacer, heading);
+        }
+      };
+
+      ensureBlankLineBeforeCommunicationHeading();
+
+      zip.file("word/document.xml", new XMLSerializer().serializeToString(xmlDoc));
+    }
+
+    function injectAlarmProcedure(zip, data) {
+      const documentFile = zip.file("word/document.xml");
+      if (!documentFile) return;
+
+      const xml = documentFile.asText();
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xml, "application/xml");
+      if (xmlDoc.getElementsByTagName("parsererror").length) return;
+
+      const wNs = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+      const paragraphs = Array.from(xmlDoc.getElementsByTagName("w:p"));
+      const getText = (paragraph) =>
+        Array.from(paragraph.getElementsByTagName("w:t")).map((n) => n.textContent || "").join("").replace(/\s+/g, " ").trim();
+      const findLastParagraph = (regex) => {
+        for (let i = paragraphs.length - 1; i >= 0; i -= 1) {
+          if (regex.test(getText(paragraphs[i]))) {
+            return paragraphs[i];
+          }
+        }
+        return null;
+      };
+      const hasNumbering = (paragraph) =>
+        paragraph.getElementsByTagName("w:numPr").length > 0 ||
+        paragraph.getElementsByTagName("numPr").length > 0 ||
+        paragraph.getElementsByTagNameNS(wNs, "numPr").length > 0;
+
+      const interneHeading = findLastParagraph(/interne en externe alarmering|interne alarmering/i);
+      const externeHeading = findLastParagraph(/externe alarmering|overige calamiteiten/i);
+      const beeindigingHeading = findLastParagraph(/be.?indiging alarmtoestand/i);
+      if (!interneHeading || !beeindigingHeading) return;
+
+      const beeindigingIndex = paragraphs.indexOf(beeindigingHeading);
+      const interneIndex = paragraphs.indexOf(interneHeading);
+      const externeIndex = externeHeading ? paragraphs.indexOf(externeHeading) : -1;
+
+      const endHeading = paragraphs.slice(beeindigingIndex + 1).find((p) => {
+        const text = getText(p);
+        if (!text) return false;
+        if (/ontruimingsorganisatie/i.test(text)) return true;
+        return false;
+      });
+
+      const bulletPrototype = paragraphs.find((p) => hasNumbering(p) && getText(p)) || null;
+      const upperBound = externeIndex >= 0 ? externeIndex : beeindigingIndex;
+      const normalPrototype = paragraphs.slice(interneIndex + 1, upperBound).find((p) => {
+        const text = getText(p);
+        if (!text) return false;
+        if (/^ongeval$|^brand$|^overige calamiteiten$|^externe alarmering$|^be.?indiging alarmtoestand$/i.test(text)) return false;
+        return true;
+      }) || paragraphs.slice(interneIndex + 1).find((p) => getText(p)) || interneHeading;
+
+      const setRunStyle = (run, options = {}) => {
+        const bold = !!options.bold;
+        const underline = !!options.underline;
+        const sourceParagraph = options.source || null;
+        let rPr = null;
+
+        if (sourceParagraph) {
+          const sourceRun = sourceParagraph.getElementsByTagName("w:r")[0] || null;
+          const sourceRPr = sourceRun ? sourceRun.getElementsByTagName("w:rPr")[0] : null;
+          if (sourceRPr) {
+            rPr = sourceRPr.cloneNode(true);
+          }
+        }
+
+        if (!rPr) {
+          rPr = xmlDoc.createElementNS(wNs, "w:rPr");
+        }
+
+        const removeRunStyleByTag = (tagName) => {
+          const nodes = Array.from(rPr.getElementsByTagName(tagName));
+          nodes.forEach((node) => node.parentNode?.removeChild(node));
+        };
+
+        removeRunStyleByTag("w:b");
+        removeRunStyleByTag("w:bCs");
+        removeRunStyleByTag("w:u");
+
+        if (bold) {
+          rPr.appendChild(xmlDoc.createElementNS(wNs, "w:b"));
+          rPr.appendChild(xmlDoc.createElementNS(wNs, "w:bCs"));
+        }
+
+        const u = xmlDoc.createElementNS(wNs, "w:u");
+        u.setAttributeNS(wNs, "w:val", underline ? "single" : "none");
+        rPr.appendChild(u);
+
+        run.appendChild(rPr);
+      };
+
+      const createParagraph = (text, useBullet, options = {}) => {
+        const paragraph = xmlDoc.createElementNS(wNs, "w:p");
+        const source = options.source || (useBullet && bulletPrototype ? bulletPrototype : normalPrototype);
+        const sourcePPr = source ? source.getElementsByTagName("w:pPr")[0] : null;
+        if (sourcePPr) {
+          const pPr = sourcePPr.cloneNode(true);
+          const removeNodeByTag = (tagName) => {
+            const nodes = Array.from(pPr.getElementsByTagName(tagName));
+            nodes.forEach((node) => node.parentNode?.removeChild(node));
+          };
+
+          // Keep template line spacing and paragraph rhythm; only clear
+          // alignment/indent/list artifacts that may break section layout.
+          removeNodeByTag("w:jc");
+          removeNodeByTag("w:ind");
+          if (!useBullet) {
+            removeNodeByTag("w:numPr");
+          }
+          paragraph.appendChild(pPr);
+        }
+        const run = xmlDoc.createElementNS(wNs, "w:r");
+        setRunStyle(run, { ...options, source });
+        const textNode = xmlDoc.createElementNS(wNs, "w:t");
+        textNode.textContent = text;
+        run.appendChild(textNode);
+        paragraph.appendChild(run);
+        return paragraph;
+      };
+
+      const setSingleRunParagraphText = (paragraph, text, options = {}) => {
+        if (!paragraph) return;
+        const pPr = paragraph.getElementsByTagName("w:pPr")[0]?.cloneNode(true) || null;
+        while (paragraph.firstChild) {
+          paragraph.removeChild(paragraph.firstChild);
+        }
+        if (pPr) {
+          const removeNodeByTag = (tagName) => {
+            const nodes = Array.from(pPr.getElementsByTagName(tagName));
+            nodes.forEach((node) => node.parentNode?.removeChild(node));
+          };
+          removeNodeByTag("w:jc");
+          removeNodeByTag("w:ind");
+          removeNodeByTag("w:numPr");
+          paragraph.appendChild(pPr);
+        }
+        const run = xmlDoc.createElementNS(wNs, "w:r");
+        setRunStyle(run, { ...options, source: paragraph });
+        const textNode = xmlDoc.createElementNS(wNs, "w:t");
+        textNode.textContent = text;
+        run.appendChild(textNode);
+        paragraph.appendChild(run);
+      };
+
+      const replaceBetween = (startNode, endNode, newNodes) => {
+        let current = startNode.nextSibling;
+        while (current && current !== endNode) {
+          const next = current.nextSibling;
+          current.parentNode?.removeChild(current);
+          current = next;
+        }
+        for (const node of newNodes) {
+          if (endNode) startNode.parentNode?.insertBefore(node, endNode);
+          else startNode.parentNode?.appendChild(node);
+        }
+      };
+
+      const paragraphHasPageBreak = (paragraph) => {
+        if (!paragraph) return false;
+        const breaks = Array.from(paragraph.getElementsByTagName("w:br"));
+        return breaks.some((br) => {
+          const type = br.getAttribute("w:type") || br.getAttributeNS(wNs, "type") || "";
+          return type === "page";
+        });
+      };
+
+      const createPageBreakParagraph = (source) => {
+        const paragraph = xmlDoc.createElementNS(wNs, "w:p");
+        const sourcePPr = source ? source.getElementsByTagName("w:pPr")[0] : null;
+        if (sourcePPr) {
+          const pPr = sourcePPr.cloneNode(true);
+          const removeNodeByTag = (tagName) => {
+            const nodes = Array.from(pPr.getElementsByTagName(tagName));
+            nodes.forEach((node) => node.parentNode?.removeChild(node));
+          };
+          removeNodeByTag("w:jc");
+          removeNodeByTag("w:ind");
+          removeNodeByTag("w:numPr");
+          paragraph.appendChild(pPr);
+        }
+        const run = xmlDoc.createElementNS(wNs, "w:r");
+        const br = xmlDoc.createElementNS(wNs, "w:br");
+        br.setAttributeNS(wNs, "w:type", "page");
+        run.appendChild(br);
+        paragraph.appendChild(run);
+        return paragraph;
+      };
+
+      const ensureBlankLineBefore = (targetParagraph) => {
+        if (!targetParagraph || !targetParagraph.parentNode) return;
+        let prev = targetParagraph.previousSibling;
+        while (prev && prev.nodeType !== 1) {
+          prev = prev.previousSibling;
+        }
+        if (!prev) return;
+        const prevText = getText(prev);
+        if (prevText) {
+          const spacer = createParagraph("", false, { bold: false, underline: false });
+          targetParagraph.parentNode.insertBefore(spacer, targetParagraph);
+        }
+      };
+
+      const ensurePageBreakBefore = (targetParagraph) => {
+        if (!targetParagraph || !targetParagraph.parentNode) return;
+        let prev = targetParagraph.previousSibling;
+        while (prev && prev.nodeType !== 1) {
+          prev = prev.previousSibling;
+        }
+        if (prev && paragraphHasPageBreak(prev)) return;
+        const pageBreakParagraph = createPageBreakParagraph(normalPrototype);
+        targetParagraph.parentNode.insertBefore(pageBreakParagraph, targetParagraph);
+      };
+
+      const ongevalText = String(data.alarm_ongeval_tekst || "").trim();
+      const brandText = String(data.alarm_brand_tekst || "").trim();
+      const externeAlarmering = String(data.alarm_externe_alarmering || "").trim();
+      const beeindigingText = String(data.alarm_beeindiging_alarmtoestand || "").trim();
+
+      const interneNodes = [createParagraph("Ongeval", false, { bold: true, underline: false, source: interneHeading })];
+      ongevalText
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .forEach((line) => interneNodes.push(createParagraph(line, false, { bold: false, underline: false })));
+      interneNodes.push(createParagraph("Brand", false, { bold: true, underline: false, source: interneHeading }));
+      brandText
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .forEach((line) => {
+          const shouldKeepByBmi = /\(\*\)\s*$/.test(line) && /brandmeldinstallatie|\{brandmeldinstallatie_\(bmi\)\}/i.test(line);
+          if (shouldKeepByBmi && String(data.bmi || "").trim() !== "Brandmeldinstallatie (BMI)") {
+            return;
+          }
+          const cleaned = line.replace(/\s*\(\*\)\s*$/g, "").trim();
+          if (cleaned) interneNodes.push(createParagraph(cleaned, false, { bold: false, underline: false }));
+        });
+
+      const externeNodes = externeAlarmering
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => createParagraph(line.replace(/\s*\(\*\)\s*$/g, "").trim(), false, { bold: false, underline: false }));
+      const beeindigingNodes = beeindigingText
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => createParagraph(line.replace(/\s*\(\*\)\s*$/g, "").trim(), false, { bold: false, underline: false }));
+
+      setSingleRunParagraphText(interneHeading, "Interne en externe alarmering", { bold: true, underline: true });
+      if (externeHeading) {
+        setSingleRunParagraphText(externeHeading, "Overige calamiteiten", { bold: true, underline: false });
+        replaceBetween(externeHeading, beeindigingHeading, externeNodes.length ? externeNodes : [createParagraph("", false)]);
+      }
+      if (!externeHeading && externeNodes.length > 0) {
+        interneNodes.push(createParagraph("Overige calamiteiten", false, { bold: true, underline: false, source: interneHeading }));
+        externeNodes.forEach((node) => interneNodes.push(node));
+      }
+      replaceBetween(interneHeading, externeHeading || beeindigingHeading, interneNodes);
+      ensureBlankLineBefore(beeindigingHeading);
+      setSingleRunParagraphText(beeindigingHeading, "Beëindiging alarmtoestand", { bold: true, underline: true });
+      replaceBetween(beeindigingHeading, endHeading || null, beeindigingNodes.length ? beeindigingNodes : [createParagraph("", false, { bold: false, underline: false })]);
+      ensurePageBreakBefore(endHeading);
+
+      zip.file("word/document.xml", new XMLSerializer().serializeToString(xmlDoc));
+    }
+
+    function injectGroteGebouwen(zip, data) {
+      const documentFile = zip.file("word/document.xml");
+      if (!documentFile) return;
+
+      const xml = documentFile.asText();
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xml, "application/xml");
+      if (xmlDoc.getElementsByTagName("parsererror").length) return;
+
+      const wNs = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+      const getParagraphs = () => Array.from(xmlDoc.getElementsByTagName("w:p"));
+      const getText = (p) =>
+        Array.from(p.getElementsByTagName("w:t")).map((n) => n.textContent || "").join("").replace(/\s+/g, " ").trim();
+
+      const brandwerendeJa = (data.grote_gebouwen_brandwerende_deuren || "nee") === "ja";
+      const verzamelgebouwJa = (data.grote_gebouwen_verzamelgebouw || "nee") === "ja";
+      const meerdereGebouwenJa = (data.grote_gebouwen_meerdere_gebouwen || "nee") === "ja";
+      const bmiGekoppeldJa = (data.grote_gebouwen_bmi_gekoppeld || "ja") === "ja";
+      const hoeAlarmeren = String(data.hoe_alarmeren_de_verschillende_organisaties_elkaar_bij_een_calamiteit || "").trim();
+
+      const removeIfText = (pattern) => {
+        getParagraphs().forEach((p) => {
+          if (p.parentNode && pattern.test(getText(p))) p.parentNode.removeChild(p);
+        });
+      };
+
+      const appendTextToLastRun = (paragraph, extraText) => {
+        const runs = Array.from(paragraph.getElementsByTagName("w:r"));
+        if (runs.length > 0) {
+          const lastRun = runs[runs.length - 1];
+          const tNodes = Array.from(lastRun.getElementsByTagName("w:t"));
+          if (tNodes.length > 0) {
+            tNodes[tNodes.length - 1].textContent += extraText;
+          } else {
+            const t = xmlDoc.createElementNS(wNs, "w:t");
+            t.textContent = extraText;
+            lastRun.appendChild(t);
+          }
+        } else {
+          const run = xmlDoc.createElementNS(wNs, "w:r");
+          const t = xmlDoc.createElementNS(wNs, "w:t");
+          t.textContent = extraText;
+          run.appendChild(t);
+          paragraph.appendChild(run);
+        }
+      };
+
+      // Ensure a page break paragraph exists after the section if missing.
+      const ensurePageBreakAfterGroteGebouwen = () => {
+        const allParas = getParagraphs();
+        // Find the last paragraph of this section (heading or any meerdere/brandwerende/verzamelgebouw paragraph)
+        let lastSectionPara = null;
+        for (const p of allParas) {
+          const t = getText(p);
+          if (
+            /^Grote gebouwen en specifieke situaties$/i.test(t) ||
+            /brandwerende deuren/i.test(t) ||
+            /verzamelgebouw/i.test(t) ||
+            /meerdere gebouwen tegen elkaar/i.test(t)
+          ) {
+            lastSectionPara = p;
+          }
+        }
+        if (!lastSectionPara || !lastSectionPara.parentNode) return;
+        // Check if next sibling already has a page break
+        let next = lastSectionPara.nextSibling;
+        while (next && next.nodeType !== 1) next = next.nextSibling;
+        const hasPageBreak = (p) =>
+          p && Array.from(p.getElementsByTagName("w:br")).some((br) => (br.getAttribute("w:type") || "") === "page");
+        if (!hasPageBreak(next)) {
+          const pbPara = xmlDoc.createElementNS(wNs, "w:p");
+          const run = xmlDoc.createElementNS(wNs, "w:r");
+          const br = xmlDoc.createElementNS(wNs, "w:br");
+          br.setAttribute("w:type", "page");
+          run.appendChild(br);
+          pbPara.appendChild(run);
+          lastSectionPara.parentNode.insertBefore(pbPara, lastSectionPara.nextSibling);
+        }
+      };
+
+      if (!brandwerendeJa) removeIfText(/brandwerende deuren\/scheidingen/i);
+      if (!verzamelgebouwJa) removeIfText(/\bverzamelgebouw\b/i);
+
+      if (!meerdereGebouwenJa) {
+        // preprocessConditionalMarkers already removed the bullets + (**)
+        // The main "meerdere gebouwen" paragraph may already be gone too.
+        removeIfText(/meerdere gebouwen tegen elkaar/i);
+        // Remove any remaining bullet fragments
+        removeIfText(/^De BMI/i);
+      } else {
+        // Find the main "meerdere gebouwen" paragraph
+        const meerderePara = getParagraphs().find((p) => /meerdere gebouwen tegen elkaar/i.test(getText(p)));
+
+        if (bmiGekoppeldJa) {
+          // Text to inline: "De BMI's zijn met elkaar gekoppeld. De alarmering en BHV-organisatie wordt gezamenlijk georganiseerd."
+          if (meerderePara) {
+            appendTextToLastRun(
+              meerderePara,
+              " De BMI's zijn met elkaar gekoppeld. De alarmering en BHV-organisatie wordt gezamenlijk georganiseerd."
+            );
+          }
+          // Remove bullet paragraphs (both bmi bullets; niet-gekoppeld was removed by preprocessor)
+          removeIfText(/^De BMI/i);
+        } else {
+          // bmi=Nee: inline the niet-gekoppeld text after the colon
+          // After docxtemplater, {hoe_alarmeren} was replaced so text is now in the paragraph
+          const nietGekoppeldPara = getParagraphs().find((p) => /niet met elkaar gekoppeld|geen BMI/i.test(getText(p)));
+          const welGekoppeldPara = getParagraphs().find((p) => /^De BMI.s zijn met elkaar gekoppeld/i.test(getText(p)));
+
+          if (meerderePara) {
+            // Build inline text: " De BMI's zijn niet met elkaar gekoppeld of er zijn geen BMI's aanwezig. De onderlinge alarmering verloop als volgt: [hoeAlarmeren]."
+            const inlineText = ` De BMI's zijn niet met elkaar gekoppeld of er zijn geen BMI's aanwezig. De onderlinge alarmering verloop als volgt: ${hoeAlarmeren}.`;
+            appendTextToLastRun(meerderePara, inlineText);
+          }
+          // Remove both bullet paragraphs
+          if (welGekoppeldPara && welGekoppeldPara.parentNode) welGekoppeldPara.parentNode.removeChild(welGekoppeldPara);
+          if (nietGekoppeldPara && nietGekoppeldPara.parentNode) nietGekoppeldPara.parentNode.removeChild(nietGekoppeldPara);
+        }
+      }
+
+      // Remove section heading if nothing applies
+      const nothingApplies = !brandwerendeJa && !verzamelgebouwJa && !meerdereGebouwenJa;
+      if (nothingApplies) {
+        removeIfText(/^Grote gebouwen en specifieke situaties$/i);
+      } else {
+        // Make sure page break is present after this section
+        ensurePageBreakAfterGroteGebouwen();
+      }
+
+      zip.file("word/document.xml", new XMLSerializer().serializeToString(xmlDoc));
+    }
+
+    function enforceCommunicatiemiddelenWhatsappLine(zip, data) {
+      const documentFile = zip.file("word/document.xml");
+      if (!documentFile) return;
+
+      const xml = documentFile.asText();
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xml, "application/xml");
+      if (xmlDoc.getElementsByTagName("parsererror").length) return;
+
+      const wNs = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+      const paragraphs = Array.from(xmlDoc.getElementsByTagName("w:p"));
+      const getText = (paragraph) =>
+        Array.from(paragraph.getElementsByTagName("w:t"))
+          .map((n) => n.textContent || "")
+          .join("")
+          .replace(/\s+/g, " ")
+          .trim();
+
+      const whatsappRaw =
+        String(data.whatsappgroep_voor_onderlinge_communicatie_met_mobiele_telefoons_tussen_bhv_ers || "").trim() ||
+        String(data["whatsappgroep_voor_onderlinge_communicatie_met_mobiele_telefoons_tussen_bhv-ers"] || "").trim();
+      const whatsappEnabled = !!whatsappRaw && whatsappRaw.toLowerCase() !== "niet aanwezig";
+
+      const sectionHeadingRegex = /communicatiemiddelen bhv-organisatie|aanwezige communicatiemiddelen|aanwezige hulpmiddelen/i;
+      const sectionEndRegex = /alarmeringsprocedure|interne en externe alarmering|verzamelplaats\s*:|verslag ontruimingsoefening|overige afspraken/i;
+      const roepenRegex = /roepen \(hard schreeuwen\) naar elkaar/i;
+      const whatsappLineRegex = /whatsappgroep voor onderlinge communicatie/i;
+      const whatsappLineText = "Whatsappgroep voor onderlinge communicatie met mobiele telefoons tussen bhv-ers";
+
+      const createParagraphLike = (prototype, text) => {
+        const paragraph = xmlDoc.createElementNS(wNs, "w:p");
+        const prototypePPr = prototype ? prototype.getElementsByTagName("w:pPr")[0] : null;
+        if (prototypePPr) paragraph.appendChild(prototypePPr.cloneNode(true));
+        const run = xmlDoc.createElementNS(wNs, "w:r");
+        const prototypeRun = prototype ? prototype.getElementsByTagName("w:r")[0] : null;
+        const prototypeRPr = prototypeRun ? prototypeRun.getElementsByTagName("w:rPr")[0] : null;
+        if (prototypeRPr) run.appendChild(prototypeRPr.cloneNode(true));
+        const textNode = xmlDoc.createElementNS(wNs, "w:t");
+        textNode.textContent = text;
+        run.appendChild(textNode);
+        paragraph.appendChild(run);
+        return paragraph;
+      };
+
+      for (let i = 0; i < paragraphs.length; i += 1) {
+        const heading = paragraphs[i];
+        if (!sectionHeadingRegex.test(getText(heading))) continue;
+
+        let endIndex = paragraphs.length;
+        for (let j = i + 1; j < paragraphs.length; j += 1) {
+          if (sectionEndRegex.test(getText(paragraphs[j]))) {
+            endIndex = j;
+            break;
+          }
+        }
+
+        let roepenParagraph = null;
+        const whatsappParagraphs = [];
+        for (let j = i + 1; j < endIndex; j += 1) {
+          const p = paragraphs[j];
+          const text = getText(p);
+          if (!text) continue;
+          if (!roepenParagraph && roepenRegex.test(text)) roepenParagraph = p;
+          if (whatsappLineRegex.test(text)) whatsappParagraphs.push(p);
+        }
+
+        if (whatsappEnabled) {
+          if (whatsappParagraphs.length === 0 && roepenParagraph && roepenParagraph.parentNode) {
+            const newParagraph = createParagraphLike(roepenParagraph, whatsappLineText);
+            roepenParagraph.parentNode.insertBefore(newParagraph, roepenParagraph.nextSibling);
+          }
+        } else {
+          whatsappParagraphs.forEach((p) => p.parentNode?.removeChild(p));
+        }
+      }
+
+      zip.file("word/document.xml", new XMLSerializer().serializeToString(xmlDoc));
+    }
+
+    async function createNoodinstructieImageMeta(data) {
+      if (typeof window.html2canvas !== "function") return null;
+
+      const safeValue = (value, fallback) => {
+        const text = String(value || "").trim();
+        return text || fallback;
+      };
+
+      const naamHuisartsenpraktijk = safeValue(data.naam_huisartsenpraktijk, "{naam_huisartsenpraktijk}");
+      const telHuisartsenpraktijk = safeValue(data.tel_huisartsenpraktijk, "{tel_huisartsenpraktijk}");
+      const telHuisartsenspoedpost = safeValue(data.telefoonnummer_huisartsenspoedpost, "{telefoonnummer_huisartsenspoedpost}");
+      const naamVerzamelplaats = safeValue(data.naam_verzamelplaats, "{naam_verzamelplaats}");
+      const ICON_1124U_INLINE = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="1124U app icoon" style="width:34px; height:34px; display:block; flex:0 0 auto;">
+          <defs>
+            <linearGradient id="bg1124u" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#56c7eb"/>
+              <stop offset="100%" stop-color="#74d6ef"/>
+            </linearGradient>
+          </defs>
+          <rect x="22" y="4" width="84" height="120" rx="20" fill="#d9d9d9"/>
+          <rect x="24" y="6" width="80" height="116" rx="18" fill="#2f4659"/>
+          <rect x="28" y="10" width="72" height="108" rx="14" fill="url(#bg1124u)"/>
+          <rect x="50" y="16" width="28" height="4" rx="2" fill="#f6f8fb"/>
+          <rect x="48" y="108" width="32" height="4" rx="2" fill="#86a1b5"/>
+          <text x="64" y="56" text-anchor="middle" font-size="34" font-family="Arial, sans-serif" font-weight="700" fill="#ffffff">112</text>
+          <text x="64" y="86" text-anchor="middle" font-size="42" font-family="Arial, sans-serif" font-weight="800" fill="#0f3c8a">4U</text>
+        </svg>
+      `.trim();
+
+      const wrapper = document.createElement("div");
+      wrapper.style.position = "fixed";
+      wrapper.style.left = "-10000px";
+      wrapper.style.top = "0";
+      wrapper.style.width = "980px";
+      wrapper.style.height = "auto";
+      wrapper.style.background = "#f4f7fb";
+      wrapper.style.padding = "10px";
+      wrapper.style.zIndex = "-1";
+      wrapper.style.overflow = "visible";
+
+      wrapper.innerHTML = `
+        <div style="font-family: Manrope, 'Segoe UI', sans-serif; color:#16345a;">
+          <h1 style="margin:0 0 8px; font-size:104px; line-height:1.05; font-family: Georgia, serif; color:#1b4f8a;">Noodinstructie</h1>
+
+          <div style="background:#eef3f9; border:1px solid #d2deed; border-left:6px solid #1b4f8a; border-radius:16px; padding:12px 14px; margin:0 0 10px;">
+            <div style="font-size:44px; font-weight:800; color:#1b4f8a; margin-bottom:4px;">📞 112 <span style="font-size:48px;">Levensbedreigend of bij twijfel</span></div>
+            <div style="font-size:38px; margin-left:38px;">De centralist helpt je er doorheen.</div>
+          </div>
+
+          <div style="background:#eef3f9; border:1px solid #d2deed; border-left:6px solid #1b4f8a; border-radius:16px; padding:12px 14px; margin:0 0 10px;">
+            <div style="font-size:44px; font-weight:800; color:#1b4f8a; margin-bottom:2px;">📞 <span style="font-size:48px;">Spoedeisend</span></div>
+            <div style="font-size:27px; font-weight:500; color:#5a6f8b; margin-left:38px; line-height:1.25;">(geen levensbedreiging, maar kan niet wachten tot de volgende dag)</div>
+            <div style="font-size:38px; line-height:1.3; margin-left:38px; margin-top:6px;"><strong>werkdagen 08.00-17.00:</strong> bel huisartsenpraktijk ${naamHuisartsenpraktijk}, ${telHuisartsenpraktijk}.</div>
+            <div style="font-size:38px; line-height:1.3; margin-left:38px; margin-top:6px;"><strong>overige tijden:</strong> bel huisartsenspoedpost ${telHuisartsenspoedpost}.</div>
+          </div>
+
+          <div style="background:#eef3f9; border:1px solid #d2deed; border-left:6px solid #1b4f8a; border-radius:16px; padding:12px 14px; margin:0 0 10px;">
+            <div style="display:flex; align-items:center; gap:10px; font-size:44px; font-weight:800; color:#1b4f8a; margin-bottom:2px;">${ICON_1124U_INLINE}<span style="font-size:48px;">Niet-spoedeisend</span></div>
+            <div style="font-size:27px; font-weight:500; color:#5a6f8b; margin-left:38px; line-height:1.25;">(kan wachten tot de volgende dag)</div>
+            <div style="font-size:34px; line-height:1.4; margin-left:38px;">gebruik EHBO-app 112-4U</div>
+          </div>
+
+          <div style="background:#eef3f9; border:1px solid #d2deed; border-left:6px solid #1b4f8a; border-radius:16px; padding:12px 14px; margin:0 0 10px;">
+            <div style="font-size:44px; font-weight:800; color:#1b4f8a; margin-bottom:4px;">🔥 <span style="font-size:48px;">Bij brand</span></div>
+            <div style="font-size:34px; line-height:1.4; margin-left:38px;">Doe één bluspoging met een handbrandblusser. Is hij leeg en de brand niet uit? Verlaat het pand en bel 112.</div>
+          </div>
+
+          <div style="background:#eef3f9; border:1px solid #d2deed; border-left:6px solid #1b4f8a; border-radius:16px; padding:12px 14px; margin:0;">
+            <div style="font-size:44px; font-weight:800; color:#1b4f8a; margin-bottom:4px;">🚨 <span style="font-size:48px;">Bij ontruimingsalarm</span></div>
+            <div style="font-size:34px; line-height:1.4; margin-left:38px;">Ga naar verzamelplaats ${naamVerzamelplaats}.</div>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(wrapper);
+      try {
+        const captureHeight = Math.max(1123, Math.ceil(wrapper.scrollHeight));
+        const canvas = await window.html2canvas(wrapper, {
+          backgroundColor: "#f4f7fb",
+          scale: 1,
+          useCORS: true,
+          logging: false,
+          width: 980,
+          height: captureHeight,
+          windowWidth: 980,
+          windowHeight: captureHeight
+        });
+
+        return {
+          dataUrl: canvas.toDataURL("image/png"),
+          width: canvas.width,
+          height: canvas.height
+        };
+      } catch (_) {
+        return null;
+      } finally {
+        wrapper.remove();
+      }
+    }
+
+    function injectImageAtPlaceholderInDocument(zip, placeholder, imageMeta, maxWidth, maxHeight) {
+      if (!imageMeta || !imageMeta.dataUrl) return;
+
+      const imageType = getImageTypeFromDataUrl(imageMeta.dataUrl);
+      const extension = imageType === "jpeg" ? "jpg" : imageType;
+      const imageBinary = dataUrlToArrayBuffer(imageMeta.dataUrl);
+      if (!imageBinary) return;
+
+      const imageName = `gbbc-noodinstructie.${extension}`;
+      const imageTarget = `media/${imageName}`;
+      const mediaPath = `word/${imageTarget}`;
+      zip.file(mediaPath, imageBinary);
+
+      const contentTypesFile = zip.file("[Content_Types].xml");
+      if (contentTypesFile) {
+        let contentTypesXml = contentTypesFile.asText();
+        contentTypesXml = addDefaultContentType(contentTypesXml, extension, getContentTypeForImage(imageType));
+        zip.file("[Content_Types].xml", contentTypesXml);
+      }
+
+      const relsPath = "word/_rels/document.xml.rels";
+      const relsXml = ensureRelsXml(zip, relsPath);
+      const relResult = addImageRelationship(relsXml, imageTarget);
+      zip.file(relsPath, relResult.xml);
+
+      const documentFile = zip.file("word/document.xml");
+      if (!documentFile) return;
+
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(documentFile.asText(), "application/xml");
+      if (xmlDoc.getElementsByTagName("parsererror").length) return;
+
+      const [w, h] = fitBox(imageMeta.width, imageMeta.height, maxWidth, maxHeight);
+      const drawing = buildDrawingXml(relResult.relId, w, h, 9401);
+
+      const textNodes = Array.from(xmlDoc.getElementsByTagName("w:t"));
+      let replaced = false;
+      for (const textNode of textNodes) {
+        if (!textNode.textContent || !textNode.textContent.includes(placeholder)) continue;
+
+        let runNode = textNode.parentNode;
+        while (runNode && runNode.nodeName !== "w:r") {
+          runNode = runNode.parentNode;
+        }
+        if (!runNode || !runNode.parentNode) continue;
+
+        const fragmentDoc = parser.parseFromString(
+          `<root xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\">${drawing}</root>`,
+          "application/xml"
+        );
+        const newRun = fragmentDoc.documentElement.firstChild;
+        if (!newRun) continue;
+        runNode.parentNode.replaceChild(xmlDoc.importNode(newRun, true), runNode);
+        replaced = true;
+        break;
+      }
+
+      const serialized = new XMLSerializer().serializeToString(xmlDoc);
+      zip.file("word/document.xml", replaced ? serialized : serialized.replaceAll(placeholder, ""));
+    }
+
+    function appendNoodinstructieLastSection(zip, data, noodinstructieImageMeta = null) {
+      const documentFile = zip.file("word/document.xml");
+      if (!documentFile) return;
+
+      const parser = new DOMParser();
+      const xml = documentFile.asText();
+      const xmlDoc = parser.parseFromString(xml, "application/xml");
+      if (xmlDoc.getElementsByTagName("parsererror").length) return;
+
+      const wNs = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+      const relNs = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+      const body = xmlDoc.getElementsByTagName("w:body")[0];
+      if (!body) return;
+
+      const getElementChildren = () => Array.from(body.childNodes).filter((n) => n.nodeType === 1);
+      const findTrailingSectPr = () => {
+        const children = getElementChildren();
+        for (let i = children.length - 1; i >= 0; i -= 1) {
+          if (children[i].nodeName === "w:sectPr") return children[i];
+        }
+        return null;
+      };
+
+      const removeHeaderReferences = (sectPr) => {
+        if (!sectPr) return;
+        const headerRefs = Array.from(sectPr.getElementsByTagName("w:headerReference"));
+        headerRefs.forEach((node) => node.parentNode?.removeChild(node));
+      };
+
+      const setSectionType = (sectPr, typeValue) => {
+        if (!sectPr) return;
+        let typeNode = sectPr.getElementsByTagName("w:type")[0] || null;
+        if (!typeNode) {
+          typeNode = xmlDoc.createElementNS(wNs, "w:type");
+          sectPr.insertBefore(typeNode, sectPr.firstChild);
+        }
+        typeNode.setAttribute("w:val", typeValue);
+      };
+
+      let finalSectPr = findTrailingSectPr();
+      if (!finalSectPr) {
+        finalSectPr = xmlDoc.createElementNS(wNs, "w:sectPr");
+        body.appendChild(finalSectPr);
+      }
+
+      const breakSectPr = finalSectPr.cloneNode(true);
+      setSectionType(breakSectPr, "nextPage");
+
+      const breakParagraph = xmlDoc.createElementNS(wNs, "w:p");
+      const breakPPr = xmlDoc.createElementNS(wNs, "w:pPr");
+      breakPPr.appendChild(breakSectPr);
+      breakParagraph.appendChild(breakPPr);
+
+      body.insertBefore(breakParagraph, finalSectPr);
+      removeHeaderReferences(finalSectPr);
+
+      let finalPgMar = finalSectPr.getElementsByTagName("w:pgMar")[0] || null;
+      if (!finalPgMar) {
+        finalPgMar = xmlDoc.createElementNS(wNs, "w:pgMar");
+        finalSectPr.appendChild(finalPgMar);
+      }
+      finalPgMar.setAttribute("w:left", "851");
+      finalPgMar.setAttribute("w:right", "851");
+      finalPgMar.setAttribute("w:top", "1134");
+      finalPgMar.setAttribute("w:bottom", "1134");
+      finalPgMar.setAttribute("w:header", "0");
+
+      const ensureBlankHeaderRelId = () => {
+        const relsPath = "word/_rels/document.xml.rels";
+        const relsFile = zip.file(relsPath);
+        if (!relsFile) return null;
+
+        const relsDoc = parser.parseFromString(relsFile.asText(), "application/xml");
+        if (relsDoc.getElementsByTagName("parsererror").length) return null;
+        const relationships = relsDoc.getElementsByTagName("Relationships")[0];
+        if (!relationships) return null;
+
+        const relNodes = Array.from(relationships.getElementsByTagName("Relationship"));
+        const usedIds = relNodes
+          .map((rel) => {
+            const id = rel.getAttribute("Id") || "";
+            const m = /^rId(\d+)$/.exec(id);
+            return m ? Number(m[1]) : 0;
+          })
+          .filter((n) => n > 0);
+        const nextRelId = `rId${(usedIds.length ? Math.max(...usedIds) : 0) + 1}`;
+
+        const headerIndexes = relNodes
+          .map((rel) => rel.getAttribute("Target") || "")
+          .map((target) => {
+            const m = /^header(\d+)\.xml$/i.exec(target);
+            return m ? Number(m[1]) : 0;
+          })
+          .filter((n) => n > 0);
+        const nextHeaderIndex = (headerIndexes.length ? Math.max(...headerIndexes) : 0) + 1;
+        const headerTarget = `header${nextHeaderIndex}.xml`;
+        const headerPath = `word/${headerTarget}`;
+
+        const blankHeaderXml =
+          '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+          '<w:hdr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
+          '<w:p><w:r><w:t/></w:r></w:p>' +
+          '</w:hdr>';
+        zip.file(headerPath, blankHeaderXml);
+
+        const rel = relsDoc.createElementNS("http://schemas.openxmlformats.org/package/2006/relationships", "Relationship");
+        rel.setAttribute("Id", nextRelId);
+        rel.setAttribute("Type", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/header");
+        rel.setAttribute("Target", headerTarget);
+        relationships.appendChild(rel);
+        zip.file(relsPath, new XMLSerializer().serializeToString(relsDoc));
+
+        const contentTypesFile = zip.file("[Content_Types].xml");
+        if (contentTypesFile) {
+          let contentTypesXml = contentTypesFile.asText();
+          const escapedHeaderPath = headerPath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          const hasOverride = new RegExp(`<Override[^>]*PartName="\\/${escapedHeaderPath}"`, "i").test(contentTypesXml);
+          if (!hasOverride) {
+            const override = `<Override PartName="/${headerPath}" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/>`;
+            contentTypesXml = contentTypesXml.replace("</Types>", `${override}</Types>`);
+            zip.file("[Content_Types].xml", contentTypesXml);
+          }
+        }
+
+        return nextRelId;
+      };
+
+      const blankHeaderRelId = ensureBlankHeaderRelId();
+      if (blankHeaderRelId) {
+        const addHeaderReference = (typeValue) => {
+          const headerRef = xmlDoc.createElementNS(wNs, "w:headerReference");
+          headerRef.setAttribute("w:type", typeValue);
+          headerRef.setAttributeNS(relNs, "r:id", blankHeaderRelId);
+          finalSectPr.insertBefore(headerRef, finalSectPr.firstChild);
+        };
+        addHeaderReference("default");
+        addHeaderReference("first");
+      }
+
+      const safeValue = (value, fallback) => {
+        const text = String(value || "").trim();
+        return text || fallback;
+      };
+
+      const naamHuisartsenpraktijk = safeValue(data.naam_huisartsenpraktijk, "{naam_huisartsenpraktijk}");
+      const telHuisartsenpraktijk = safeValue(data.tel_huisartsenpraktijk, "{tel_huisartsenpraktijk}");
+      const telHuisartsenspoedpost = safeValue(data.telefoonnummer_huisartsenspoedpost, "{telefoonnummer_huisartsenspoedpost}");
+
+      const createParagraph = (text, options = {}) => {
+        const makeBold = !!options.bold;
+        const paragraph = xmlDoc.createElementNS(wNs, "w:p");
+        if (options.spacingBefore || options.spacingAfter) {
+          const pPr = xmlDoc.createElementNS(wNs, "w:pPr");
+          const spacing = xmlDoc.createElementNS(wNs, "w:spacing");
+          if (options.spacingBefore) spacing.setAttribute("w:before", String(options.spacingBefore));
+          if (options.spacingAfter) spacing.setAttribute("w:after", String(options.spacingAfter));
+          pPr.appendChild(spacing);
+          paragraph.appendChild(pPr);
+        }
+        const run = xmlDoc.createElementNS(wNs, "w:r");
+        if (makeBold) {
+          const rPr = xmlDoc.createElementNS(wNs, "w:rPr");
+          const bold = xmlDoc.createElementNS(wNs, "w:b");
+          rPr.appendChild(bold);
+          run.appendChild(rPr);
+        }
+        const textNode = xmlDoc.createElementNS(wNs, "w:t");
+        textNode.setAttribute("xml:space", "preserve");
+        textNode.textContent = text;
+        run.appendChild(textNode);
+        paragraph.appendChild(run);
+        return paragraph;
+      };
+
+      const lines = noodinstructieImageMeta
+        ? [{ text: "__GBBC_NOODINSTRUCTIE_SLOT__", bold: false, spacingBefore: 100 }]
+        : [
+          { text: "Noodinstructie", bold: true },
+          { text: "Spoedeisend", bold: true },
+          { text: `werkdagen 08.00-17.00: bel huisartsenpraktijk ${naamHuisartsenpraktijk},  ${telHuisartsenpraktijk}.`, bold: false },
+          { text: `overige tijden: bel huisartsenspoedpost ${telHuisartsenspoedpost}.`, bold: false }
+        ];
+
+      for (const line of lines) {
+        const paragraph = createParagraph(line.text, line);
+        body.insertBefore(paragraph, finalSectPr);
+      }
+
+      zip.file("word/document.xml", new XMLSerializer().serializeToString(xmlDoc));
+    }
+
+    function getImageTypeFromDataUrl(dataUrl) {
+      const match = /^data:image\/(png|jpg|jpeg|webp|gif);base64,/i.exec(dataUrl || "");
+      return match ? match[1].toLowerCase() : "png";
+    }
+
+    function getContentTypeForImage(imageType) {
+      if (imageType === "jpg" || imageType === "jpeg") return "image/jpeg";
+      if (imageType === "gif") return "image/gif";
+      if (imageType === "webp") return "image/webp";
+      return "image/png";
+    }
+
+    function addDefaultContentType(contentTypesXml, extension, contentType) {
+      const hasDefault = new RegExp(`<Default[^>]*Extension=\"${extension}\"`, "i").test(contentTypesXml);
+      if (hasDefault) return contentTypesXml;
+      return contentTypesXml.replace("</Types>", `<Default Extension="${extension}" ContentType="${contentType}"/></Types>`);
+    }
+
+    function ensureRelsXml(zip, relsPath) {
+      const existing = zip.file(relsPath);
+      if (existing) return existing.asText();
+      return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\"></Relationships>";
+    }
+
+    function addImageRelationship(relsXml, target) {
+      const idMatches = [...relsXml.matchAll(/Id=\"rId(\d+)\"/g)].map((m) => Number(m[1]));
+      const nextId = (idMatches.length ? Math.max(...idMatches) : 0) + 1;
+      const relId = `rId${nextId}`;
+      const rel = `<Relationship Id="${relId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="${target}"/>`;
+      return {
+        relId,
+        xml: relsXml.replace("</Relationships>", `${rel}</Relationships>`)
+      };
+    }
+
+    function buildDrawingXml(relId, pxWidth, pxHeight, docPrId) {
+      const cx = Math.max(1, Math.round(pxWidth * 9525));
+      const cy = Math.max(1, Math.round(pxHeight * 9525));
+      return `<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"><wp:extent cx="${cx}" cy="${cy}"/><wp:effectExtent l="0" t="0" r="0" b="0"/><wp:docPr id="${docPrId}" name="GBBCLogo"/><wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"/></wp:cNvGraphicFramePr><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="0" name="GBBCLogo"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="${relId}" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`;
+    }
+
+    function injectLogoIntoZip(zip, logoMeta) {
+      if (!logoMeta || !logoMeta.dataUrl) return;
+
+      const imageType = getImageTypeFromDataUrl(logoMeta.dataUrl);
+      const extension = imageType === "jpeg" ? "jpg" : imageType;
+      const imageBinary = dataUrlToArrayBuffer(logoMeta.dataUrl);
+      if (!imageBinary) return;
+
+      const imageName = `gbbc-logo.${extension}`;
+      const imageTarget = `media/${imageName}`;
+      const mediaPath = `word/${imageTarget}`;
+      zip.file(mediaPath, imageBinary);
+
+      const contentTypesFile = zip.file("[Content_Types].xml");
+      if (contentTypesFile) {
+        let contentTypesXml = contentTypesFile.asText();
+        contentTypesXml = addDefaultContentType(contentTypesXml, extension, getContentTypeForImage(imageType));
+        zip.file("[Content_Types].xml", contentTypesXml);
+      }
+
+      const docParts = Object.keys(zip.files).filter((name) => /^word\/(document|header\d+)\.xml$/.test(name));
+      let docPrId = 5000;
+
+      for (const partPath of docParts) {
+        const partFile = zip.file(partPath);
+        if (!partFile) continue;
+        let partXml = partFile.asText();
+        if (!partXml.includes("__GBBC_LOGO_SLOT__")) continue;
+
+        // Use smaller size for headers (half of document size)
+        const isHeader = /header\d+\.xml$/.test(partPath);
+        const [w, h] = fitBox(logoMeta.width, logoMeta.height, isHeader ? 110 : 220, isHeader ? 35 : 70);
+
+        const relsPath = partPath.replace("word/", "word/_rels/") + ".rels";
+        const relsXml = ensureRelsXml(zip, relsPath);
+        const relResult = addImageRelationship(relsXml, imageTarget);
+        zip.file(relsPath, relResult.xml);
+
+        const drawing = buildDrawingXml(relResult.relId, w, h, docPrId++);
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(partXml, "application/xml");
+        if (xmlDoc.getElementsByTagName("parsererror").length) {
+          continue;
+        }
+
+        const textNodes = Array.from(xmlDoc.getElementsByTagName("w:t"));
+        let replaced = false;
+        for (const textNode of textNodes) {
+          if (!textNode.textContent || !textNode.textContent.includes("__GBBC_LOGO_SLOT__")) continue;
+
+          let runNode = textNode.parentNode;
+          while (runNode && runNode.nodeName !== "w:r") {
+            runNode = runNode.parentNode;
+          }
+          if (!runNode || !runNode.parentNode) continue;
+
+          const fragmentDoc = parser.parseFromString(
+            `<root xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">${drawing}</root>`,
+            "application/xml"
+          );
+          const newRun = fragmentDoc.documentElement.firstChild;
+          if (!newRun) continue;
+
+          const imported = xmlDoc.importNode(newRun, true);
+          runNode.parentNode.replaceChild(imported, runNode);
+          replaced = true;
+          break;
+        }
+
+        if (!replaced) {
+          const allXml = new XMLSerializer().serializeToString(xmlDoc).replaceAll("__GBBC_LOGO_SLOT__", "");
+          zip.file(partPath, allXml);
+          continue;
+        }
+
+        const serialized = new XMLSerializer().serializeToString(xmlDoc).replaceAll("__GBBC_LOGO_SLOT__", "");
+        zip.file(partPath, serialized);
+      }
+    }
+
+    async function generateDocument() {
+      if (!state.templateBuffer) {
+        await loadDefaultTemplate();
+        if (!state.templateBuffer) {
+          state.pendingGenerateAfterTemplatePick = true;
+          setStatus("Template niet automatisch beschikbaar. Kies nu eenmalig het .docx templatebestand.", "warn");
+          elements.templateFileAuto.click();
+          return;
+        }
+      }
+
+      clearValidation();
+      if (!validateStep1Required()) {
+        setStatus("Vul eerst alle verplichte velden van stap 1 in.", "error");
+        return;
+      }
+      if (!validateStep2Required()) {
+        setStatus("Vul eerst alle verplichte velden van stap 2 in.", "error");
+        return;
+      }
+      if (!validateStep3Required()) {
+        setStatus("Vul eerst alle verplichte velden van stap 3 in.", "error");
+        return;
+      }
+      if (!validateStep4Required()) {
+        setStatus("Vul eerst alle verplichte velden van stap 4 in.", "error");
+        return;
+      }
+      if (!validateStep5Required()) {
+        setStatus("Vul eerst alle verplichte velden van stap 5 in.", "error");
+        return;
+      }
+      if (!validateTijdvakRows()) {
+        setStatus("Als dag/periode is ingevuld, is Gem. aantal personen verplicht.", "error");
+        return;
+      }
+
+      try {
+        setStatus("Word-document wordt opgebouwd...");
+
+        const renderData = readData();
+        const zip = await prepareZip(state.templateBuffer);
+        harmonizePage8Communicatiemiddelen(zip);
+        preprocessConditionalMarkers(zip, renderData);
+        const doc = new window.docxtemplater(zip, {
+          paragraphLoop: true,
+          linebreaks: true,
+          nullGetter() {
+            return "";
+          }
+        });
+
+        doc.render(renderData);
+
+        if (state.logo) {
+          injectLogoIntoZip(doc.getZip(), state.logo);
+        } else {
+          const generatedZip = doc.getZip();
+          const slotParts = Object.keys(generatedZip.files).filter((name) => /^word\/(document|header\d+)\.xml$/.test(name));
+          for (const partPath of slotParts) {
+            const partFile = generatedZip.file(partPath);
+            if (!partFile) continue;
+            const xml = partFile.asText();
+            if (xml.includes('__GBBC_LOGO_SLOT__')) {
+              generatedZip.file(partPath, xml.replaceAll('__GBBC_LOGO_SLOT__', ''));
+            }
+          }
+        }
+
+        injectAlarmProcedure(doc.getZip(), renderData);
+        injectGroteGebouwen(doc.getZip(), renderData);
+        injectCustomAndersBullets(doc.getZip(), renderData);
+        enforceCommunicatiemiddelenWhatsappLine(doc.getZip(), renderData);
+        const noodinstructieImageMeta = await createNoodinstructieImageMeta(renderData);
+        appendNoodinstructieLastSection(doc.getZip(), renderData, noodinstructieImageMeta);
+        if (noodinstructieImageMeta) {
+          injectImageAtPlaceholderInDocument(
+            doc.getZip(),
+            "__GBBC_NOODINSTRUCTIE_SLOT__",
+            noodinstructieImageMeta,
+            740,
+            900
+          );
+        }
+        stripPresenceTokenFromZip(doc.getZip());
+
+        const blob = doc.getZip().generate({
+          type: "blob",
+          mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        });
+
+        const fileName = `Ontruimingsplan_${(elements.naamGebouw.value.trim() || "gebouw").replace(/[^a-z0-9_-]+/gi, "_")}.docx`;
+        const downloadUrl = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = downloadUrl;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(downloadUrl);
+
+        setStatus(`Klaar. Het document is gedownload als ${fileName}.`);
+      } catch (error) {
+        console.error(error);
+        setStatus(`Genereren mislukt: ${error && error.message ? error.message : error}`, "error");
+      }
+    }
+
+    elements.logoFile.addEventListener("change", async () => {
+      const file = elements.logoFile.files && elements.logoFile.files[0];
+      if (!file) {
+        state.logo = null;
+        renderLogoPreview();
+        updateNextButtonsState();
+        return;
+      }
+      try {
+        state.logo = await loadLogoMeta(file);
+        renderLogoPreview();
+        setStatus(`Logo geladen: ${file.name}`);
+        updateNextButtonsState();
+      } catch (error) {
+        state.logo = null;
+        renderLogoPreview();
+        setStatus(`Logo kon niet worden gelezen: ${error && error.message ? error.message : error}`, "error");
+        updateNextButtonsState();
+      }
+    });
+
+    (function ensureHiddenTemplateInput() {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".docx";
+      input.id = "templateFileAuto";
+      input.hidden = true;
+      document.body.appendChild(input);
+      elements.templateFileAuto = input;
+    })();
+
+    elements.templateFileAuto.addEventListener("change", async () => {
+      const file = elements.templateFileAuto.files && elements.templateFileAuto.files[0];
+      if (!file) {
+        state.pendingGenerateAfterTemplatePick = false;
+        setStatus("Geen template gekozen. Genereren is geannuleerd.", "warn");
+        return;
+      }
+      try {
+        state.templateBuffer = await file.arrayBuffer();
+        if (AUTO_FILL_STEP4_FROM_TEMPLATE) {
+          applyAlarmDefaultsFromTemplate(state.templateBuffer);
+        }
+        setTemplateLabel(file.name, false);
+        setStatus(`Template geladen: ${file.name}`);
+        if (state.pendingGenerateAfterTemplatePick) {
+          state.pendingGenerateAfterTemplatePick = false;
+          await generateDocument();
+        }
+      } catch (error) {
+        state.pendingGenerateAfterTemplatePick = false;
+        setStatus(`Template laden mislukt: ${error && error.message ? error.message : error}`, "error");
+      }
+    });
+
+    elements.nextBtn.addEventListener("click", () => {
+      clearValidation();
+      if (!validateStep1Required()) {
+        setStatus("Vul eerst alle verplichte velden van stap 1 in.", "error");
+        return;
+      }
+      document.getElementById("stap1Card").style.display = "none";
+      document.getElementById("stap2Card").style.display = "";
+      setActiveStep(2);
+      window.scrollTo(0, 0);
+    });
+    document.getElementById("topNextBtn1").addEventListener("click", () => {
+      elements.nextBtn.click();
+    });
+    document.getElementById("backBtn2").addEventListener("click", () => {
+      document.getElementById("stap2Card").style.display = "none";
+      document.getElementById("stap1Card").style.display = "";
+      setActiveStep(1);
+      window.scrollTo(0, 0);
+    });
+    document.getElementById("topBackBtn2").addEventListener("click", () => {
+      document.getElementById("backBtn2").click();
+    });
+    document.getElementById("nextBtn2").addEventListener("click", () => {
+      clearValidation();
+      if (!validateStep2Required()) {
+        setStatus("Vul eerst alle verplichte velden van stap 2 in.", "error");
+        return;
+      }
+      if (!validateTijdvakRows()) {
+        setStatus("Als dag/periode is ingevuld, is Gem. aantal personen verplicht.", "error");
+        return;
+      }
+      document.getElementById("stap2Card").style.display = "none";
+      document.getElementById("stap3Card").style.display = "";
+      setActiveStep(3);
+      window.scrollTo(0, 0);
+    });
+    document.getElementById("topNextBtn2").addEventListener("click", () => {
+      document.getElementById("nextBtn2").click();
+    });
+    document.getElementById("backBtn3").addEventListener("click", () => {
+      document.getElementById("stap3Card").style.display = "none";
+      document.getElementById("stap2Card").style.display = "";
+      setActiveStep(2);
+      window.scrollTo(0, 0);
+    });
+    document.getElementById("topBackBtn3").addEventListener("click", () => {
+      document.getElementById("backBtn3").click();
+    });
+    document.getElementById("nextBtn3").addEventListener("click", () => {
+      clearValidation();
+      if (!validateStep3Required()) {
+        setStatus("Vul eerst alle verplichte velden van stap 3 in.", "error");
+        return;
+      }
+      document.getElementById("stap3Card").style.display = "none";
+      document.getElementById("stap4Card").style.display = "";
+      setActiveStep(4);
+      window.scrollTo(0, 0);
+    });
+    document.getElementById("topNextBtn3").addEventListener("click", () => {
+      document.getElementById("nextBtn3").click();
+    });
+    document.getElementById("backBtn4").addEventListener("click", () => {
+      document.getElementById("stap4Card").style.display = "none";
+      document.getElementById("stap3Card").style.display = "";
+      setActiveStep(3);
+      window.scrollTo(0, 0);
+    });
+    document.getElementById("topBackBtn4").addEventListener("click", () => {
+      document.getElementById("backBtn4").click();
+    });
+    document.getElementById("topNextBtn4").addEventListener("click", () => {
+      document.getElementById("nextBtn4").click();
+    });
+    document.getElementById("nextBtn4").addEventListener("click", () => {
+      clearValidation();
+      if (!validateStep4Required()) {
+        setStatus("Vul eerst alle verplichte velden van stap 4 in.", "error");
+        return;
+      }
+      document.getElementById("stap4Card").style.display = "none";
+      document.getElementById("stap5Card").style.display = "";
+      setActiveStep(5);
+      window.scrollTo(0, 0);
+    });
+    document.getElementById("backBtn5").addEventListener("click", () => {
+      document.getElementById("stap5Card").style.display = "none";
+      document.getElementById("stap4Card").style.display = "";
+      setActiveStep(4);
+      window.scrollTo(0, 0);
+    });
+    document.getElementById("topBackBtn5").addEventListener("click", () => {
+      document.getElementById("backBtn5").click();
+    });
+    elements.generateBtnFinal.addEventListener("click", generateDocument);
+
+    for (const input of [
+      elements.naamGebouw,
+      elements.adres,
+      elements.postcode,
+      elements.plaats,
+      elements.telefoon,
+      elements.email,
+      elements.naamHoogsteManager,
+      elements.functieNaamHoogsteManager,
+      elements.naamHoofdBhv,
+      elements.naamPloegleiderBhv,
+      elements.namenBhvErs
+    ]) {
+      input.addEventListener("input", () => {
+        input.classList.remove("invalid");
+        updateNextButtonsState();
+      });
+    }
+
+    for (const input of [
+      ...getStep2RequiredInputs(),
+      document.getElementById("bmiMerk"),
+      document.getElementById("bmiType")
+    ].filter(Boolean)) {
+      input.addEventListener("input", () => {
+        input.classList.remove("invalid");
+        updateNextButtonsState();
+      });
+    }
+
+    const organisatieNaam1Input = document.getElementById("organisatieNaam1");
+    if (organisatieNaam1Input) {
+      organisatieNaam1Input.addEventListener("input", () => {
+        organisatieNaam1Input.classList.remove("invalid");
+        updateNextButtonsState();
+      });
+    }
+
+    function getTijdvakData() {
+      const data = {};
+      for (let i = 1; i <= 6; i++) {
+        data[`aanwezig_dag_${i}`] = "";
+        data[`aanwezig_aantal_${i}`] = "";
+        data[`zelfredzame_dag_${i}`] = "";
+        data[`zelfredzame_aantal_${i}`] = "";
+      }
+      const rows = document.querySelectorAll("#aanwezigRows .tijdvak-row");
+      rows.forEach((row, idx) => {
+        const n = idx + 1;
+        const dagInput = row.querySelector('[data-field="aanwezig_dag"]');
+        const aantalInput = row.querySelector('[data-field="aanwezig_aantal"]');
+        if (dagInput) data[`aanwezig_dag_${n}`] = dagInput.value.trim();
+        if (aantalInput) data[`aanwezig_aantal_${n}`] = aantalInput.value.trim();
+      });
+
+      const zelfredzameRows = document.querySelectorAll("#zelfredzameRows .tijdvak-row");
+      zelfredzameRows.forEach((row, idx) => {
+        const n = idx + 1;
+        const dagInput = row.querySelector('[data-field="zelfredzame_dag"]');
+        const aantalInput = row.querySelector('[data-field="zelfredzame_aantal"]');
+        if (dagInput) data[`zelfredzame_dag_${n}`] = dagInput.value.trim();
+        if (aantalInput) data[`zelfredzame_aantal_${n}`] = aantalInput.value.trim();
+      });
+      return data;
+    }
+
+    function getAlarmProcedureData() {
+      const naamHuisartsenpraktijk = document.getElementById("naamHuisartsenpraktijk")?.value.trim() || "";
+      const telHuisartsenpraktijk = document.getElementById("telHuisartsenpraktijk")?.value.trim() || "";
+      const telefoonnummerHuisartsenspoedpost = document.getElementById("telefoonnummerHuisartsenspoedpost")?.value.trim() || "";
+      const ongevalTekst = document.getElementById("alarmOngevalTekst")?.value.trim() || "";
+
+      const ongevalTekstResolved = ongevalTekst
+        .replaceAll("{naam_huisartsenpraktijk}", naamHuisartsenpraktijk)
+        .replaceAll("{tel_huisartsenpraktijk}", telHuisartsenpraktijk)
+        .replaceAll("{telefoonnummer_huisartsenpraktijk}", telHuisartsenpraktijk)
+        .replaceAll("{telefoonnummer_huisartsenspoedpost}", telefoonnummerHuisartsenspoedpost);
+
+      return {
+        naamHuisartsenpraktijk,
+        telHuisartsenpraktijk,
+        telefoonnummerHuisartsenspoedpost,
+        ongevalTekst,
+        ongevalTekstResolved,
+        brandTekst: document.getElementById("alarmBrandTekst")?.value.trim() || "",
+        externeTekst: document.getElementById("alarmExterneTekst")?.value.trim() || "",
+        beeindigingAlarmtoestand: document.getElementById("alarmBeeindigingTekst")?.value.trim() || ""
+      };
+    }
+
+    function syncOngevalMedicalLines() {
+      const ongevalInput = document.getElementById("alarmOngevalTekst");
+      if (!ongevalInput) return;
+
+      const naam = document.getElementById("naamHuisartsenpraktijk")?.value.trim() || "{naam_huisartsenpraktijk}";
+      const tel = document.getElementById("telHuisartsenpraktijk")?.value.trim() || "{tel_huisartsenpraktijk}";
+      const spoed = document.getElementById("telefoonnummerHuisartsenspoedpost")?.value.trim() || "{telefoonnummer_huisartsenspoedpost}";
+
+      const lijnen = ongevalInput.value.split(/\r?\n/);
+      const werkdagenLine = `** werkdagen 08.00-17.00: bel huisartsenpraktijk ${naam},  ${tel}`;
+      const overigeLine = `** overige tijden: bel huisartsenspoedpost ${spoed}`;
+
+      const idxWerkdagen = lijnen.findIndex((line) => /werkdagen\s*08\.00-17\.00\s*:/i.test(line));
+      const idxOverige = lijnen.findIndex((line) => /overige\s+tijden\s*:/i.test(line));
+
+      if (idxWerkdagen >= 0) {
+        lijnen[idxWerkdagen] = werkdagenLine;
+      }
+      if (idxOverige >= 0) {
+        lijnen[idxOverige] = overigeLine;
+      }
+
+      ongevalInput.value = lijnen.join("\n");
+    }
+
+    function renderAlarmWordPreview() {
+      const preview = document.getElementById("alarmWordPreview");
+      if (!preview) return;
+
+      const alarm = getAlarmProcedureData();
+      const lines = [];
+      lines.push("Ongeval");
+      lines.push(alarm.ongevalTekstResolved || "(leeg)");
+      lines.push("");
+      lines.push("Brand");
+      lines.push(alarm.brandTekst || "(leeg)");
+      lines.push("");
+      lines.push("Overige calamiteiten");
+      lines.push(alarm.externeTekst || "(leeg)");
+      lines.push("");
+      lines.push("Beëindiging alarmtoestand");
+      lines.push(alarm.beeindigingAlarmtoestand || "(leeg)");
+
+      preview.textContent = lines.join("\n");
+    }
+
+    function applyAlarmDraft(draft) {
+      if (!draft || typeof draft !== "object") return;
+
+      const naamHuisartsenpraktijkInput = document.getElementById("naamHuisartsenpraktijk");
+      if (naamHuisartsenpraktijkInput && typeof draft.naamHuisartsenpraktijk === "string") {
+        naamHuisartsenpraktijkInput.value = draft.naamHuisartsenpraktijk;
+      }
+
+      const telHuisartsenpraktijkInput = document.getElementById("telHuisartsenpraktijk");
+      if (telHuisartsenpraktijkInput && typeof draft.telHuisartsenpraktijk === "string") {
+        telHuisartsenpraktijkInput.value = draft.telHuisartsenpraktijk;
+      }
+
+      const telefoonnummerHuisartsenspoedpostInput = document.getElementById("telefoonnummerHuisartsenspoedpost");
+      if (telefoonnummerHuisartsenspoedpostInput && typeof draft.telefoonnummerHuisartsenspoedpost === "string") {
+        telefoonnummerHuisartsenspoedpostInput.value = draft.telefoonnummerHuisartsenspoedpost;
+      }
+
+      const ongevalInput = document.getElementById("alarmOngevalTekst");
+      if (ongevalInput && typeof draft.ongevalTekst === "string") {
+        ongevalInput.value = draft.ongevalTekst;
+      }
+
+      const brandInput = document.getElementById("alarmBrandTekst");
+      if (brandInput && typeof draft.brandTekst === "string") {
+        brandInput.value = draft.brandTekst;
+      }
+
+      const externeInput = document.getElementById("alarmExterneTekst");
+      if (externeInput && typeof draft.externeTekst === "string") {
+        externeInput.value = draft.externeTekst;
+      }
+
+      const beeindigingInput = document.getElementById("alarmBeeindigingTekst");
+      if (beeindigingInput && typeof draft.beeindigingAlarmtoestand === "string") {
+        beeindigingInput.value = draft.beeindigingAlarmtoestand;
+      }
+
+      syncOngevalMedicalLines();
+
+    }
+
+    function saveAlarmDraftToLocalStorage() {
+      const alarm = getAlarmProcedureData();
+      const payload = {
+        naamHuisartsenpraktijk: alarm.naamHuisartsenpraktijk,
+        telHuisartsenpraktijk: alarm.telHuisartsenpraktijk,
+        telefoonnummerHuisartsenspoedpost: alarm.telefoonnummerHuisartsenspoedpost,
+        ongevalTekst: alarm.ongevalTekst,
+        brandTekst: alarm.brandTekst,
+        externeTekst: alarm.externeTekst,
+        beeindigingAlarmtoestand: alarm.beeindigingAlarmtoestand,
+        savedAt: new Date().toISOString()
+      };
+      localStorage.setItem(ALARM_DRAFT_STORAGE_KEY, JSON.stringify(payload));
+      renderAlarmWordPreview();
+      setStatus("Stap 4 opgeslagen. Voorbeeld toont hoe dit naar Word gaat.");
+    }
+
+    function initTijdvakDynamic() {
+      function wireRowAddButton(tbodyId, dagField, aantalField, aantalPlaceholder, buttonId) {
+        const tbody = document.getElementById(tbodyId);
+        const addBtn = document.getElementById(buttonId);
+        if (!tbody || !addBtn) return;
+
+        function updateButtonState() {
+          const count = tbody.querySelectorAll(".tijdvak-row").length;
+          addBtn.disabled = count >= 6;
+        }
+
+        addBtn.addEventListener("click", () => {
+          const rows = tbody.querySelectorAll(".tijdvak-row");
+          if (rows.length >= 6) return;
+          const n = rows.length + 1;
+          const tr = document.createElement("tr");
+          tr.className = "tijdvak-row";
+          tr.innerHTML = `
+            <td><input type="text" data-field="${dagField}" data-row="${n}" placeholder="Bijv. ma-vr 08:00-17:00"></td>
+            <td><input type="number" data-field="${aantalField}" data-row="${n}" placeholder="${aantalPlaceholder}" min="0" style="width:100%;"></td>
+          `;
+          tbody.appendChild(tr);
+
+          const newInputs = tr.querySelectorAll("input");
+          newInputs.forEach((inp) => {
+            inp.addEventListener("input", () => {
+              inp.classList.remove("invalid");
+              updateNextButtonsState();
+            });
+          });
+
+          updateButtonState();
+          updateNextButtonsState();
+        });
+
+        tbody.querySelectorAll("input").forEach((inp) => {
+          inp.addEventListener("input", () => {
+            inp.classList.remove("invalid");
+            updateNextButtonsState();
+          });
+        });
+
+        updateButtonState();
+      }
+
+      wireRowAddButton("aanwezigRows", "aanwezig_dag", "aanwezig_aantal", "Bijv. 45", "addAanwezigRowBtn");
+      wireRowAddButton("zelfredzameRows", "zelfredzame_dag", "zelfredzame_aantal", "Bijv. 5", "addZelfredzameRowBtn");
+    }
+
+    function initBijzondereKenmerkenDynamic() {
+      const rowIds = [
+        "bijzonderKenmerkRow1",
+        "bijzonderKenmerkRow2",
+        "bijzonderKenmerkRow3",
+        "bijzonderKenmerkRow4",
+        "bijzonderKenmerkRow5"
+      ];
+      const inputIds = [
+        "bijzonderKenmerk1",
+        "bijzonderKenmerk2",
+        "bijzonderKenmerk3",
+        "bijzonderKenmerk4",
+        "bijzonderKenmerk5"
+      ];
+      const rows = rowIds.map((id) => document.getElementById(id));
+      const inputs = inputIds.map((id) => document.getElementById(id));
+      const addBtn = document.getElementById("addBijzonderKenmerkRowBtn");
+      if (!addBtn || rows.some((r) => !r)) return;
+
+      let visibleCount = 1;
+      for (let i = 0; i < inputs.length; i++) {
+        if (inputs[i] && inputs[i].value.trim()) {
+          visibleCount = Math.max(visibleCount, Math.min(rows.length, i + 2));
+        }
+      }
+      rows.forEach((row, idx) => {
+        row.hidden = idx >= visibleCount;
+      });
+
+      function updateButtonState() {
+        addBtn.disabled = rows.every((row) => !row.hidden);
+      }
+
+      addBtn.addEventListener("click", () => {
+        const nextRow = rows.find((row) => row.hidden);
+        if (!nextRow) return;
+        nextRow.hidden = false;
+        const nextInput = nextRow.querySelector("input");
+        if (nextInput) nextInput.focus();
+        updateButtonState();
+      });
+
+      updateButtonState();
+    }
+
+    function initOrganisatiesDynamic() {
+      const rowIds = [
+        "organisatieNaamRow1",
+        "organisatieNaamRow2",
+        "organisatieNaamRow3",
+        "organisatieNaamRow4",
+        "organisatieNaamRow5",
+        "organisatieNaamRow6"
+      ];
+      const inputIds = [
+        "organisatieNaam1",
+        "organisatieNaam2",
+        "organisatieNaam3",
+        "organisatieNaam4",
+        "organisatieNaam5",
+        "organisatieNaam6"
+      ];
+      const rows = rowIds.map((id) => document.getElementById(id));
+      const inputs = inputIds.map((id) => document.getElementById(id));
+      const addBtn = document.getElementById("addOrganisatieRowBtn");
+      if (!addBtn || rows.some((r) => !r)) return;
+
+      let visibleCount = 1;
+      for (let i = 0; i < inputs.length; i++) {
+        if (inputs[i] && inputs[i].value.trim()) {
+          visibleCount = Math.max(visibleCount, Math.min(rows.length, i + 2));
+        }
+      }
+      rows.forEach((row, idx) => {
+        row.hidden = idx >= visibleCount;
+      });
+
+      function updateButtonState() {
+        addBtn.disabled = rows.every((row) => !row.hidden);
+      }
+
+      addBtn.addEventListener("click", () => {
+        const nextRow = rows.find((row) => row.hidden);
+        if (!nextRow) return;
+        nextRow.hidden = false;
+        const nextInput = nextRow.querySelector("input");
+        if (nextInput) nextInput.focus();
+        updateButtonState();
+      });
+
+      updateButtonState();
+    }
+
+    function initBmiVisibility() {
+      const bmiSelect = document.getElementById("bmiKeuze");
+      const bmiDetails = document.getElementById("bmiDetails");
+      if (!bmiSelect || !bmiDetails) return;
+
+      function updateVisibility() {
+        const enabled = bmiSelect.value === "ja";
+        bmiDetails.hidden = !enabled;
+        if (enabled) return;
+
+        const detailInputs = bmiDetails.querySelectorAll("input");
+        detailInputs.forEach((input) => {
+          input.value = "";
+        });
+      }
+
+      bmiSelect.addEventListener("change", updateVisibility);
+      bmiSelect.addEventListener("change", updateNextButtonsState);
+      updateVisibility();
+
+      const bmiMerk = document.getElementById("bmiMerk");
+      const bmiType = document.getElementById("bmiType");
+      const naamBeheerderBmi = document.getElementById("naamBeheerderBmi");
+      if (bmiMerk) {
+        bmiMerk.addEventListener("input", updateNextButtonsState);
+      }
+      if (bmiType) {
+        bmiType.addEventListener("input", updateNextButtonsState);
+      }
+      if (naamBeheerderBmi) {
+        naamBeheerderBmi.addEventListener("input", updateNextButtonsState);
+      }
+    }
+
+    function initAlarmProcedureDynamic() {
+      const naamHuisartsenpraktijk = document.getElementById("naamHuisartsenpraktijk");
+      const telHuisartsenpraktijk = document.getElementById("telHuisartsenpraktijk");
+      const telefoonnummerHuisartsenspoedpost = document.getElementById("telefoonnummerHuisartsenspoedpost");
+      const ongeval = document.getElementById("alarmOngevalTekst");
+      const brand = document.getElementById("alarmBrandTekst");
+      const externe = document.getElementById("alarmExterneTekst");
+      const beeindiging = document.getElementById("alarmBeeindigingTekst");
+
+      const wire = (el) => {
+        if (!el) return;
+        el.addEventListener("input", () => {
+          el.classList.remove("invalid");
+          renderAlarmWordPreview();
+          updateNextButtonsState();
+        });
+      };
+
+      const wireMedical = (el) => {
+        if (!el) return;
+        el.addEventListener("input", () => {
+          el.classList.remove("invalid");
+          syncOngevalMedicalLines();
+          renderAlarmWordPreview();
+          updateNextButtonsState();
+        });
+      };
+
+      wireMedical(naamHuisartsenpraktijk);
+      wireMedical(telHuisartsenpraktijk);
+      wireMedical(telefoonnummerHuisartsenspoedpost);
+      wire(ongeval);
+      wire(brand);
+      wire(externe);
+      wire(beeindiging);
+
+      const saveBtn = document.getElementById("saveAlarmStep4Btn");
+      if (saveBtn) {
+        saveBtn.addEventListener("click", saveAlarmDraftToLocalStorage);
+      }
+
+      syncOngevalMedicalLines();
+      renderAlarmWordPreview();
+    }
+
+    function initAndersVisibility() {
+      const controls = [
+        {
+          selectId: "overigeTechnischeAndersKeuze",
+          textRowId: "overigeTechnischeAndersTekstRow",
+          textInputId: "overigeTechnischeAndersTekst"
+        },
+        {
+          selectId: "andereVoorzieningenAndersKeuze",
+          textRowId: "andereVoorzieningenAndersTekstRow",
+          textInputId: "andereVoorzieningenAndersTekst"
+        },
+        {
+          selectId: "communicatiemiddelenAndersKeuze",
+          textRowId: "communicatiemiddelenAndersTekstRow",
+          textInputId: "communicatiemiddelenAndersTekst"
+        }
+      ];
+
+      for (const control of controls) {
+        const select = document.getElementById(control.selectId);
+        const textRow = document.getElementById(control.textRowId);
+        const textInput = document.getElementById(control.textInputId);
+        const textLabel = textRow ? textRow.querySelector("label") : null;
+        if (!select || !textRow || !textInput) continue;
+
+        const updateVisibility = () => {
+          const enabled = select.value === "ja";
+          textRow.hidden = !enabled;
+          if (textLabel) {
+            textLabel.classList.toggle("required", enabled);
+          }
+          if (!enabled) {
+            textInput.value = "";
+            setFieldInvalid(textInput, false);
+          }
+        };
+
+        select.addEventListener("change", () => {
+          updateVisibility();
+          updateNextButtonsState();
+        });
+        textInput.addEventListener("input", updateNextButtonsState);
+        updateVisibility();
+      }
+    }
+
+    renderLogoPreview();
+    initTijdvakDynamic();
+    initBijzondereKenmerkenDynamic();
+    initOrganisatiesDynamic();
+    initBmiVisibility();
+    initAndersVisibility();
+    clearOldAlarmDraftFromLocalStorage();
+    initAlarmProcedureDynamic();
+
+    (function initStap5Dynamic() {
+      const brandwerendeSelect = document.getElementById("stap5BrandwerendeDeurenScheidingen");
+      const brandwerendeHelp = document.getElementById("stap5BrandwerendeHelpText");
+      const verzamelgebouwSelect = document.getElementById("stap5Verzamelgebouw");
+      const verzamelgebouwHelp = document.getElementById("stap5VerzamelgebouwHelpText");
+      const meerdereSelect = document.getElementById("stap5MeerdereGebouwen");
+      const bmiRow = document.getElementById("stap5BmiGekoppeldRow");
+      const bmiSelect = document.getElementById("stap5BmiGekoppeld");
+      const hoeRow = document.getElementById("stap5HoeAlarmataenRow");
+      const hoeInput = document.getElementById("stap5HoeAlarmeren");
+
+      const updateVisibility = () => {
+        const meerdereJa = meerdereSelect?.value === "ja";
+        const bmiNee = bmiSelect?.value === "nee";
+
+        if (brandwerendeHelp) brandwerendeHelp.style.display = brandwerendeSelect?.value === "ja" ? "" : "none";
+        if (verzamelgebouwHelp) verzamelgebouwHelp.style.display = verzamelgebouwSelect?.value === "ja" ? "" : "none";
+        if (bmiRow) bmiRow.style.display = meerdereJa ? "" : "none";
+        if (hoeRow) hoeRow.style.display = (meerdereJa && bmiNee) ? "" : "none";
+        if (!meerdereJa || !bmiNee) {
+          if (hoeInput) { hoeInput.value = ""; setFieldInvalid(hoeInput, false); }
+        }
+        updateNextButtonsState();
+      };
+
+      [brandwerendeSelect, verzamelgebouwSelect, meerdereSelect, bmiSelect].forEach((el) => {
+        el?.addEventListener("change", updateVisibility);
+      });
+      hoeInput?.addEventListener("input", () => {
+        setFieldInvalid(hoeInput, false);
+        updateNextButtonsState();
+      });
+
+      updateVisibility();
+    })();
+
+    document.addEventListener("input", (event) => {
+      const target = event.target;
+      if (!target || !target.matches || !target.matches("input, select, textarea")) return;
+      updateFilledFieldStates(target.parentElement || document);
+    });
+
+    document.addEventListener("change", (event) => {
+      const target = event.target;
+      if (!target || !target.matches || !target.matches("input, select, textarea")) return;
+      updateFilledFieldStates(target.parentElement || document);
+    });
+
+    updateNextButtonsState();
+    setActiveStep(1);
+    loadDefaultTemplate();
+  </script>
+</body>
+</html>

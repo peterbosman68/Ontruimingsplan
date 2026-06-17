@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ontruimingsplan Invuldocument</title>
+  <style>
+    :root {
+      --bg-1: #f7f2e7;
+      --bg-2: #e9efe5;
+      --ink: #1e2a22;
+      --muted: #5b6b61;
+      --panel: #ffffffd9;
+      --line: #c6d3c7;
+      --accent: #1f6f43;
+      --accent-2: #0f5132;
+      --warn: #b06200;
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(20, 40, 26, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Segoe UI", "Aptos", Tahoma, Geneva, Verdana, sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, #f9f5cc 0, #f9f5cc33 30%, transparent 50%),
+        radial-gradient(circle at 90% 85%, #cde5d4 0, #cde5d455 25%, transparent 45%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+      min-height: 100vh;
+    }
+
+    .wrap {
+      width: min(980px, 92vw);
+      margin: 28px auto 50px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      backdrop-filter: blur(4px);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+      letter-spacing: 0.2px;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .grid {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    input, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.96rem;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(31, 111, 67, 0.12);
+    }
+
+    .section-title {
+      margin: 28px 0 10px;
+      font-size: 1.08rem;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin: 0;
+    }
+
+    .placeholder-table {
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .placeholder-row {
+      display: grid;
+      grid-template-columns: minmax(180px, 280px) 1fr;
+      border-bottom: 1px solid #e6ede7;
+    }
+
+    .placeholder-row:last-child {
+      border-bottom: 0;
+    }
+
+    .ph-key {
+      padding: 10px 12px;
+      font-weight: 600;
+      color: #345445;
+      background: #f7fbf8;
+      border-right: 1px solid #e6ede7;
+      word-break: break-word;
+    }
+
+    .ph-value {
+      padding: 8px;
+    }
+
+    .ph-value input {
+      border-color: #d5e2d8;
+    }
+
+    .actions {
+      margin-top: 18px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.12s ease, opacity 0.12s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+
+    .primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .primary:hover { background: var(--accent-2); }
+
+    .secondary {
+      background: #e8f1eb;
+      color: #264734;
+      border: 1px solid #bfd3c4;
+    }
+
+    .status {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      background: #f3f7f3;
+      border: 1px solid #dbe8dc;
+      color: #2b4a36;
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+    }
+
+    .status.warn {
+      background: #fff8ef;
+      border-color: #f3ddbc;
+      color: var(--warn);
+    }
+
+    @media (max-width: 760px) {
+      .grid { grid-template-columns: 1fr; }
+      .placeholder-row { grid-template-columns: 1fr; }
+      .ph-key { border-right: 0; border-bottom: 1px solid #e6ede7; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Ontruimingsplan Invuldocument</h1>
+      <p class="subtitle">Vul de velden in, klik op <strong>Rapport genereren</strong> en sla het ingevulde Word-document op.</p>
+
+      <div class="grid">
+        <div class="field full">
+          <label for="templateFile">Word-template (.docx)</label>
+          <input id="templateFile" type="file" accept=".docx">
+          <p class="hint">Kies bij voorkeur OntruimingsplanConformNEN8112 250529.docx.</p>
+        </div>
+
+        <div class="field">
+          <label for="gebouwNaam">Naam (gebouw)</label>
+          <input id="gebouwNaam" type="text" placeholder="Bijv. Tolkamer Kantoor">
+        </div>
+
+        <div class="field">
+          <label for="adres">Adres</label>
+          <input id="adres" type="text">
+        </div>
+
+        <div class="field">
+          <label for="pcPlaats">PC + plaats</label>
+          <input id="pcPlaats" type="text" placeholder="1234 AB Arnhem">
+        </div>
+
+        <div class="field">
+          <label for="telefoon">Telefoon</label>
+          <input id="telefoon" type="text">
+        </div>
+
+        <div class="field full">
+          <label for="email">E-mail</label>
+          <input id="email" type="email">
+        </div>
+      </div>
+
+      <h2 class="section-title">Extra placeholders uit document</h2>
+      <p class="hint">Als in het document placeholders staan als &lt;functie&gt; of &lt;afspraken hier vermelden&gt;, verschijnen die hieronder automatisch na het kiezen van de template.</p>
+
+      <div id="placeholders" class="placeholder-table" aria-live="polite"></div>
+
+      <div class="actions">
+        <button id="scanBtn" class="secondary" type="button">Placeholders opnieuw scannen</button>
+        <button id="generateBtn" class="primary" type="button">Rapport genereren</button>
+      </div>
+
+      <div id="status" class="status">Kies eerst de .docx-template.</div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script>
+    const templateInput = document.getElementById("templateFile");
+    const scanBtn = document.getElementById("scanBtn");
+    const generateBtn = document.getElementById("generateBtn");
+    const placeholdersBox = document.getElementById("placeholders");
+    const statusBox = document.getElementById("status");
+
+    let templateArrayBuffer = null;
+    let detectedPlaceholders = [];
+
+    function setStatus(msg, warn) {
+      statusBox.textContent = msg;
+      statusBox.classList.toggle("warn", !!warn);
+    }
+
+    function xmlEscape(text) {
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&apos;");
+    }
+
+    function xmlUnescape(text) {
+      return String(text)
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, "\"")
+        .replace(/&apos;/g, "'")
+        .replace(/&amp;/g, "&");
+    }
+
+    function plainTextFromParagraph(paragraphXml) {
+      const withTabs = paragraphXml.replace(/<w:tab\s*\/\s*>/g, "\t");
+      const noTags = withTabs.replace(/<[^>]+>/g, "");
+      return xmlUnescape(noTags).replace(/\s+/g, " ").trim();
+    }
+
+    function makeTextRun(value) {
+      const safe = xmlEscape(value);
+      return `<w:r><w:t xml:space="preserve"> ${safe}</w:t></w:r>`;
+    }
+
+    function fillParagraphByMarker(xml, marker, value) {
+      if (!value) return xml;
+      const paragraphs = xml.match(/<w:p[\s\S]*?<\/w:p>/g) || [];
+      for (const paragraph of paragraphs) {
+        const text = plainTextFromParagraph(paragraph).toLowerCase();
+        if (!text.includes(marker.toLowerCase())) continue;
+
+        const updated = paragraph.replace(/<\/w:p>$/, `${makeTextRun(value)}</w:p>`);
+        xml = xml.replace(paragraph, updated);
+        break;
+      }
+      return xml;
+    }
+
+    function getFixedValues() {
+      return {
+        gebouwNaam: document.getElementById("gebouwNaam").value.trim(),
+        adres: document.getElementById("adres").value.trim(),
+        pcPlaats: document.getElementById("pcPlaats").value.trim(),
+        telefoon: document.getElementById("telefoon").value.trim(),
+        email: document.getElementById("email").value.trim()
+      };
+    }
+
+    function renderPlaceholderInputs(placeholders) {
+      placeholdersBox.innerHTML = "";
+      if (!placeholders.length) {
+        placeholdersBox.innerHTML = `<div class="ph-key" style="padding:12px;">Geen <...>-placeholders gevonden in het document.</div>`;
+        return;
+      }
+
+      for (const ph of placeholders) {
+        const row = document.createElement("div");
+        row.className = "placeholder-row";
+        row.innerHTML = `
+          <div class="ph-key">&lt;${ph}&gt;</div>
+          <div class="ph-value"><input type="text" data-ph="${ph}" placeholder="Waarde voor &lt;${ph}&gt;"></div>
+        `;
+        placeholdersBox.appendChild(row);
+      }
+    }
+
+    function getPlaceholderValues() {
+      const values = {};
+      const inputs = placeholdersBox.querySelectorAll("input[data-ph]");
+      for (const input of inputs) {
+        values[input.dataset.ph] = input.value.trim();
+      }
+      return values;
+    }
+
+    function safeName(text) {
+      const normalized = (text || "Gebouw")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-zA-Z0-9_-]+/g, "")
+        .slice(0, 40);
+      return normalized || "Gebouw";
+    }
+
+    function yymmdd(date) {
+      const yy = String(date.getFullYear()).slice(-2);
+      const mm = String(date.getMonth() + 1).padStart(2, "0");
+      const dd = String(date.getDate()).padStart(2, "0");
+      return `${yy}${mm}${dd}`;
+    }
+
+    async function readTemplateAndScan() {
+      const file = templateInput.files && templateInput.files[0];
+      if (!file) {
+        setStatus("Selecteer eerst een .docx-template.", true);
+        return;
+      }
+      if (!window.JSZip) {
+        setStatus("JSZip kon niet worden geladen (internetverbinding nodig voor CDN).", true);
+        return;
+      }
+
+      setStatus("Template inlezen en placeholders zoeken...");
+      templateArrayBuffer = await file.arrayBuffer();
+
+      const zip = await JSZip.loadAsync(templateArrayBuffer);
+      const xmlFile = zip.file("word/document.xml");
+      if (!xmlFile) {
+        setStatus("word/document.xml niet gevonden in template.", true);
+        return;
+      }
+
+      const xml = await xmlFile.async("string");
+      const rawMatches = [...xml.matchAll(/&lt;([^<>]{1,120})&gt;/g)].map(m => m[1].trim());
+      detectedPlaceholders = [...new Set(rawMatches)].filter(Boolean);
+
+      renderPlaceholderInputs(detectedPlaceholders);
+      setStatus(`Template geladen. ${detectedPlaceholders.length} placeholder(s) gevonden.`);
+    }
+
+    async function saveDocx(blob, fileName) {
+      if (window.showSaveFilePicker) {
+        try {
+          const handle = await window.showSaveFilePicker({
+            suggestedName: fileName,
+            types: [
+              {
+                description: "Word document",
+                accept: {
+                  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"]
+                }
+              }
+            ]
+          });
+          const writable = await handle.createWritable();
+          await writable.write(blob);
+          await writable.close();
+          return "saved";
+        } catch (err) {
+          if (err && err.name === "AbortError") {
+            return "cancelled";
+          }
+        }
+      }
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      return "downloaded";
+    }
+
+    async function generate() {
+      try {
+        const file = templateInput.files && templateInput.files[0];
+        if (!file) {
+          setStatus("Selecteer eerst een .docx-template.", true);
+          return;
+        }
+        if (!templateArrayBuffer) {
+          await readTemplateAndScan();
+        }
+
+        setStatus("Document genereren...");
+        const zip = await JSZip.loadAsync(templateArrayBuffer);
+        const xmlFile = zip.file("word/document.xml");
+        if (!xmlFile) {
+          setStatus("word/document.xml niet gevonden in template.", true);
+          return;
+        }
+
+        let xml = await xmlFile.async("string");
+
+        const fixed = getFixedValues();
+        xml = fillParagraphByMarker(xml, "naam", fixed.gebouwNaam);
+        xml = fillParagraphByMarker(xml, "adres", fixed.adres);
+        xml = fillParagraphByMarker(xml, "pc + plaats", fixed.pcPlaats);
+        xml = fillParagraphByMarker(xml, "telefoon", fixed.telefoon);
+        xml = fillParagraphByMarker(xml, "e-mail", fixed.email);
+
+        const phValues = getPlaceholderValues();
+        for (const [key, value] of Object.entries(phValues)) {
+          if (!value) continue;
+          const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          const re = new RegExp(`&lt;${escapedKey}&gt;`, "g");
+          xml = xml.replace(re, xmlEscape(value));
+        }
+
+        zip.file("word/document.xml", xml);
+        const outBlob = await zip.generateAsync({ type: "blob" });
+
+        const stamp = yymmdd(new Date());
+        const outputName = `Ontruimingsplan${safeName(fixed.gebouwNaam)}${stamp}.docx`;
+        const saveResult = await saveDocx(outBlob, outputName);
+
+        if (saveResult === "saved") {
+          setStatus(`Klaar. Document opgeslagen als ${outputName}.`);
+        } else if (saveResult === "downloaded") {
+          setStatus(`Klaar. Document is gedownload als ${outputName}.`);
+        } else {
+          setStatus("Opslaan geannuleerd.", true);
+        }
+      } catch (err) {
+        console.error(err);
+        setStatus(`Fout bij genereren: ${err && err.message ? err.message : err}`, true);
+      }
+    }
+
+    templateInput.addEventListener("change", () => {
+      templateArrayBuffer = null;
+      detectedPlaceholders = [];
+      renderPlaceholderInputs([]);
+      readTemplateAndScan().catch(err => setStatus(`Fout bij inlezen: ${err.message}`, true));
+    });
+
+    scanBtn.addEventListener("click", () => {
+      readTemplateAndScan().catch(err => setStatus(`Fout bij scannen: ${err.message}`, true));
+    });
+
+    generateBtn.addEventListener("click", generate);
+
+    renderPlaceholderInputs([]);
+  </script>
+</body>
+</html>

@@ -1,0 +1,2633 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ontruimingsplan Generator</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Nunito+Sans:wght@400;600;700&display=swap");
+
+    :root {
+      --bg: #eef3fa;
+      --card: #ffffffee;
+      --line: #cdd9eb;
+      --text: #1f2f49;
+      --muted: #5a6e8f;
+      --accent: #1f4f8a;
+      --accent-2: #173a67;
+      --warn: #c26400;
+      --error: #c26400;
+      --radius: 16px;
+      --shadow: 0 14px 30px rgba(26, 48, 80, 0.12);
+    }
+
+    body[data-theme="premium"] {
+      --bg: #e9f0fb;
+      --line: #bdd0ea;
+      --text: #172944;
+      --muted: #4a628b;
+      --accent: #153f79;
+      --accent-2: #0f2f5a;
+      --warn: #cc6f00;
+      --error: #cc6f00;
+      --shadow: 0 22px 46px rgba(12, 36, 70, 0.22);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 88% 8%, #d6e6ff 0, #d6e6ff00 31%),
+        radial-gradient(circle at 10% 88%, #dce9ff 0, #dce9ff00 28%),
+        linear-gradient(135deg, #eef3fb 0%, #f4f7fc 44%, #e9f1fb 100%);
+      color: var(--text);
+      font-family: "Nunito Sans", "Segoe UI", sans-serif;
+      line-height: 1.45;
+    }
+
+    body[data-theme="premium"] {
+      background:
+        radial-gradient(circle at 84% 6%, #c5d9ff 0, #c5d9ff00 34%),
+        radial-gradient(circle at 8% 92%, #f3d7b6 0, #f3d7b600 24%),
+        linear-gradient(130deg, #e5eefb 0%, #edf4ff 42%, #dfeaf8 100%);
+    }
+
+    .wrap {
+      width: min(1120px, 94vw);
+      margin: 22px auto 44px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 14px;
+      backdrop-filter: blur(6px);
+    }
+
+    body[data-theme="premium"] .card {
+      border-color: #b8cae6;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.93), rgba(250,254,255,0.93));
+      position: relative;
+      overflow: hidden;
+    }
+
+    body[data-theme="premium"] .card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 3px;
+      background: linear-gradient(90deg, #184988, #2b6aa8 58%, #e08b24);
+      opacity: 0.95;
+      pointer-events: none;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      letter-spacing: 0.1px;
+      font-family: "Space Grotesk", "Segoe UI", sans-serif;
+    }
+
+    h1 { font-size: clamp(1.55rem, 3vw, 2.35rem); }
+    h2 { font-size: 1.1rem; margin-bottom: 10px; }
+    h3 { font-size: 0.97rem; color: #2a4c80; }
+
+    .sub {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    body[data-theme="premium"] h1 {
+      font-size: clamp(1.7rem, 3.1vw, 2.6rem);
+      letter-spacing: 0.25px;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.7);
+    }
+
+    body[data-theme="premium"] .sub {
+      font-size: 1rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: #e8f0fb;
+      color: #1f4f8a;
+      border: 1px solid #c6d8f2;
+      margin-bottom: 10px;
+    }
+
+    body[data-theme="premium"] .pill {
+      background: linear-gradient(135deg, #e6eefc, #dae7fb);
+      border-color: #b8cdee;
+      color: #154381;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.75);
+    }
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .theme-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 0.84rem;
+    }
+
+    .theme-control select {
+      width: auto;
+      min-width: 130px;
+      padding: 8px 10px;
+      font-size: 0.85rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      font-weight: 600;
+      font-size: 0.92rem;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 11px;
+      font-size: 0.94rem;
+      color: var(--text);
+      background: #fff;
+      outline: none;
+    }
+
+    body[data-theme="premium"] input,
+    body[data-theme="premium"] select,
+    body[data-theme="premium"] textarea {
+      background: linear-gradient(180deg, #ffffff, #f8fbff);
+      border-color: #c4d6ef;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(31, 110, 69, 0.12);
+    }
+
+    body[data-theme="premium"] input:focus,
+    body[data-theme="premium"] select:focus,
+    body[data-theme="premium"] textarea:focus {
+      box-shadow: 0 0 0 3px rgba(30, 79, 138, 0.18);
+    }
+
+    .hint {
+      margin: 0;
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+
+    .required::after {
+      content: " *";
+      color: var(--error);
+    }
+
+    .section {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 10px;
+      background: #f9fbff;
+    }
+
+    .placeholder-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .group-block {
+      border: 1px solid #d9e3f1;
+      border-radius: 10px;
+      background: #fff;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .group-title {
+      margin: 0 0 8px;
+      font-size: 0.95rem;
+      color: #2a4c80;
+      border-bottom: 1px solid #dfe8f6;
+      padding-bottom: 6px;
+    }
+
+    .time-block {
+      border: 1px solid #d6e2f2;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 10px;
+      background: #ffffff;
+    }
+
+    .time-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .time-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn, button {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 13px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.14s ease, opacity 0.14s ease;
+    }
+
+    .btn:hover, button:hover {
+      transform: translateY(-1px);
+    }
+
+    body[data-theme="premium"] .btn,
+    body[data-theme="premium"] button {
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+    }
+
+    body[data-theme="premium"] .btn:hover,
+    body[data-theme="premium"] button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(17, 49, 89, 0.18);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover { background: var(--accent-2); }
+
+    body[data-theme="premium"] .btn-primary {
+      background: linear-gradient(135deg, #1a4d8e, #194679);
+    }
+
+    body[data-theme="premium"] .btn-primary:hover {
+      background: linear-gradient(135deg, #143f74, #123861);
+    }
+
+    .btn-secondary {
+      background: #e8f0fb;
+      color: #1f4f8a;
+      border: 1px solid #c1d3ee;
+    }
+
+    .btn-danger {
+      background: #fff1e6;
+      color: #9a4f00;
+      border: 1px solid #f4d2ae;
+      padding: 8px 10px;
+      font-size: 0.84rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .status {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      border-radius: 10px;
+      padding: 10px 12px;
+      border: 1px solid #d7e2f2;
+      background: #f2f7ff;
+      color: #234574;
+      margin-top: 10px;
+      white-space: pre-wrap;
+    }
+
+    .template-mode {
+      margin-top: 8px;
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+
+    .template-mode strong {
+      color: var(--text);
+    }
+
+    .status.warn {
+      border-color: #f0cb9f;
+      background: #fff3e8;
+      color: var(--warn);
+    }
+
+    .status.error {
+      border-color: #f0cb9f;
+      background: #fff3e8;
+      color: var(--error);
+    }
+
+    body[data-theme="premium"] .status {
+      border-color: #c8d8ee;
+      background: linear-gradient(180deg, #f4f8ff, #edf4ff);
+    }
+
+    body[data-theme="premium"] .status.warn,
+    body[data-theme="premium"] .status.error {
+      border-color: #ebc18f;
+      background: linear-gradient(180deg, #fff5ea, #ffefde);
+    }
+
+    @keyframes premiumFadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    body[data-theme="premium"] .card {
+      animation: premiumFadeUp 260ms ease-out both;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body[data-theme="premium"] .card {
+        animation: none;
+      }
+      body[data-theme="premium"] .btn,
+      body[data-theme="premium"] button {
+        transition: none;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .grid, .placeholder-grid { grid-template-columns: 1fr; }
+      .time-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="top-row">
+        <div class="pill">Live Generator</div>
+        <label class="theme-control" for="themePreset">
+          Thema
+          <select id="themePreset">
+            <option value="zakelijk">Zakelijk</option>
+            <option value="premium">Premium</option>
+          </select>
+        </label>
+      </div>
+      <h1>Ontruimingsplan Generator</h1>
+      <p class="sub">Deploy-klaar voor GitHub Pages of Netlify. De standaardtemplate wordt automatisch geladen, je kunt direct invullen en genereren.</p>
+    </div>
+
+    <div class="card">
+      <h2>Invoer</h2>
+
+      <div id="logoSection" class="section" style="display:none;">
+        <h3>Logo</h3>
+        <div class="grid" style="margin-top:8px;">
+          <div class="field full">
+            <label for="logoFile" id="logoLabel" class="required">Logo van gebouw</label>
+            <input id="logoFile" type="file" accept=".png,.jpg,.jpeg,.webp">
+            <p class="hint">Wordt groot op voorpagina en klein in koptekst geplaatst, binnen tabelkaders.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="timeBlocksSection" class="section" style="display:none;">
+        <h3>Gebouw-, installatie- en organisatiegegevens</h3>
+        <p class="hint">Per blok is regel 1 verplicht. Extra regels zijn optioneel.</p>
+        <div id="timeBlocksContainer"></div>
+      </div>
+
+      <div id="syntheticSection" class="section" style="display:none;">
+        <h3>Grote gebouwen en specifieke situaties.</h3>
+        <p class="hint">Regels met (*) worden automatisch als niet van toepassing verwijderd.</p>
+        <div id="syntheticContainer" class="placeholder-grid" style="margin-top:8px;"></div>
+      </div>
+
+      <div id="specialFeaturesSection" class="section" style="display:none;">
+        <h3>Bijzondere kenmerken</h3>
+        <p class="hint">Zijn er bijzondere kenmerken die van belang zijn bij een ontruiming (zoals gevaarlijke stoffen, gevaarlijke technische ruimten e.d.)?</p>
+        <div class="grid" style="margin-top:8px;">
+          <div class="field full">
+            <label for="specialFeaturesToggle">Antwoord</label>
+            <select id="specialFeaturesToggle">
+              <option value="nee">Nee</option>
+              <option value="ja">Ja</option>
+            </select>
+          </div>
+        </div>
+        <div id="specialFeaturesRowsWrap" style="display:none; margin-top:8px;">
+          <div id="specialFeaturesRows" class="time-rows"></div>
+          <div class="actions">
+            <button id="specialFeaturesAddBtn" class="btn btn-secondary" type="button">Kenmerk toevoegen</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="organizationsSection" class="section" style="display:none;">
+        <h3>Het gebouw wordt door de volgende organisatie(s) gebruikt:</h3>
+        <div id="organizationsRows" class="time-rows"></div>
+        <div class="actions">
+          <button id="organizationsAddBtn" class="btn btn-secondary" type="button">Organisatie toevoegen</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Placeholders uit document</h3>
+        <p class="hint">Alle gevonden &lt;...&gt; velden (behalve tijdstipblokken) staan hieronder, gegroepeerd op documentsectie.</p>
+        <div id="placeholdersContainer" style="margin-top:8px;"></div>
+      </div>
+
+      <div class="actions">
+        <button id="generateBtn" class="btn btn-primary" type="button">Rapport maken</button>
+      </div>
+
+      <div id="fallbackTemplateWrap" class="section" style="display:none; margin-top:12px;">
+        <h3>Template fallback</h3>
+        <p class="hint">Automatisch laden is hier geblokkeerd. Kies eenmalig het templatebestand.</p>
+        <div class="actions">
+          <input id="fallbackTemplateFile" type="file" accept=".docx" style="display:none;">
+          <button id="fallbackTemplateBtn" class="btn btn-secondary" type="button">Kies templatebestand</button>
+        </div>
+      </div>
+
+      <div id="status" class="status">Standaardtemplate wordt geladen...</div>
+      <div id="templateMode" class="template-mode">Template-modus: nog niet bepaald.</div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script>
+    const P_REGEX = /<w:p[\s\S]*?<\/w:p>/g;
+    const STAR_SINGLE = /\(\*\)/;
+    const STAR_DOUBLE_EXACT = /^\(\*\*\)$/;
+    const GROUP_PRIMARY = "Gebouw-, installatie- en organisatiegegevens";
+    const TIMEBLOCK_TITLE_1 = "Het aantal personen dat naar verwachting aanwezig is op welke tijden (dag, avond, weekend).";
+    const TIMEBLOCK_TITLE_2 = "• Aantal niet of verminderd zelfredzame personen (baby’s, patiënten, gevangenen e.d.).";
+    const IGNORED_PLACEHOLDERS = new Set(["portofoons", "aantal verdiepingen"]);
+    const DEFAULT_TEMPLATE_CANDIDATES = [
+      "OntruimingsplanConformNEN8112 260610.v6.docx"
+    ];
+    const AUTO_TEST_DATASETS = {
+      "default": {
+        gebouw: "Testgebouw",
+        adres: "Teststraat 1",
+        postcode: "1234AB",
+        plaats: "Tolkamer",
+        telefoon: "010-1234567",
+        email: "test@example.com",
+        managerNaam: "Jan Jansen",
+        managerFunctie: "Algemeen directeur",
+        hoofdBhv: "Piet Piets",
+        ploegleiderBhv: "Klaas Klaassen",
+        bhvNamen: "Jan Jansen, Piet Piets",
+        verzamelplaats: "Parkeerplaats A",
+        organisatie: "Organisatie 1",
+        daytime: "ma-vr 08:00-17:00",
+        average: "10",
+        jaNeeDefault: "nee",
+        specialFeatures: "nee",
+        syntheticDefault: "nee",
+        bmi: "nee",
+        autogen: false
+      },
+      "edge": {
+        gebouw: "Testgebouw-Edge",
+        adres: "Havenweg 99",
+        postcode: "9876ZX",
+        plaats: "Lobith",
+        telefoon: "0316-000000",
+        email: "edge@example.com",
+        managerNaam: "Anna van Dijk",
+        managerFunctie: "Locatiemanager",
+        hoofdBhv: "Bram de Groot",
+        ploegleiderBhv: "Sofie Peters",
+        bhvNamen: "Anna van Dijk, Bram de Groot",
+        verzamelplaats: "Ingang Noord",
+        organisatie: "Organisatie Edge",
+        daytime: "za-zo 10:00-18:00",
+        average: "24",
+        jaNeeDefault: "ja",
+        specialFeatures: "ja",
+        syntheticDefault: "ja",
+        bmi: "ja",
+        autogen: false
+      }
+    };
+
+    const logoFileInput = document.getElementById("logoFile");
+    const logoSection = document.getElementById("logoSection");
+    const generateBtn = document.getElementById("generateBtn");
+    const statusBox = document.getElementById("status");
+    const templateModeBox = document.getElementById("templateMode");
+    const fallbackTemplateWrap = document.getElementById("fallbackTemplateWrap");
+    const fallbackTemplateFile = document.getElementById("fallbackTemplateFile");
+    const fallbackTemplateBtn = document.getElementById("fallbackTemplateBtn");
+    const themePreset = document.getElementById("themePreset");
+    const specialFeaturesSection = document.getElementById("specialFeaturesSection");
+    const specialFeaturesToggle = document.getElementById("specialFeaturesToggle");
+    const specialFeaturesRowsWrap = document.getElementById("specialFeaturesRowsWrap");
+    const specialFeaturesRows = document.getElementById("specialFeaturesRows");
+    const specialFeaturesAddBtn = document.getElementById("specialFeaturesAddBtn");
+    const organizationsSection = document.getElementById("organizationsSection");
+    const organizationsRows = document.getElementById("organizationsRows");
+    const organizationsAddBtn = document.getElementById("organizationsAddBtn");
+
+    const placeholdersContainer = document.getElementById("placeholdersContainer");
+    const timeBlocksSection = document.getElementById("timeBlocksSection");
+    const timeBlocksContainer = document.getElementById("timeBlocksContainer");
+    const syntheticSection = document.getElementById("syntheticSection");
+    const syntheticContainer = document.getElementById("syntheticContainer");
+
+    const state = {
+      templateBuffer: null,
+      templateName: "",
+      scan: null,
+      autoTest: {
+        requested: false,
+        dataset: "default",
+        autogen: false,
+        ran: false
+      }
+    };
+
+    (function initAutoTestConfigFromUrl() {
+      try {
+        const params = new URLSearchParams(window.location.search || "");
+        const dataset = String(params.get("autotest") || "").trim().toLowerCase();
+        if (!dataset) return;
+        state.autoTest.requested = true;
+        state.autoTest.dataset = Object.prototype.hasOwnProperty.call(AUTO_TEST_DATASETS, dataset) ? dataset : "default";
+        state.autoTest.autogen = params.get("autogen") === "1" || AUTO_TEST_DATASETS[state.autoTest.dataset].autogen === true;
+      } catch (_) {}
+    })();
+
+    function applyTheme(theme) {
+      const normalized = theme === "premium" ? "premium" : "zakelijk";
+      document.body.setAttribute("data-theme", normalized);
+      themePreset.value = normalized;
+      try {
+        localStorage.setItem("op_theme", normalized);
+      } catch (_) {}
+    }
+
+    function resetRenderedInputs() {
+      state.scan = null;
+      setTemplateModeIndicator(null);
+      logoSection.style.display = "none";
+      timeBlocksSection.style.display = "none";
+      syntheticSection.style.display = "none";
+      specialFeaturesSection.style.display = "none";
+      organizationsSection.style.display = "none";
+      specialFeaturesRowsWrap.style.display = "none";
+      specialFeaturesToggle.value = "nee";
+      clearChildren(placeholdersContainer);
+      clearChildren(timeBlocksContainer);
+      clearChildren(syntheticContainer);
+      clearChildren(specialFeaturesRows);
+      clearChildren(organizationsRows);
+    }
+
+    function setStatus(msg, kind) {
+      statusBox.textContent = msg;
+      statusBox.classList.remove("warn", "error");
+      if (kind) statusBox.classList.add(kind);
+    }
+
+    function setTemplateModeIndicator(scanModel) {
+      if (!templateModeBox) return;
+      if (!scanModel) {
+        templateModeBox.innerHTML = "Template-modus: <strong>nog niet bepaald</strong>.";
+        return;
+      }
+
+      if (scanModel.contentControlOnly) {
+        templateModeBox.innerHTML = "Template-modus: <strong>content controls (tag-only)</strong>.";
+        return;
+      }
+
+      if (scanModel.usesContentControlTags && scanModel.usesLegacyTextPlaceholders) {
+        templateModeBox.innerHTML = "Template-modus: <strong>gemengd</strong> (content controls + legacy &lt;...&gt;).";
+        return;
+      }
+
+      if (scanModel.usesLegacyTextPlaceholders) {
+        templateModeBox.innerHTML = "Template-modus: <strong>legacy &lt;...&gt;</strong>.";
+        return;
+      }
+
+      templateModeBox.innerHTML = "Template-modus: <strong>onbekend</strong> (geen tags gevonden).";
+    }
+
+    function xmlEscape(text) {
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&apos;");
+    }
+
+    function xmlUnescape(text) {
+      return String(text)
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, "\"")
+        .replace(/&apos;/g, "'")
+        .replace(/&amp;/g, "&");
+    }
+
+    function plainTextFromParagraph(paragraphXml) {
+      const withTabs = paragraphXml.replace(/<w:tab\s*\/?\s*>/g, "\t");
+      const noTags = withTabs.replace(/<[^>]+>/g, "");
+      return xmlUnescape(noTags).replace(/\s+/g, " ").trim();
+    }
+
+    function parseParagraphs(xml) {
+      const paraXmls = xml.match(P_REGEX) || [];
+      return paraXmls.map((px, idx) => {
+        const text = plainTextFromParagraph(px);
+        const tags = extractTags(text);
+        return {
+          idx,
+          xml: px,
+          text,
+          tags,
+          hasStar: STAR_SINGLE.test(text),
+          hasDoubleStarMarker: STAR_DOUBLE_EXACT.test(text),
+          removed: false
+        };
+      });
+    }
+
+    function extractTags(text) {
+      const out = [];
+      const re = /<<([^<>]{1,140})>>|<([^<>]{1,140})>/g;
+      let m;
+      while ((m = re.exec(text)) !== null) {
+        const name = (m[1] || m[2] || "").trim();
+        if (!name) continue;
+        out.push({ name, raw: m[0], isDouble: !!m[1] });
+      }
+      return out;
+    }
+
+    function escapeRegex(text) {
+      return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    function isTruthyPresence(value) {
+      const t = String(value || "").trim().toLowerCase();
+      if (!t) return false;
+      if (["nee", "no", "false", "0", "n.v.t.", "niet aanwezig", "nvt"].includes(t)) return false;
+      return true;
+    }
+
+    function isBooleanPlaceholder(name) {
+      const key = normalizeLookupKey(name);
+      return [
+        "brandmeldinstallatie (bmi)",
+        "sprinkler",
+        "automatische blusinstallatie",
+        "klimaatbeheers",
+        "personenzoek",
+        "rookwarmteafvoer",
+        "portofoons",
+        "bhv-app",
+        "megafoon",
+        "hesjes",
+        "whatsapp",
+        "brandwerende deuren",
+        "brandweerlift",
+        "brandmeldinstallatie"
+      ].some(token => key.includes(token));
+    }
+
+    function sanitizeForId(text) {
+      return text
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "") || "veld";
+    }
+
+    function normalizePlaceholderName(text) {
+      return String(text || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[_-]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function normalizeLookupKey(text) {
+      return normalizePlaceholderName(text);
+    }
+
+    function humanizeTagLabel(tag) {
+      const cleaned = String(tag || "").replace(/[_-]+/g, " ").trim();
+      if (!cleaned) return "";
+      return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+    }
+
+    function isGenericWordPromptLabel(label) {
+      const normalized = normalizeLookupKey(label).replace(/[.!?]+$/g, "");
+      if (!normalized) return true;
+      return normalized.startsWith("klik of tik om tekst in te voeren");
+    }
+
+    function getDisplayLabel(ph) {
+      const humanized = humanizeTagLabel(ph.name);
+      const fallback = humanized || `<${ph.name}>`;
+      const raw = String(ph.label || "").trim();
+      if (!raw) return fallback;
+      if (isGenericWordPromptLabel(raw)) return fallback;
+      return raw;
+    }
+
+    function extractContentControls(xml, partPath) {
+      const controls = [];
+      const re = /<w:sdt[\s\S]*?<\/w:sdt>/g;
+      let m;
+      while ((m = re.exec(xml)) !== null) {
+        const sdt = m[0];
+        const tagMatch = sdt.match(/<w:tag\b[^>]*w:val="([^"]+)"/i);
+        if (!tagMatch) continue;
+        const aliasMatch = sdt.match(/<w:alias\b[^>]*w:val="([^"]+)"/i);
+        controls.push({
+          name: tagMatch[1],
+          label: aliasMatch ? aliasMatch[1] : humanizeTagLabel(tagMatch[1]),
+          partPath
+        });
+      }
+      return controls;
+    }
+
+    function buildNormalizedValueMap(valueMap) {
+      const out = new Map();
+      for (const [k, v] of Object.entries(valueMap || {})) {
+        const nk = normalizeLookupKey(k);
+        if (!nk) continue;
+        if (!out.has(nk)) out.set(nk, v);
+      }
+      return out;
+    }
+
+    function applyAutoTestDataset(scanModel, datasetName) {
+      const ds = AUTO_TEST_DATASETS[datasetName] || AUTO_TEST_DATASETS.default;
+      const inputs = placeholdersContainer.querySelectorAll("[data-placeholder-name]");
+      for (const input of inputs) {
+        const name = String(input.dataset.placeholderName || "");
+        const n = normalizePlaceholderName(name);
+        let val = "";
+
+        if (n.includes("naam gebouw") || n.includes("naam bedrijf of gebouw")) val = ds.gebouw;
+        else if (n === "adres") val = ds.adres;
+        else if (n === "postcode") val = ds.postcode;
+        else if (n === "plaats") val = ds.plaats;
+        else if (n.includes("telefoon")) val = ds.telefoon;
+        else if (n.includes("e-mail") || n.includes("email")) val = ds.email;
+        else if (n === "naam hoogste manager") val = ds.managerNaam;
+        else if (n === "functienaam hoogste manager") val = ds.managerFunctie;
+        else if (n.includes("naam hoofd bhv")) val = ds.hoofdBhv;
+        else if (n.includes("naam ploegleider bhv")) val = ds.ploegleiderBhv;
+        else if (n.includes("namen bhv-ers")) val = ds.bhvNamen;
+        else if (n.includes("naam verzamelplaats")) val = ds.verzamelplaats;
+        else if (input.tagName === "SELECT") {
+          if (n === "bmi") val = ds.bmi;
+          else val = ds.jaNeeDefault;
+        } else {
+          val = `Test ${name}`;
+        }
+
+        input.value = val;
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+
+      const timeRows = document.querySelectorAll(".time-row");
+      for (const row of timeRows) {
+        const day = row.querySelector("[data-role='daytime']");
+        const avg = row.querySelector("[data-role='average']");
+        if (day) day.value = ds.daytime;
+        if (avg) avg.value = ds.average;
+      }
+
+      const specialToggle = document.getElementById("specialFeaturesToggle");
+      if (specialToggle) {
+        specialToggle.value = ds.specialFeatures;
+        specialToggle.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+
+      const orgInput = organizationsRows.querySelector("[data-role='organization-name']");
+      if (orgInput) {
+        orgInput.value = ds.organisatie;
+        orgInput.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+
+      const synSelects = syntheticContainer.querySelectorAll("select[data-synthetic-id]");
+      for (const sel of synSelects) {
+        sel.value = ds.syntheticDefault;
+        sel.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+
+      return ds;
+    }
+
+    async function ensureAutoTestLogo() {
+      if (!state.scan || !state.scan.hasLogo) return;
+      if (logoFileInput.files && logoFileInput.files[0]) return;
+      try {
+        const res = await fetch("./test-logo.png", { cache: "no-store" });
+        if (!res.ok) return;
+        const blob = await res.blob();
+        const file = new File([blob], "test-logo.png", { type: "image/png" });
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        logoFileInput.files = dt.files;
+      } catch (_) {}
+    }
+
+    async function maybeRunAutoTest() {
+      if (!state.autoTest.requested || state.autoTest.ran || !state.scan) return;
+      state.autoTest.ran = true;
+      const ds = applyAutoTestDataset(state.scan, state.autoTest.dataset);
+      await ensureAutoTestLogo();
+      setStatus(`Auto-test dataset '${state.autoTest.dataset}' ingevuld.`, "warn");
+      if (state.autoTest.autogen || ds.autogen) {
+        await generateReport();
+      }
+    }
+
+    function isSpecialFeaturePlaceholder(name) {
+      return /^bijzondere kenmerk\s+\d+$/i.test(normalizeLookupKey(name));
+    }
+
+    function isOrganizationPlaceholder(name) {
+      return /^naam organisatie\s+\d+$/i.test(normalizeLookupKey(name));
+    }
+
+    function isVerzamelplaatsPlaceholder(name) {
+      return normalizeLookupKey(name) === "naam verzamelplaats";
+    }
+
+    function isInterOrgAlarmPlaceholder(name) {
+      const lower = normalizeLookupKey(name);
+      if (!lower) return false;
+      if (lower.includes("alarmeringsprocedure meerdere gebouwen")) return true;
+      return (
+        (lower.includes("hoe alarmeer") || lower.includes("hoe alarmeer") || lower.includes("alarmer")) &&
+        lower.includes("organisaties") &&
+        lower.includes("calamiteit")
+      );
+    }
+
+    function isBmiCouplingSyntheticText(text) {
+      const lower = String(text || "").trim().toLowerCase();
+      return lower.includes("bmi") && lower.includes("met elkaar gekoppeld");
+    }
+
+    function mapSyntheticLabel(text) {
+      const lower = String(text || "").trim().toLowerCase();
+      if (
+        lower.includes("brandwerende deuren aanwezig") &&
+        lower.includes("gedeeltelijke of gefaseerde ontruiming")
+      ) {
+        return "Er zijn brandwerende deuren/scheidingen aanwezig.";
+      }
+      if (
+        lower.includes("gebouw is verzamelgebouw") &&
+        lower.includes("bhv-organisatie")
+      ) {
+        return "Het gebouw is een verzamelgebouw.";
+      }
+      if (
+        lower.includes("bmi") &&
+        lower.includes("met elkaar gekoppeld")
+      ) {
+        return "Er staan meerdere gebhouwen tegen elkaar, ieder gebouw heeft een aparte ingang en er is geen doorgang.";
+      }
+      return text;
+    }
+
+    function isBmiTogglePlaceholder(name) {
+      return normalizeLookupKey(name) === "bmi";
+    }
+
+    function isBmiDependentPlaceholder(name) {
+      const lower = normalizeLookupKey(name);
+      return lower.includes("bmi merk") || lower.includes("bmi type") || (lower.includes("naam beheer") && lower.includes("bmi"));
+    }
+
+    function buildScanModel(documentXml, headerMap) {
+      const documentParagraphs = parseParagraphs(documentXml);
+      const allParts = [{ partPath: "word/document.xml", paragraphs: documentParagraphs }];
+      for (const [path, xml] of Object.entries(headerMap)) {
+        allParts.push({ partPath: path, paragraphs: parseParagraphs(xml) });
+      }
+
+      const placeholderMap = new Map();
+      let hasLogo = false;
+      let legacyTagHits = 0;
+      let contentControlHits = 0;
+
+      const headingRules = [
+        { re: /verslag ontruimingsoefening/i, label: "Verslag" },
+        { re: /ontruimingsplan/i, label: "Ontruimingsplan" },
+        { re: /aanwezige hulpmiddelen|communicatiemiddelen/i, label: "Hulpmiddelen" },
+        { re: /verantwoordingsinformatie|overzicht bhv-ers/i, label: "BHV-overzicht" },
+        { re: /technische installaties/i, label: "Technische installaties" },
+        { re: /werking van de brandveiligheidsinstallaties/i, label: "Werking brandveiligheidsinstallaties" },
+        { re: /andere relevante technische/i, label: "Overige voorzieningen" },
+        { re: /verantwoordelijken voor het dagelijks beheer/i, label: "Beheer installaties" },
+        { re: /grote gebouwen en specifieke situaties/i, label: "Specifieke situaties" },
+        { re: /scenario|2 tips|2 tops/i, label: "Scenario en evaluatie" }
+      ];
+
+      function forcedGroupForPlaceholder(name) {
+        const n = normalizeLookupKey(name);
+
+        if (n.includes("naam beheer") && n.includes("bmi")) {
+          return "Technische installaties";
+        }
+
+        if ([
+          "naam gebouw",
+          "naam bedrijf of gebouw",
+          "adres",
+          "postcode",
+          "plaats",
+          "telefoon",
+          "e-mail",
+          "naam hoogste manager",
+          "functienaam hoogste manager",
+          "naam hoofd bhv",
+          "naam ploegleider bhv",
+          "namen bhv-ers"
+        ].includes(n)) {
+          return GROUP_PRIMARY;
+        }
+
+        return "";
+      }
+
+      function groupFromText(text, currentGroup) {
+        const clean = String(text || "").trim();
+        if (!clean) return currentGroup;
+        for (const rule of headingRules) {
+          if (rule.re.test(clean)) return rule.label;
+        }
+        return currentGroup;
+      }
+
+      let orderCounter = 0;
+      let currentGroup = "Algemeen";
+
+      for (const p of documentParagraphs) {
+        currentGroup = groupFromText(p.text, currentGroup);
+        for (const tag of p.tags) {
+          if (tag.name.toLowerCase() === "logo" && tag.isDouble) {
+            hasLogo = true;
+            continue;
+          }
+          legacyTagHits += 1;
+          const key = tag.name;
+          if (!placeholderMap.has(key)) {
+              const forced = forcedGroupForPlaceholder(key);
+            placeholderMap.set(key, {
+              name: key,
+              appearsInNonStar: false,
+              appearsInStar: false,
+                group: forced || currentGroup,
+              order: orderCounter++
+            });
+          }
+          const ref = placeholderMap.get(key);
+          if (p.hasStar) ref.appearsInStar = true;
+          else ref.appearsInNonStar = true;
+        }
+      }
+
+      for (const part of allParts) {
+        if (part.partPath === "word/document.xml") continue;
+        for (const p of part.paragraphs) {
+          for (const tag of p.tags) {
+            if (tag.name.toLowerCase() === "logo" && tag.isDouble) {
+              hasLogo = true;
+              continue;
+            }
+            legacyTagHits += 1;
+            const key = tag.name;
+            if (!placeholderMap.has(key)) {
+              placeholderMap.set(key, {
+                name: key,
+                appearsInNonStar: false,
+                appearsInStar: false,
+                group: "Koptekst",
+                order: orderCounter++
+              });
+            }
+            const ref = placeholderMap.get(key);
+            if (p.hasStar) ref.appearsInStar = true;
+            else ref.appearsInNonStar = true;
+          }
+        }
+      }
+
+      const controlParts = [{ partPath: "word/document.xml", xml: documentXml }];
+      for (const [partPath, xml] of Object.entries(headerMap)) {
+        controlParts.push({ partPath, xml });
+      }
+      for (const part of controlParts) {
+        const controls = extractContentControls(part.xml, part.partPath);
+        for (const ctrl of controls) {
+          const key = ctrl.name;
+          if (normalizeLookupKey(key) !== "logo") {
+            contentControlHits += 1;
+          }
+          if (!placeholderMap.has(key)) {
+            const forced = forcedGroupForPlaceholder(key);
+            placeholderMap.set(key, {
+              name: key,
+              label: ctrl.label,
+              appearsInNonStar: false,
+              appearsInStar: false,
+              group: forced || (part.partPath === "word/document.xml" ? "Algemeen" : "Koptekst"),
+              order: orderCounter++
+            });
+          } else {
+            const ref = placeholderMap.get(key);
+            if (!ref.label && ctrl.label) ref.label = ctrl.label;
+          }
+          if (String(key || "").toLowerCase() === "logo") hasLogo = true;
+        }
+      }
+
+      const timeBlocks = [];
+      const timeCandidates = documentParagraphs.map((p, idx) => {
+        const lower = p.text.toLowerCase();
+        const isTime = lower.includes("<dagen en tijdstip>") && lower.includes("<gemiddeld aantal personen>");
+        return { idx, isTime };
+      });
+
+      let cursor = 0;
+      while (cursor < timeCandidates.length) {
+        if (!timeCandidates[cursor].isTime) {
+          cursor++;
+          continue;
+        }
+        let end = cursor;
+        while (end + 1 < timeCandidates.length && timeCandidates[end + 1].isTime && timeCandidates[end + 1].idx === timeCandidates[end].idx + 1) {
+          end++;
+        }
+        const indices = [];
+        for (let i = cursor; i <= end; i++) indices.push(timeCandidates[i].idx);
+        const blockId = `time-block-${timeBlocks.length + 1}`;
+        const blockIndex = timeBlocks.length + 1;
+        let blockTitle = `Tijdstipblok ${blockIndex}`;
+        if (blockIndex === 1) blockTitle = TIMEBLOCK_TITLE_1;
+        if (blockIndex === 2) blockTitle = TIMEBLOCK_TITLE_2;
+        timeBlocks.push({
+          id: blockId,
+          title: blockTitle,
+          paragraphIndices: indices,
+          maxRows: 10,
+          templateRows: indices.length
+        });
+        cursor = end + 1;
+      }
+
+      const syntheticStars = [];
+      for (const p of documentParagraphs) {
+        if (!p.hasStar) continue;
+        if (p.tags.length) continue;
+        if (p.hasDoubleStarMarker) continue;
+        const cleaned = p.text.replace(/\(\*\)/g, "").trim();
+        if (!cleaned) continue;
+        syntheticStars.push({
+          id: `starline-${p.idx}`,
+          paragraphIndex: p.idx,
+          label: mapSyntheticLabel(cleaned),
+          sourceText: cleaned,
+          kind: isBmiCouplingSyntheticText(cleaned) ? "bmi-coupling" : "default"
+        });
+      }
+
+      const allPlaceholders = [...placeholderMap.values()]
+        .filter(p => !["dagen en tijdstip", "gemiddeld aantal personen"].includes(normalizeLookupKey(p.name)))
+        .filter(p => !IGNORED_PLACEHOLDERS.has(normalizeLookupKey(p.name)))
+        .sort((a, b) => a.order - b.order);
+
+      const specialFeaturePlaceholders = allPlaceholders
+        .filter(p => isSpecialFeaturePlaceholder(p.name))
+        .sort((a, b) => {
+          const na = Number((a.name.match(/(\d+)$/) || ["", "0"])[1]);
+          const nb = Number((b.name.match(/(\d+)$/) || ["", "0"])[1]);
+          return na - nb;
+        });
+
+      const organizationPlaceholders = allPlaceholders
+        .filter(p => isOrganizationPlaceholder(p.name))
+        .sort((a, b) => {
+          const na = Number((a.name.match(/(\d+)$/) || ["", "0"])[1]);
+          const nb = Number((b.name.match(/(\d+)$/) || ["", "0"])[1]);
+          return na - nb;
+        });
+
+      const interOrgAlarmPlaceholders = allPlaceholders
+        .filter(p => isInterOrgAlarmPlaceholder(p.name))
+        .sort((a, b) => a.order - b.order);
+
+      const placeholders = allPlaceholders
+        .filter(p => !isSpecialFeaturePlaceholder(p.name))
+        .filter(p => !isOrganizationPlaceholder(p.name))
+        .filter(p => !isInterOrgAlarmPlaceholder(p.name));
+
+      const usesLegacyTextPlaceholders = legacyTagHits > 0;
+      const usesContentControlTags = contentControlHits > 0;
+      const contentControlOnly = usesContentControlTags && !usesLegacyTextPlaceholders;
+
+      return {
+        placeholders,
+        specialFeaturePlaceholders,
+        organizationPlaceholders,
+        interOrgAlarmPlaceholders,
+        hasLogo,
+        usesLegacyTextPlaceholders,
+        usesContentControlTags,
+        contentControlOnly,
+        timeBlocks,
+        syntheticStars,
+        headerPaths: Object.keys(headerMap)
+      };
+    }
+
+    function clearChildren(el) {
+      while (el.firstChild) el.removeChild(el.firstChild);
+    }
+
+    function renderPlaceholderInputs(scanModel) {
+      clearChildren(placeholdersContainer);
+      if (!scanModel.placeholders.length) {
+        const p = document.createElement("p");
+        p.className = "hint";
+        p.textContent = "Geen placeholders gevonden.";
+        placeholdersContainer.appendChild(p);
+        return;
+      }
+
+      const groups = [];
+      const groupMap = new Map();
+      for (const ph of scanModel.placeholders) {
+        const groupName = ph.group || "Algemeen";
+        if (!groupMap.has(groupName)) {
+          const arr = [];
+          groupMap.set(groupName, arr);
+          groups.push({ name: groupName, items: arr });
+        }
+        groupMap.get(groupName).push(ph);
+      }
+
+      const technicalOrder = [
+        "bmi",
+        "bmi merk",
+        "bmi type",
+        "naam beheerder bmi",
+        "sprinklerinstallatie"
+      ];
+
+      function orderGroupItems(groupName, items) {
+        if (String(groupName || "").toLowerCase() !== "technische installaties") return items;
+        const rank = new Map(technicalOrder.map((name, idx) => [name, idx]));
+        return [...items].sort((a, b) => {
+          const anRaw = String(a.name || "").toLowerCase();
+          const bnRaw = String(b.name || "").toLowerCase();
+          const an = (anRaw.includes("naam beheer") && anRaw.includes("bmi")) ? "naam beheerder bmi" : anRaw;
+          const bn = (bnRaw.includes("naam beheer") && bnRaw.includes("bmi")) ? "naam beheerder bmi" : bnRaw;
+          const ai = rank.has(an) ? rank.get(an) : Number.MAX_SAFE_INTEGER;
+          const bi = rank.has(bn) ? rank.get(bn) : Number.MAX_SAFE_INTEGER;
+          if (ai !== bi) return ai - bi;
+          return a.order - b.order;
+        });
+      }
+
+      const preferredOrder = [GROUP_PRIMARY];
+      groups.sort((a, b) => {
+        const ai = preferredOrder.indexOf(a.name);
+        const bi = preferredOrder.indexOf(b.name);
+        const aPinned = ai !== -1;
+        const bPinned = bi !== -1;
+        if (aPinned && bPinned) return ai - bi;
+        if (aPinned) return -1;
+        if (bPinned) return 1;
+        return 0;
+      });
+
+      let insertedDynamicBlocks = false;
+
+      for (const group of groups) {
+        const block = document.createElement("div");
+        block.className = "group-block";
+
+        const title = document.createElement("h4");
+        title.className = "group-title";
+        title.textContent = group.name;
+
+        const grid = document.createElement("div");
+        grid.className = "placeholder-grid";
+
+        const groupItems = orderGroupItems(group.name, group.items);
+        const verzamelplaatsItems = [];
+        for (const ph of groupItems) {
+        if (isVerzamelplaatsPlaceholder(ph.name)) {
+          verzamelplaatsItems.push(ph);
+          continue;
+        }
+        if (normalizeLookupKey(ph.name) === "datum rapport") {
+          continue;
+        }
+        const field = document.createElement("div");
+        field.className = "field";
+
+        const label = document.createElement("label");
+        label.htmlFor = `ph-${sanitizeForId(ph.name)}`;
+        label.textContent = getDisplayLabel(ph);
+        const required = ph.appearsInNonStar;
+        if (required) label.classList.add("required");
+
+        let input;
+        const lower = normalizeLookupKey(`${ph.name} ${ph.label || ""}`);
+        const isBmiToggle = isBmiTogglePlaceholder(ph.name);
+        const isBmiDependent = isBmiDependentPlaceholder(ph.name);
+        if (isBmiToggle) {
+          input = document.createElement("select");
+          input.innerHTML = `
+            <option value="">kies</option>
+            <option value="ja">ja</option>
+            <option value="nee">nee</option>
+          `;
+        } else if (isBooleanPlaceholder(ph.name)) {
+          input = document.createElement("select");
+          input.innerHTML = `
+            <option value="">-- kies --</option>
+            <option value="ja">ja</option>
+            <option value="nee">nee</option>
+          `;
+        } else if (lower.includes("e-mail") || lower.includes("email")) {
+          input = document.createElement("input");
+          input.type = "email";
+        } else if (lower.includes("namen bhv-ers")) {
+          input = document.createElement("input");
+          input.type = "text";
+          input.placeholder = "Voornaam Achternaam, Voornaam Achternaam";
+        } else if (
+          lower.includes("naam hoogste manager") ||
+          lower.includes("naam hoofd bhv") ||
+          lower.includes("naam ploegleider bhv") ||
+          (lower.includes("naam beheer") && lower.includes("bmi"))
+        ) {
+          input = document.createElement("input");
+          input.type = "text";
+          if (!lower.includes("functienaam hoogste manager")) {
+            input.placeholder = "Voornaam Achternaam";
+          }
+        } else {
+          input = document.createElement("input");
+          input.type = "text";
+        }
+
+        input.id = `ph-${sanitizeForId(ph.name)}`;
+        input.dataset.placeholderName = ph.name;
+        input.dataset.requiredBase = required ? "1" : "0";
+        input.dataset.required = required ? "1" : "0";
+        if (isBmiToggle) input.dataset.bmiToggle = "1";
+        if (isBmiDependent) {
+          input.dataset.bmiDependent = "1";
+          field.classList.add("bmi-dependent");
+        }
+
+        field.appendChild(label);
+        field.appendChild(input);
+
+        if (lower.includes("namen bhv-ers")) {
+          const hint = document.createElement("p");
+          hint.className = "hint";
+          hint.textContent = "Gebruik komma + spatie tussen namen. Elke naam moet voornaam en achternaam hebben.";
+          field.appendChild(hint);
+        }
+
+        grid.appendChild(field);
+        }
+
+        if (grid.childElementCount) {
+          block.appendChild(title);
+          block.appendChild(grid);
+          placeholdersContainer.appendChild(block);
+        }
+
+        if (verzamelplaatsItems.length) {
+          const vzBlock = document.createElement("div");
+          vzBlock.className = "group-block";
+
+          const vzTitle = document.createElement("h4");
+          vzTitle.className = "group-title";
+          vzTitle.textContent = "Verzamelplaats";
+
+          const vzGrid = document.createElement("div");
+          vzGrid.className = "placeholder-grid";
+
+          for (const ph of verzamelplaatsItems) {
+            const field = document.createElement("div");
+            field.className = "field";
+
+            const label = document.createElement("label");
+            label.htmlFor = `ph-${sanitizeForId(ph.name)}`;
+            label.textContent = getDisplayLabel(ph);
+            const required = ph.appearsInNonStar;
+            if (required) label.classList.add("required");
+
+            const input = document.createElement("input");
+            input.type = "text";
+            input.id = `ph-${sanitizeForId(ph.name)}`;
+            input.dataset.placeholderName = ph.name;
+            input.dataset.requiredBase = required ? "1" : "0";
+            input.dataset.required = required ? "1" : "0";
+
+            field.appendChild(label);
+            field.appendChild(input);
+            vzGrid.appendChild(field);
+          }
+
+          vzBlock.appendChild(vzTitle);
+          vzBlock.appendChild(vzGrid);
+          placeholdersContainer.appendChild(vzBlock);
+        }
+
+        if (!insertedDynamicBlocks && group.name === GROUP_PRIMARY) {
+          placeholdersContainer.appendChild(timeBlocksSection);
+          placeholdersContainer.appendChild(syntheticSection);
+          placeholdersContainer.appendChild(specialFeaturesSection);
+          placeholdersContainer.appendChild(organizationsSection);
+          insertedDynamicBlocks = true;
+        }
+      }
+
+      if (!insertedDynamicBlocks) {
+        placeholdersContainer.appendChild(timeBlocksSection);
+        placeholdersContainer.appendChild(syntheticSection);
+        placeholdersContainer.appendChild(specialFeaturesSection);
+        placeholdersContainer.appendChild(organizationsSection);
+      }
+
+      // Keep this block directly above the final action button.
+      placeholdersContainer.appendChild(syntheticSection);
+
+      bindBmiVisibility();
+    }
+
+    function updateBmiDependentVisibility() {
+      const bmiSelect = placeholdersContainer.querySelector("[data-bmi-toggle='1']");
+      const showBmiDetails = !!bmiSelect && String(bmiSelect.value || "").toLowerCase() === "ja";
+      const dependentFields = placeholdersContainer.querySelectorAll(".bmi-dependent");
+      for (const field of dependentFields) {
+        field.style.display = showBmiDetails ? "" : "none";
+        const input = field.querySelector("[data-placeholder-name]");
+        if (!input) continue;
+        const baseRequired = input.dataset.requiredBase === "1";
+        input.dataset.required = showBmiDetails && baseRequired ? "1" : "0";
+        if (!showBmiDetails) input.value = "";
+      }
+    }
+
+    function bindBmiVisibility() {
+      const bmiSelect = placeholdersContainer.querySelector("[data-bmi-toggle='1']");
+      if (!bmiSelect) {
+        updateBmiDependentVisibility();
+        return;
+      }
+      bmiSelect.addEventListener("change", updateBmiDependentVisibility);
+      updateBmiDependentVisibility();
+    }
+
+    function createTimeRow(blockId, rowData) {
+      const row = document.createElement("div");
+      row.className = "time-row";
+
+      const day = document.createElement("input");
+      day.type = "text";
+      day.placeholder = "Bijv. maandag t/m vrijdag van 8.00-17.00";
+      day.dataset.role = "daytime";
+      day.value = (rowData && rowData.daytime) || "";
+
+      const avg = document.createElement("input");
+      avg.type = "text";
+      avg.placeholder = "Gemiddeld aantal personen";
+      avg.dataset.role = "average";
+      avg.value = (rowData && rowData.average) || "";
+
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "btn btn-danger";
+      removeBtn.textContent = "Verwijder";
+      removeBtn.addEventListener("click", () => {
+        const rows = document.querySelectorAll(`.time-row[data-block-id="${blockId}"]`);
+        if (rows.length <= 1) {
+          setStatus("Minimaal 1 regel per tijdstipblok behouden.", "warn");
+          return;
+        }
+        row.remove();
+      });
+
+      row.dataset.blockId = blockId;
+      row.appendChild(day);
+      row.appendChild(avg);
+      row.appendChild(removeBtn);
+      return row;
+    }
+
+    function renderTimeBlocks(scanModel) {
+      clearChildren(timeBlocksContainer);
+      if (!scanModel.timeBlocks.length) {
+        timeBlocksSection.style.display = "none";
+        return;
+      }
+      timeBlocksSection.style.display = "block";
+
+      for (const block of scanModel.timeBlocks) {
+        const card = document.createElement("div");
+        card.className = "time-block";
+        card.dataset.blockId = block.id;
+
+        const title = document.createElement("h3");
+        title.textContent = block.title;
+
+        const rows = document.createElement("div");
+        rows.className = "time-rows";
+        rows.id = `rows-${block.id}`;
+        rows.appendChild(createTimeRow(block.id));
+
+        const addBtn = document.createElement("button");
+        addBtn.type = "button";
+        addBtn.className = "btn btn-secondary";
+        addBtn.textContent = "Regel toevoegen";
+        addBtn.addEventListener("click", () => {
+          const current = rows.querySelectorAll(`.time-row[data-block-id="${block.id}"]`).length;
+          if (current >= block.maxRows) {
+            setStatus(`Maximum ${block.maxRows} regels bereikt voor ${block.title}.`, "warn");
+            return;
+          }
+          rows.appendChild(createTimeRow(block.id));
+        });
+
+        const hint = document.createElement("p");
+        hint.className = "hint";
+        hint.textContent = "Bij meer regels dan in de template worden extra regels samengevoegd in de laatste beschikbare regel.";
+
+        card.appendChild(title);
+        card.appendChild(hint);
+        card.appendChild(rows);
+        card.appendChild(addBtn);
+        timeBlocksContainer.appendChild(card);
+      }
+    }
+
+    function renderSyntheticStars(scanModel) {
+      clearChildren(syntheticContainer);
+      syntheticSection.style.display = "none";
+    }
+
+    function createSpecialFeatureRow(value) {
+      const row = document.createElement("div");
+      row.className = "time-row";
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.placeholder = "Bijzonder kenmerk";
+      input.value = value || "";
+      input.dataset.role = "special-feature";
+
+      const spacer = document.createElement("div");
+
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "btn btn-danger";
+      removeBtn.textContent = "Verwijder";
+      removeBtn.addEventListener("click", () => {
+        const rows = specialFeaturesRows.querySelectorAll("[data-role='special-feature']");
+        if (rows.length <= 1) {
+          setStatus("Minimaal 1 kenmerkregel behouden als het antwoord op Ja staat.", "warn");
+          return;
+        }
+        row.remove();
+      });
+
+      row.appendChild(input);
+      row.appendChild(spacer);
+      row.appendChild(removeBtn);
+      return row;
+    }
+
+    function renderSpecialFeatures(scanModel) {
+      const hasSpecial = (scanModel.specialFeaturePlaceholders || []).length > 0;
+      if (!hasSpecial) {
+        specialFeaturesSection.style.display = "none";
+        clearChildren(specialFeaturesRows);
+        return;
+      }
+
+      specialFeaturesSection.style.display = "block";
+      specialFeaturesToggle.value = "nee";
+      specialFeaturesRowsWrap.style.display = "none";
+      clearChildren(specialFeaturesRows);
+
+      specialFeaturesToggle.onchange = () => {
+        const isYes = specialFeaturesToggle.value === "ja";
+        specialFeaturesRowsWrap.style.display = isYes ? "block" : "none";
+        if (isYes && !specialFeaturesRows.childElementCount) {
+          specialFeaturesRows.appendChild(createSpecialFeatureRow());
+        }
+      };
+
+      specialFeaturesAddBtn.onclick = () => {
+        const max = scanModel.specialFeaturePlaceholders.length;
+        const current = specialFeaturesRows.querySelectorAll("[data-role='special-feature']").length;
+        if (current >= max) {
+          setStatus(`Maximaal ${max} kenmerken mogelijk in dit document.`, "warn");
+          return;
+        }
+        specialFeaturesRows.appendChild(createSpecialFeatureRow());
+      };
+    }
+
+    function readSpecialFeatureValues() {
+      const isYes = specialFeaturesToggle.value === "ja";
+      if (!isYes) return [];
+      return [...specialFeaturesRows.querySelectorAll("[data-role='special-feature']")]
+        .map(i => i.value.trim())
+        .filter(Boolean);
+    }
+
+    function createOrganizationRow(value, onChanged) {
+      const row = document.createElement("div");
+      row.className = "time-row";
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.placeholder = "Naam organisatie";
+      input.value = value || "";
+      input.dataset.role = "organization-name";
+      input.addEventListener("input", () => {
+        if (onChanged) onChanged();
+      });
+
+      const spacer = document.createElement("div");
+
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "btn btn-danger";
+      removeBtn.textContent = "Verwijder";
+      removeBtn.addEventListener("click", () => {
+        const rows = organizationsRows.querySelectorAll("[data-role='organization-name']");
+        if (rows.length <= 1) {
+          setStatus("Minimaal 1 organisatie behouden.", "warn");
+          return;
+        }
+        row.remove();
+        if (onChanged) onChanged();
+      });
+
+      row.appendChild(input);
+      row.appendChild(spacer);
+      row.appendChild(removeBtn);
+      return row;
+    }
+
+    function renderOrganizations(scanModel) {
+      const orgPlaceholders = scanModel.organizationPlaceholders || [];
+      if (!orgPlaceholders.length) {
+        organizationsSection.style.display = "none";
+        clearChildren(organizationsRows);
+        return;
+      }
+
+      const refreshAddState = () => {
+        const rows = [...organizationsRows.querySelectorAll("[data-role='organization-name']")];
+        const current = rows.length;
+        const lastValue = rows.length ? String(rows[rows.length - 1].value || "").trim() : "";
+        organizationsAddBtn.disabled = current >= orgPlaceholders.length || !lastValue;
+      };
+
+      organizationsSection.style.display = "block";
+      clearChildren(organizationsRows);
+      organizationsRows.appendChild(createOrganizationRow("", refreshAddState));
+      refreshAddState();
+
+      organizationsAddBtn.onclick = () => {
+        const max = orgPlaceholders.length;
+        const current = organizationsRows.querySelectorAll("[data-role='organization-name']").length;
+        if (current >= max) {
+          setStatus(`Maximaal ${max} organisaties mogelijk in dit document.`, "warn");
+          return;
+        }
+        organizationsRows.appendChild(createOrganizationRow("", refreshAddState));
+        refreshAddState();
+      };
+    }
+
+    function readOrganizationValues() {
+      return [...organizationsRows.querySelectorAll("[data-role='organization-name']")]
+        .map(i => i.value.trim())
+        .filter(Boolean);
+    }
+
+    function readPlaceholderValues() {
+      const values = {};
+      const inputs = placeholdersContainer.querySelectorAll("[data-placeholder-name]");
+      for (const input of inputs) {
+        values[input.dataset.placeholderName] = (input.value || "").trim();
+      }
+      return values;
+    }
+
+    function readSyntheticValues() {
+      return {};
+    }
+
+    function readBmiCouplingDetails() {
+      return {};
+    }
+
+    function readTimeBlockValues(scanModel) {
+      const out = {};
+      for (const block of scanModel.timeBlocks) {
+        const rows = [...document.querySelectorAll(`.time-row[data-block-id="${block.id}"]`)];
+        out[block.id] = rows.map(row => {
+          const day = row.querySelector("[data-role='daytime']").value.trim();
+          const avg = row.querySelector("[data-role='average']").value.trim();
+          return { daytime: day, average: avg };
+        }).filter(r => r.daytime || r.average);
+      }
+      return out;
+    }
+
+    function validateBhvNames(value) {
+      const raw = (value || "").trim();
+      if (!raw) return { ok: false, message: "Namen BHV-ers is leeg." };
+      if (raw.includes(",") && !raw.includes(", ")) {
+        return { ok: false, message: "Gebruik komma + spatie tussen BHV-namen." };
+      }
+      const names = raw.split(",").map(s => s.trim()).filter(Boolean);
+      if (!names.length) return { ok: false, message: "Geen geldige BHV-namen gevonden." };
+      for (const nm of names) {
+        const parts = nm.split(/\s+/).filter(Boolean);
+        if (parts.length < 2) {
+          return { ok: false, message: `Naam '${nm}' is ongeldig. Gebruik minimaal voornaam en achternaam.` };
+        }
+      }
+      return { ok: true };
+    }
+
+    function validateInputs(scanModel) {
+      if (!state.templateBuffer) return { ok: false, message: "Kies en scan eerst een template." };
+
+      const phValues = readPlaceholderValues();
+      const reportDate = yymmdd(new Date());
+      phValues["Datum rapport"] = reportDate;
+      phValues["datum rapport"] = reportDate;
+      phValues["datum_rapport"] = reportDate;
+      phValues["datum"] = reportDate;
+      const timeValues = readTimeBlockValues(scanModel);
+      const specialFeatureValues = readSpecialFeatureValues();
+      const organizationValues = readOrganizationValues();
+      const syntheticValues = readSyntheticValues();
+      const bmiCouplingDetails = readBmiCouplingDetails();
+
+      const timeRows = Object.values(timeValues).flat().filter(row => row && (row.daytime || row.average));
+      if (timeRows.length) {
+        const daysText = timeRows.map(row => row.daytime || "").filter(Boolean).join("\n");
+        const averagesText = timeRows.map(row => row.average || "").filter(Boolean).join("\n");
+        phValues["dagen en tijdstip"] = daysText;
+        phValues["dagen_en_tijdstip"] = daysText;
+        phValues["gemiddeld aantal personen"] = averagesText;
+        phValues["gemiddeld_aantal_personen"] = averagesText;
+      }
+
+      if ((scanModel.specialFeaturePlaceholders || []).length) {
+        const featureNames = scanModel.specialFeaturePlaceholders.map(p => p.name);
+        if (specialFeaturesToggle.value === "ja") {
+          if (!specialFeatureValues.length) {
+            return { ok: false, message: "Bijzondere kenmerken staat op Ja, maar er is nog geen kenmerk ingevuld." };
+          }
+          featureNames.forEach((name, idx) => {
+            phValues[name] = specialFeatureValues[idx] || "";
+          });
+        } else {
+          featureNames.forEach(name => {
+            phValues[name] = "";
+          });
+        }
+      }
+
+      if ((scanModel.organizationPlaceholders || []).length) {
+        const orgNames = scanModel.organizationPlaceholders.map(p => p.name);
+        if (!organizationValues.length) {
+          return { ok: false, message: "Vul minimaal 1 organisatie in." };
+        }
+        orgNames.forEach((name, idx) => {
+          phValues[name] = organizationValues[idx] || "";
+        });
+      }
+
+      const alarmTargets = scanModel.interOrgAlarmPlaceholders || [];
+      alarmTargets.forEach(p => {
+        phValues[p.name] = "";
+      });
+
+      const inputs = placeholdersContainer.querySelectorAll("[data-placeholder-name]");
+      for (const input of inputs) {
+        if (input.dataset.required !== "1") continue;
+        if (!String(input.value || "").trim()) {
+          input.focus();
+          return { ok: false, message: `Verplicht veld ontbreekt: <${input.dataset.placeholderName}>` };
+        }
+      }
+
+      if (scanModel.hasLogo && (!logoFileInput.files || !logoFileInput.files[0])) {
+        logoFileInput.focus();
+        return { ok: false, message: "Logo ontbreekt. Kies een logo-bestand voor <<Logo>>." };
+      }
+
+      for (const block of scanModel.timeBlocks) {
+        const rows = timeValues[block.id] || [];
+        if (!rows.length) {
+          return { ok: false, message: `${block.title}: minimaal 1 regel invullen.` };
+        }
+        if (!rows[0].daytime || !rows[0].average) {
+          return { ok: false, message: `${block.title}: regel 1 moet zowel dagen/tijdstip als gemiddeld aantal personen hebben.` };
+        }
+      }
+
+      if (Object.prototype.hasOwnProperty.call(phValues, "Namen BHV-ers")) {
+        const check = validateBhvNames(phValues["Namen BHV-ers"]);
+        if (!check.ok) return { ok: false, message: check.message };
+      }
+
+      return { ok: true, phValues, timeValues, syntheticValues, bmiCouplingDetails };
+    }
+
+    function replaceTagInParagraphXml(paragraphXml, rawTag, value) {
+      const encodedRaw = xmlEscape(rawTag);
+      const encodedValue = xmlEscape(value);
+      const re = new RegExp(escapeRegex(encodedRaw), "g");
+      const replaced = paragraphXml.replace(re, encodedValue);
+      if (replaced !== paragraphXml) return replaced;
+
+      const hasComplexStructure = /<w:txbxContent\b|<w:sdt\b|<w:fld/i.test(paragraphXml);
+      if (hasComplexStructure) return paragraphXml;
+
+      const plain = plainTextFromParagraph(paragraphXml);
+      if (!plain.includes(rawTag)) return paragraphXml;
+      const updatedPlain = plain.split(rawTag).join(String(value || ""));
+      return overwriteParagraphText(paragraphXml, updatedPlain);
+    }
+
+    function stripStarMarkers(paragraphXml) {
+      return paragraphXml.replace(/\(\*\*?\)/g, "").replace(/\s{2,}/g, " ");
+    }
+
+    function overwriteParagraphText(paragraphXml, text) {
+      let written = false;
+      const updated = paragraphXml.replace(/<w:t([^>]*)>[\s\S]*?<\/w:t>/g, (_, attrs) => {
+        if (written) return "";
+        written = true;
+        return `<w:t${attrs}>${xmlEscape(text)}</w:t>`;
+      });
+      return written ? updated : paragraphXml;
+    }
+
+    function isTagApplicable(tagName, valueMap) {
+      return isTruthyPresence(valueMap[tagName]);
+    }
+
+    function applyTimeBlocks(paragraphs, timeBlocks, timeValues) {
+      for (const block of timeBlocks) {
+        const rows = timeValues[block.id] || [];
+        const idxs = block.paragraphIndices;
+        if (!idxs.length) continue;
+
+        const lineTexts = rows.map(r => `${r.daytime}: ${r.average}`);
+        const seqLen = idxs.length;
+
+        for (let i = 0; i < seqLen; i++) {
+          const p = paragraphs[idxs[i]];
+          if (!p) continue;
+
+          if (i >= rows.length) {
+            p.removed = true;
+            continue;
+          }
+
+          let dayValue = rows[i].daytime;
+          let avgValue = rows[i].average;
+
+          if (i === seqLen - 1 && rows.length > seqLen) {
+            const remainder = lineTexts.slice(i).join(" | ");
+            const splitAt = remainder.indexOf(":");
+            if (splitAt > -1) {
+              dayValue = remainder.slice(0, splitAt).trim();
+              avgValue = remainder.slice(splitAt + 1).trim();
+            } else {
+              dayValue = remainder;
+              avgValue = "";
+            }
+          }
+
+          p.xml = replaceTagInParagraphXml(p.xml, "<dagen en tijdstip>", dayValue);
+          p.xml = replaceTagInParagraphXml(p.xml, "<gemiddeld aantal personen>", avgValue);
+          p.xml = stripStarMarkers(p.xml);
+        }
+      }
+    }
+
+    function applySingleStarRules(paragraphs, valueMap, syntheticMap, bmiCouplingDetails) {
+      for (const p of paragraphs) {
+        if (p.removed) continue;
+        if (!p.hasStar) continue;
+        if (p.hasDoubleStarMarker) continue;
+
+        if (!p.tags.length) {
+          p.removed = true;
+          continue;
+        }
+
+        const applicable = p.tags.some(tag => isTagApplicable(tag.name, valueMap));
+        if (!applicable) {
+          p.removed = true;
+          continue;
+        }
+        p.xml = stripStarMarkers(p.xml);
+      }
+    }
+
+    function applyIgnoredPlaceholderRules(paragraphs) {
+      for (const p of paragraphs) {
+        if (p.removed) continue;
+        if (!p.tags || !p.tags.length) continue;
+        if (p.tags.some(tag => IGNORED_PLACEHOLDERS.has(String(tag.name || "").toLowerCase()))) {
+          p.removed = true;
+        }
+      }
+    }
+
+    function replaceAllTags(paragraphs, valueMap) {
+      const normalizedMap = buildNormalizedValueMap(valueMap);
+      for (const p of paragraphs) {
+        if (p.removed) continue;
+        for (const tag of p.tags) {
+          if (tag.isDouble && tag.name.toLowerCase() === "logo") continue;
+          let v = valueMap[tag.name];
+          if (typeof v === "undefined") {
+            v = normalizedMap.get(normalizeLookupKey(tag.name));
+          }
+          if (typeof v === "undefined" || v === null) v = "";
+          p.xml = replaceTagInParagraphXml(p.xml, tag.raw, v);
+        }
+      }
+    }
+
+    function replaceContentControlsByTagInXml(xml, valueMap) {
+      const normalizedMap = buildNormalizedValueMap(valueMap);
+      const hasOwn = Object.prototype.hasOwnProperty;
+
+      function buildWordTextNodes(value, attrs) {
+        const raw = String(value == null ? "" : value);
+        const lines = raw.replace(/\r\n?/g, "\n").split("\n");
+        const attrText = attrs || "";
+        const nodes = [];
+        for (let i = 0; i < lines.length; i++) {
+          if (i > 0) nodes.push("<w:br/>");
+          nodes.push(`<w:t${attrText}>${xmlEscape(lines[i])}</w:t>`);
+        }
+        if (!nodes.length) nodes.push(`<w:t${attrText}></w:t>`);
+        return nodes.join("");
+      }
+
+      return String(xml || "").replace(/<w:sdt[\s\S]*?<\/w:sdt>/g, (sdtXml) => {
+        const tagMatch = sdtXml.match(/<w:tag\b[^>]*w:val="([^"]+)"/i);
+        if (!tagMatch) return sdtXml;
+        const tag = tagMatch[1];
+        const normalizedKey = normalizeLookupKey(tag);
+        if (normalizedKey === "logo") return sdtXml;
+        if (/<w:sdt[\s\S]*<w:sdt/i.test(sdtXml)) return sdtXml;
+        const directHit = hasOwn.call(valueMap || {}, tag);
+        const normalizedHit = normalizedMap.has(normalizedKey);
+        if (!directHit && !normalizedHit) return sdtXml;
+
+        let val = directHit ? valueMap[tag] : normalizedMap.get(normalizedKey);
+        if (typeof val === "undefined") {
+          val = normalizedMap.get(normalizedKey);
+        }
+        if (typeof val === "undefined" || val === null) val = "";
+
+        let wrote = false;
+        let out = sdtXml.replace(/<w:t([^>]*)>[\s\S]*?<\/w:t>/g, (_, attrs) => {
+          if (wrote) return "";
+          wrote = true;
+          return buildWordTextNodes(val, attrs);
+        });
+
+        if (!wrote) {
+          out = out.replace(/<w:sdtContent>/, `<w:sdtContent><w:r>${buildWordTextNodes(val, "")}</w:r>`);
+        }
+        return out;
+      });
+    }
+
+    function collectMissingContentControlDiagnostics(partName, xml, valueMap) {
+      const out = [];
+      const normalizedMap = buildNormalizedValueMap(valueMap || {});
+      const hasOwn = Object.prototype.hasOwnProperty;
+      const controls = extractContentControls(xml, partName);
+      for (const ctrl of controls) {
+        const rawName = String(ctrl.name || "").trim();
+        if (!rawName) continue;
+        if (normalizeLookupKey(rawName) === "logo") continue;
+        const nk = normalizeLookupKey(rawName);
+        const exists = hasOwn.call(valueMap || {}, rawName) || normalizedMap.has(nk);
+        if (!exists) {
+          out.push({
+            part: partName,
+            name: rawName,
+            normalized: nk,
+            source: "content-control"
+          });
+        }
+      }
+      return out;
+    }
+
+    function collectUnresolvedTagNames(xml) {
+      const names = [];
+      const paragraphs = parseParagraphs(xml);
+      for (const p of paragraphs) {
+        if (p.removed) continue;
+        for (const tag of p.tags) {
+          if (tag.isDouble && String(tag.name || "").toLowerCase() === "logo") continue;
+          names.push(String(tag.name || "").trim());
+        }
+      }
+      return names;
+    }
+
+    function collectUnresolvedTagDiagnostics(partName, xml) {
+      const out = [];
+      const paragraphs = parseParagraphs(xml);
+      for (const p of paragraphs) {
+        if (p.removed) continue;
+        for (const tag of p.tags) {
+          if (tag.isDouble && String(tag.name || "").toLowerCase() === "logo") continue;
+          out.push({
+            part: partName,
+            name: String(tag.name || "").trim(),
+            normalized: normalizePlaceholderName(tag.name)
+          });
+        }
+      }
+      return out;
+    }
+
+    function getCriticalPlaceholderNamesFromUi() {
+      const names = new Set();
+      const inputs = placeholdersContainer.querySelectorAll("[data-placeholder-name]");
+      for (const input of inputs) {
+        if (String(input.dataset.required || "0") !== "1") continue;
+        names.add(normalizePlaceholderName(input.dataset.placeholderName || ""));
+      }
+      return names;
+    }
+
+    function countUnresolvedTagsInXml(xml) {
+      const paragraphs = parseParagraphs(xml);
+      let unresolved = 0;
+      for (const p of paragraphs) {
+        if (p.removed) continue;
+        for (const tag of p.tags) {
+          if (tag.isDouble && String(tag.name || "").toLowerCase() === "logo") continue;
+          unresolved += 1;
+        }
+      }
+      return unresolved;
+    }
+
+    function validateXmlOrThrow(xml, partName) {
+      const doc = new DOMParser().parseFromString(xml, "application/xml");
+      const parserError = doc.querySelector("parsererror");
+      if (!parserError) return;
+      const raw = (parserError.textContent || "").replace(/\s+/g, " ").trim();
+      let detail = raw || "onbekende parserfout";
+      const lcMatch = raw.match(/line\s+(\d+)\s+at\s+column\s+(\d+)/i);
+      if (lcMatch) {
+        const lineNo = Number(lcMatch[1]);
+        const colNo = Number(lcMatch[2]);
+        const lines = String(xml || "").split("\n");
+        let offset = 0;
+        for (let i = 0; i < lineNo - 1 && i < lines.length; i++) offset += lines[i].length + 1;
+        offset += Math.max(0, colNo - 1);
+        const start = Math.max(0, offset - 180);
+        const end = Math.min(xml.length, offset + 180);
+        const snippet = xml.slice(start, end).replace(/\s+/g, " ");
+        detail += ` | snippet: ${snippet}`;
+      }
+      throw new Error(`Ongeldige XML in ${partName}: ${detail}`);
+    }
+
+    function applySectionDoubleStarRules(paragraphs) {
+      const headingMatchers = [
+        /bijzondere kenmerken/i,
+        /technische installaties/i,
+        /werking van de brandveiligheidsinstallaties/i,
+        /andere relevante technische/i,
+        /verantwoordelijken voor het dagelijks beheer/i,
+        /grote gebouwen en specifieke situaties/i
+      ];
+
+      for (let i = 0; i < paragraphs.length; i++) {
+        const p = paragraphs[i];
+        if (p.removed) continue;
+        if (!STAR_DOUBLE_EXACT.test(p.text.trim())) continue;
+
+        let headingIdx = -1;
+        for (let j = i - 1; j >= 0; j--) {
+          if (paragraphs[j].removed) continue;
+          const txt = paragraphs[j].text.trim();
+          if (!txt) continue;
+          if (headingMatchers.some(re => re.test(txt))) {
+            headingIdx = j;
+            break;
+          }
+          if (STAR_DOUBLE_EXACT.test(txt)) break;
+        }
+
+        if (headingIdx < 0) {
+          p.removed = true;
+          continue;
+        }
+
+        let hasRelevant = false;
+        for (let k = headingIdx + 1; k < i; k++) {
+          const item = paragraphs[k];
+          if (item.removed) continue;
+          if (!item.text.trim()) continue;
+          if (item.hasStar || item.tags.length > 0) {
+            hasRelevant = true;
+            break;
+          }
+        }
+
+        if (!hasRelevant) {
+          for (let k = headingIdx; k <= i; k++) paragraphs[k].removed = true;
+        } else {
+          p.removed = true;
+        }
+      }
+
+      for (const p of paragraphs) {
+        if (p.removed) continue;
+        p.xml = p.xml.replace(/\(\*\*\)/g, "");
+      }
+    }
+
+    function paragraphsToXml(originalXml, paragraphs) {
+      let ix = 0;
+      return originalXml.replace(P_REGEX, () => {
+        const p = paragraphs[ix++];
+        if (!p || p.removed) return "";
+        return p.xml;
+      });
+    }
+
+    function yymmdd(date) {
+      const yy = String(date.getFullYear()).slice(-2);
+      const mm = String(date.getMonth() + 1).padStart(2, "0");
+      const dd = String(date.getDate()).padStart(2, "0");
+      return `${yy}${mm}${dd}`;
+    }
+
+    function safeName(text) {
+      const normalized = (text || "Gebouw")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-zA-Z0-9_-]+/g, "")
+        .slice(0, 48);
+      return normalized || "Gebouw";
+    }
+
+    async function getImageSize(file) {
+      const url = URL.createObjectURL(file);
+      try {
+        const img = await new Promise((resolve, reject) => {
+          const im = new Image();
+          im.onload = () => resolve(im);
+          im.onerror = reject;
+          im.src = url;
+        });
+        return { width: img.naturalWidth, height: img.naturalHeight };
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+    }
+
+    function fitBox(width, height, maxW, maxH) {
+      if (!width || !height) return { width: maxW, height: maxH };
+      const scale = Math.min(maxW / width, maxH / height, 1);
+      return {
+        width: Math.max(1, Math.round(width * scale)),
+        height: Math.max(1, Math.round(height * scale))
+      };
+    }
+
+    function pxToEmu(px) {
+      return Math.round(px * 9525);
+    }
+
+    function ensureContentType(contentTypesXml, ext) {
+      const lower = ext.toLowerCase();
+      if (new RegExp(`<Default\\s+Extension="${escapeRegex(lower)}"`, "i").test(contentTypesXml)) {
+        return contentTypesXml;
+      }
+      const contentType = lower === "png"
+        ? "image/png"
+        : lower === "jpg" || lower === "jpeg"
+          ? "image/jpeg"
+          : lower === "webp"
+            ? "image/webp"
+            : "application/octet-stream";
+      return contentTypesXml.replace("</Types>", `<Default Extension="${lower}" ContentType="${contentType}"/></Types>`);
+    }
+
+    function addImageRelationship(relsXml, targetFileName) {
+      const ids = [...relsXml.matchAll(/Id="rId(\d+)"/g)].map(m => Number(m[1]));
+      const nextId = ids.length ? Math.max(...ids) + 1 : 1;
+      const rid = `rId${nextId}`;
+      const rel = `<Relationship Id="${rid}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${targetFileName}"/>`;
+      return {
+        rid,
+        xml: relsXml.replace("</Relationships>", `${rel}</Relationships>`)
+      };
+    }
+
+    function makeDrawingRun(rid, name, cx, cy, docPrId) {
+      return `<w:r><w:drawing xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:effectExtent l="0" t="0" r="0" b="0"/><wp:docPr id="${docPrId}" name="${xmlEscape(name)}"/><wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="0" name="${xmlEscape(name)}"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="${rid}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`;
+    }
+
+    async function injectLogo(zip, documentXml, headerXmls, logoFile) {
+      if (!logoFile) return { documentXml, headerXmls };
+
+      const extRaw = logoFile.name.split(".").pop() || "png";
+      const ext = extRaw.toLowerCase() === "jpeg" ? "jpg" : extRaw.toLowerCase();
+      const logoBytes = await logoFile.arrayBuffer();
+      const imageSize = await getImageSize(logoFile);
+      const big = fitBox(imageSize.width, imageSize.height, 260, 90);
+      const small = fitBox(imageSize.width, imageSize.height, 110, 34);
+
+      const contentTypesFile = zip.file("[Content_Types].xml");
+      if (contentTypesFile) {
+        const ctXml = await contentTypesFile.async("string");
+        zip.file("[Content_Types].xml", ensureContentType(ctXml, ext));
+      }
+
+      const mediaDocName = `logo-main.${ext}`;
+      const mediaHeaderName = `logo-header.${ext}`;
+      zip.file(`word/media/${mediaDocName}`, logoBytes);
+      zip.file(`word/media/${mediaHeaderName}`, logoBytes);
+
+      let docPrCounter = 7000;
+
+      const docRelsPath = "word/_rels/document.xml.rels";
+      const docRelsFile = zip.file(docRelsPath);
+      if (docRelsFile) {
+        const relsXml = await docRelsFile.async("string");
+        const relResult = addImageRelationship(relsXml, mediaDocName);
+        zip.file(docRelsPath, relResult.xml);
+
+        const paragraphs = parseParagraphs(documentXml);
+        for (const p of paragraphs) {
+          if (!p.text.includes("<<Logo>>")) continue;
+          const pPr = (p.xml.match(/<w:pPr[\s\S]*?<\/w:pPr>/) || [""])[0];
+          const run = makeDrawingRun(relResult.rid, "Logo voorpagina", pxToEmu(big.width), pxToEmu(big.height), docPrCounter++);
+          p.xml = `<w:p xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">${pPr}${run}</w:p>`;
+        }
+        documentXml = paragraphsToXml(documentXml, paragraphs);
+      }
+
+      for (const [headerPath, headerXml] of Object.entries(headerXmls)) {
+        const relsName = headerPath.split("/").pop() + ".rels";
+        const relsPath = `word/_rels/${relsName}`;
+        const relsFile = zip.file(relsPath);
+        if (!relsFile) continue;
+
+        const relsXml = await relsFile.async("string");
+        const relResult = addImageRelationship(relsXml, mediaHeaderName);
+        zip.file(relsPath, relResult.xml);
+
+        const paragraphs = parseParagraphs(headerXml);
+        for (const p of paragraphs) {
+          if (!p.text.includes("<<Logo>>")) continue;
+          const pPr = (p.xml.match(/<w:pPr[\s\S]*?<\/w:pPr>/) || [""])[0];
+          const run = makeDrawingRun(relResult.rid, "Logo koptekst", pxToEmu(small.width), pxToEmu(small.height), docPrCounter++);
+          p.xml = `<w:p xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">${pPr}${run}</w:p>`;
+        }
+        headerXmls[headerPath] = paragraphsToXml(headerXml, paragraphs);
+      }
+
+      return { documentXml, headerXmls };
+    }
+
+    async function scanTemplate() {
+      try {
+        if (!window.JSZip) {
+          setStatus("JSZip kon niet geladen worden (internet nodig voor CDN).", "error");
+          return;
+        }
+
+        fallbackTemplateWrap.style.display = "none";
+        resetRenderedInputs();
+        setStatus("Template wordt gelezen...");
+        let loaded = null;
+        let hadFetchError = false;
+        for (const fileName of DEFAULT_TEMPLATE_CANDIDATES) {
+          try {
+            const fileUrl = `./${encodeURIComponent(fileName).replace(/%2F/g, "/")}`;
+            const response = await fetch(fileUrl, { cache: "no-store" });
+            if (!response.ok) continue;
+            const buffer = await response.arrayBuffer();
+            try {
+              const probeZip = await JSZip.loadAsync(buffer);
+              const probeDocFile = probeZip.file("word/document.xml");
+              if (!probeDocFile) continue;
+              const probeDocXml = await probeDocFile.async("string");
+              validateXmlOrThrow(probeDocXml, `word/document.xml (${fileName})`);
+
+              const probeHeaderPaths = Object.keys(probeZip.files).filter(p => /^word\/header\d+\.xml$/i.test(p));
+              for (const hp of probeHeaderPaths) {
+                const probeHeaderXml = await probeZip.file(hp).async("string");
+                validateXmlOrThrow(probeHeaderXml, `${hp} (${fileName})`);
+              }
+
+              loaded = {
+                templateName: fileName,
+                buffer
+              };
+              break;
+            } catch (probeErr) {
+              console.warn(`Template overgeslagen wegens ongeldige XML: ${fileName}`, probeErr);
+            }
+          } catch (fetchErr) {
+            hadFetchError = true;
+            console.warn(`Template kon niet worden opgehaald: ${fileName}`, fetchErr);
+          }
+        }
+        if (!loaded) {
+          if (hadFetchError && window.location.protocol === "file:") {
+            setStatus("Standaardtemplate kan niet via file:// worden geladen. Open via een lokale server of gebruik 'Kies templatebestand'.", "error");
+          } else if (hadFetchError) {
+            setStatus("Standaardtemplate kon niet worden opgehaald (netwerk/toegang). Gebruik eventueel 'Kies templatebestand'.", "error");
+          } else {
+            setStatus("Standaardtemplate kon niet worden geladen vanaf de website.", "error");
+          }
+          fallbackTemplateWrap.style.display = "block";
+          return;
+        }
+        state.templateBuffer = loaded.buffer;
+        state.templateName = loaded.templateName;
+
+        const zip = await JSZip.loadAsync(state.templateBuffer);
+        const docFile = zip.file("word/document.xml");
+        if (!docFile) {
+          setStatus("word/document.xml niet gevonden in template.", "error");
+          return;
+        }
+
+        const documentXml = await docFile.async("string");
+        const headerPaths = Object.keys(zip.files).filter(p => /^word\/header\d+\.xml$/i.test(p));
+        const headerXmls = {};
+        for (const p of headerPaths) {
+          headerXmls[p] = await zip.file(p).async("string");
+        }
+
+        const model = buildScanModel(documentXml, headerXmls);
+        state.scan = model;
+        setTemplateModeIndicator(model);
+
+        logoSection.style.display = model.hasLogo ? "block" : "none";
+        renderPlaceholderInputs(model);
+        renderTimeBlocks(model);
+        renderSyntheticStars(model);
+        renderSpecialFeatures(model);
+        renderOrganizations(model);
+
+        setStatus(`Template geladen: ${model.placeholders.length} placeholder(s), ${model.timeBlocks.length} tijdstipblok(ken), ${model.syntheticStars.length} conditionele tekstregel(s).`);
+        await maybeRunAutoTest();
+      } catch (err) {
+        console.error(err);
+        setStatus(`Fout bij scannen: ${err && err.message ? err.message : err}`, "error");
+        fallbackTemplateWrap.style.display = "block";
+      }
+    }
+
+    async function scanFromFallbackFile(file) {
+      try {
+        if (!file) return;
+        resetRenderedInputs();
+        setStatus("Templatebestand wordt ingelezen...");
+        state.templateBuffer = await file.arrayBuffer();
+        state.templateName = file.name;
+
+        const zip = await JSZip.loadAsync(state.templateBuffer);
+        const docFile = zip.file("word/document.xml");
+        if (!docFile) {
+          setStatus("word/document.xml niet gevonden in template.", "error");
+          return;
+        }
+
+        const documentXml = await docFile.async("string");
+        const headerPaths = Object.keys(zip.files).filter(p => /^word\/header\d+\.xml$/i.test(p));
+        const headerXmls = {};
+        for (const p of headerPaths) {
+          headerXmls[p] = await zip.file(p).async("string");
+        }
+
+        const model = buildScanModel(documentXml, headerXmls);
+        state.scan = model;
+        setTemplateModeIndicator(model);
+
+        logoSection.style.display = model.hasLogo ? "block" : "none";
+        renderPlaceholderInputs(model);
+        renderTimeBlocks(model);
+        renderSyntheticStars(model);
+        renderSpecialFeatures(model);
+        renderOrganizations(model);
+
+        fallbackTemplateWrap.style.display = "none";
+        setStatus(`Template geladen: ${model.placeholders.length} placeholder(s), ${model.timeBlocks.length} tijdstipblok(ken), ${model.syntheticStars.length} conditionele tekstregel(s).`);
+        await maybeRunAutoTest();
+      } catch (err) {
+        console.error(err);
+        setStatus(`Fout bij inlezen fallback-template: ${err && err.message ? err.message : err}`, "error");
+      }
+    }
+
+    async function saveBlob(blob, fileName) {
+      if (window.showSaveFilePicker) {
+        try {
+          const handle = await window.showSaveFilePicker({
+            suggestedName: fileName,
+            types: [{
+              description: "Word document",
+              accept: {
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"]
+              }
+            }]
+          });
+          const writable = await handle.createWritable();
+          await writable.write(blob);
+          await writable.close();
+          return "saved";
+        } catch (err) {
+          if (err && err.name === "AbortError") return "cancelled";
+        }
+      }
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      return "downloaded";
+    }
+
+    async function generateReport() {
+      try {
+        if (!state.scan) {
+          setStatus("Template nog niet geladen. Gebruik indien nodig 'Kies templatebestand'.", "warn");
+          return;
+        }
+
+        const validation = validateInputs(state.scan);
+        if (!validation.ok) {
+          setStatus(validation.message, "error");
+          return;
+        }
+
+        setStatus("Rapport wordt gegenereerd...");
+
+        const zip = await JSZip.loadAsync(state.templateBuffer);
+        const docFile = zip.file("word/document.xml");
+        let documentXml = await docFile.async("string");
+
+        const headerPaths = Object.keys(zip.files).filter(p => /^word\/header\d+\.xml$/i.test(p));
+        const headerXmls = {};
+        for (const p of headerPaths) {
+          headerXmls[p] = await zip.file(p).async("string");
+        }
+
+        const values = validation.phValues;
+        const timeValues = validation.timeValues;
+        const syntheticValues = validation.syntheticValues;
+        const bmiCouplingDetails = validation.bmiCouplingDetails;
+
+        const docParagraphs = parseParagraphs(documentXml);
+
+        applyTimeBlocks(docParagraphs, state.scan.timeBlocks, timeValues);
+        applySingleStarRules(docParagraphs, values, syntheticValues, bmiCouplingDetails);
+        applyIgnoredPlaceholderRules(docParagraphs);
+        replaceAllTags(docParagraphs, values);
+        applySectionDoubleStarRules(docParagraphs);
+
+        documentXml = paragraphsToXml(documentXml, docParagraphs);
+        documentXml = replaceContentControlsByTagInXml(documentXml, values);
+
+        for (const hp of Object.keys(headerXmls)) {
+          const headerParagraphs = parseParagraphs(headerXmls[hp]);
+          replaceAllTags(headerParagraphs, values);
+          headerXmls[hp] = paragraphsToXml(headerXmls[hp], headerParagraphs);
+          headerXmls[hp] = replaceContentControlsByTagInXml(headerXmls[hp], values);
+        }
+
+        const logo = state.scan.hasLogo ? (logoFileInput.files && logoFileInput.files[0]) : null;
+        const logoResult = await injectLogo(zip, documentXml, headerXmls, logo);
+        documentXml = logoResult.documentXml;
+
+        validateXmlOrThrow(documentXml, "word/document.xml");
+        for (const [hp, hx] of Object.entries(logoResult.headerXmls)) {
+          validateXmlOrThrow(hx, hp);
+        }
+
+        zip.file("word/document.xml", documentXml);
+        for (const [hp, hx] of Object.entries(logoResult.headerXmls)) {
+          zip.file(hp, hx);
+        }
+
+        const useLegacyUnresolvedChecks = !(state.scan && state.scan.contentControlOnly);
+        let unresolvedCount = 0;
+        if (useLegacyUnresolvedChecks) {
+          unresolvedCount = countUnresolvedTagsInXml(documentXml);
+          for (const hx of Object.values(logoResult.headerXmls)) {
+            unresolvedCount += countUnresolvedTagsInXml(hx);
+          }
+        }
+
+        const missingControlDiag = collectMissingContentControlDiagnostics("word/document.xml", documentXml, values);
+        for (const [hp, hx] of Object.entries(logoResult.headerXmls)) {
+          missingControlDiag.push(...collectMissingContentControlDiagnostics(hp, hx, values));
+        }
+        unresolvedCount += missingControlDiag.length;
+
+        const unresolvedDiag = [];
+        if (useLegacyUnresolvedChecks) {
+          unresolvedDiag.push(...collectUnresolvedTagDiagnostics("word/document.xml", documentXml));
+          for (const [hp, hx] of Object.entries(logoResult.headerXmls)) {
+            unresolvedDiag.push(...collectUnresolvedTagDiagnostics(hp, hx));
+          }
+        }
+        unresolvedDiag.push(...missingControlDiag);
+
+        const unresolvedNames = new Set();
+        if (useLegacyUnresolvedChecks) {
+          for (const nm of collectUnresolvedTagNames(documentXml)) {
+            unresolvedNames.add(normalizePlaceholderName(nm));
+          }
+          for (const hx of Object.values(logoResult.headerXmls)) {
+            for (const nm of collectUnresolvedTagNames(hx)) {
+              unresolvedNames.add(normalizePlaceholderName(nm));
+            }
+          }
+        }
+        for (const miss of missingControlDiag) {
+          unresolvedNames.add(miss.normalized);
+        }
+
+        const criticalNames = getCriticalPlaceholderNamesFromUi();
+        const criticalMissing = [...criticalNames].filter(nm => unresolvedNames.has(nm));
+        if (criticalMissing.length) {
+          const detail = [];
+          for (const nm of criticalMissing.slice(0, 8)) {
+            const hit = unresolvedDiag.find(d => d.normalized === nm);
+            if (hit) detail.push(`${hit.name} (${hit.part})`);
+            else detail.push(nm);
+          }
+          throw new Error(`Kritieke placeholders niet vervangen: ${detail.join(", ")}`);
+        }
+
+        const normValues = buildNormalizedValueMap(values);
+        const gebouwNaam =
+          values["Naam gebouw"] ||
+          values["Naam bedrijf of gebouw"] ||
+          values["naam_gebouw"] ||
+          normValues.get("naam gebouw") ||
+          normValues.get("naam bedrijf of gebouw") ||
+          "Gebouw";
+        const stamp = yymmdd(new Date());
+        const outName = `Ontruimingsplan${safeName(gebouwNaam)}${stamp}.docx`;
+
+        const blob = await zip.generateAsync({ type: "blob" });
+        const saveResult = await saveBlob(blob, outName);
+
+        if (saveResult === "saved") {
+          let suffix = "";
+          if (unresolvedCount) {
+            const preview = unresolvedDiag
+              .slice(0, 4)
+              .map(d => `${d.name} (${d.part}${d.source ? `, ${d.source}` : ""})`)
+              .join(", ");
+            suffix = ` Let op: ${unresolvedCount} placeholder(s) lijken nog niet vervangen.${preview ? ` Voorbeelden: ${preview}.` : ""}`;
+          }
+          setStatus(`Klaar. Document opgeslagen als ${outName}.${suffix}`, unresolvedCount ? "warn" : undefined);
+        } else if (saveResult === "downloaded") {
+          let suffix = "";
+          if (unresolvedCount) {
+            const preview = unresolvedDiag
+              .slice(0, 4)
+              .map(d => `${d.name} (${d.part})`)
+              .join(", ");
+            suffix = ` Let op: ${unresolvedCount} placeholder(s) lijken nog niet vervangen.${preview ? ` Voorbeelden: ${preview}.` : ""}`;
+          }
+          setStatus(`Klaar. Document gedownload als ${outName}.${suffix}`, unresolvedCount ? "warn" : undefined);
+        } else {
+          setStatus("Opslaan geannuleerd.", "warn");
+        }
+      } catch (err) {
+        console.error(err);
+        setStatus(`Fout bij genereren: ${err && err.message ? err.message : err}`, "error");
+      }
+    }
+
+    generateBtn.addEventListener("click", generateReport);
+    fallbackTemplateBtn.addEventListener("click", () => fallbackTemplateFile.click());
+    fallbackTemplateFile.addEventListener("change", () => {
+      const file = fallbackTemplateFile.files && fallbackTemplateFile.files[0];
+      scanFromFallbackFile(file);
+    });
+
+    themePreset.addEventListener("change", () => applyTheme(themePreset.value));
+
+    try {
+      applyTheme(localStorage.getItem("op_theme") || "zakelijk");
+    } catch (_) {
+      applyTheme("zakelijk");
+    }
+
+    scanTemplate();
+  </script>
+</body>
+</html>
