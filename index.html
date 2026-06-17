@@ -349,17 +349,30 @@
     .btn[id^="topNextBtn"],
     .btn[id^="backBtn"],
     .btn[id^="nextBtn"] {
-      background: var(--accent);
+      background: #2f5ea6;
       color: #fff;
       border: 1px solid transparent;
-      box-shadow: 0 10px 22px rgba(27, 79, 138, .18);
+      box-shadow: 0 10px 22px rgba(36, 76, 136, .24);
     }
 
     .btn[id^="topBackBtn"]:hover,
     .btn[id^="topNextBtn"]:hover,
     .btn[id^="backBtn"]:hover,
     .btn[id^="nextBtn"]:hover {
-      background: var(--accent-2);
+      background: #244c88;
+    }
+
+    .actions.actions-bottom .btn[id^="backBtn"],
+    .actions.actions-bottom .btn[id^="nextBtn"] {
+      background: #2f5ea6;
+      color: #fff;
+      border: 1px solid transparent;
+      box-shadow: 0 10px 22px rgba(36, 76, 136, .24);
+    }
+
+    .actions.actions-bottom .btn[id^="backBtn"]:hover,
+    .actions.actions-bottom .btn[id^="nextBtn"]:hover {
+      background: #244c88;
     }
 
     .btn-secondary {
@@ -774,6 +787,84 @@
       color: #223a59;
     }
 
+    .label-with-info {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .info-help {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .info-trigger {
+      width: 19px;
+      height: 19px;
+      border-radius: 999px;
+      border: 1px solid #123d74;
+      background: #1b4f92;
+      color: #ffffff;
+      font-size: .72rem;
+      font-weight: 800;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: help;
+      padding: 0;
+      box-shadow: none;
+    }
+
+    .info-trigger:hover,
+    .info-trigger:focus-visible {
+      background: #123d74;
+      border-color: #0f3566;
+      outline: none;
+    }
+
+    .info-popover {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      min-width: 320px;
+      max-width: 420px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #b5c7df;
+      background: #ffffff;
+      color: #2c4160;
+      text-transform: none;
+      letter-spacing: 0;
+      font-size: .84rem;
+      font-weight: 500;
+      line-height: 1.45;
+      box-shadow: 0 12px 24px rgba(28, 47, 73, .18);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(2px);
+      transition: opacity 120ms ease, transform 120ms ease, visibility 120ms ease;
+      z-index: 60;
+      pointer-events: none;
+    }
+
+    .info-popover-image {
+      display: block;
+      width: 100%;
+      max-width: 220px;
+      margin-top: 8px;
+      border-radius: 8px;
+      border: 1px solid #c9d6e8;
+    }
+
+    .info-help:hover .info-popover,
+    .info-help:focus-within .info-popover {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
     .sidebar-stack {
       display: grid;
       gap: 12px;
@@ -907,6 +998,51 @@
       font-size: .82rem;
       color: #60779a;
       margin: 0;
+    }
+
+    .text-ok-row {
+      display: flex;
+      justify-content: flex-start;
+      margin-top: 8px;
+    }
+
+    .step4-text-ok-help {
+      margin: 2px 2px 10px;
+      color: #425469;
+      font-size: .92rem;
+    }
+
+    #stap4Card .text-ok-btn {
+      background: #dfe8f4;
+      color: #1e4a82;
+      border: 1px solid #a8bbdb;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: .9rem;
+      font-weight: 700;
+      box-shadow: none;
+    }
+
+    #stap4Card .text-ok-btn:hover {
+      background: #d4e0f0;
+    }
+
+    #stap4Card .text-ok-btn.is-confirmed {
+      background: #2f5ea6;
+      color: #fff;
+      border-color: #2f5ea6;
+      box-shadow: 0 10px 22px rgba(36, 76, 136, .24);
+    }
+
+    #stap4Card .text-ok-btn.is-confirmed::after {
+      content: " \2713";
+      font-weight: 800;
+    }
+
+    #stap4Card .field.text-ok-confirmed textarea {
+      border-color: #2f5ea6;
+      background: #f2f8ff;
+      box-shadow: 0 0 0 2px rgba(47, 94, 166, .14);
     }
 
     .steps-list {
@@ -1126,32 +1262,32 @@
             <div class="grid">
               <div class="field full">
                 <label for="naamGebouw" class="required">Naam gebouw</label>
-                <input id="naamGebouw" type="text" autocomplete="off" placeholder="Bijvoorbeeld Hotel GBBC" value="Bijvoorbeeld Hotel GBBC">
+                <input id="naamGebouw" type="text" autocomplete="off" placeholder="Bijvoorbeeld Hotel GBBC">
               </div>
 
               <div class="field full">
                 <label for="adres" class="required">Adres</label>
-                <input id="adres" type="text" autocomplete="off" placeholder="Straat en huisnummer" value="Voorbeeldstraat 1">
+                <input id="adres" type="text" autocomplete="off" placeholder="Straat en huisnummer">
               </div>
 
               <div class="field">
                 <label for="postcode" class="required">Postcode</label>
-                <input id="postcode" type="text" autocomplete="off" placeholder="1234 AB" value="1234 AB">
+                <input id="postcode" type="text" autocomplete="off" placeholder="1234 AB">
               </div>
 
               <div class="field">
                 <label for="plaats" class="required">Plaats</label>
-                <input id="plaats" type="text" autocomplete="off" placeholder="Plaatsnaam" value="Tolkamer">
+                <input id="plaats" type="text" autocomplete="off" placeholder="Plaatsnaam">
               </div>
 
               <div class="field">
                 <label for="telefoon" class="required">Telefoon</label>
-                <input id="telefoon" type="tel" autocomplete="off" placeholder="Telefoonnummer" value="0316-123456">
+                <input id="telefoon" type="tel" autocomplete="off" placeholder="Telefoonnummer">
               </div>
 
               <div class="field">
                 <label for="email" class="required">E-mail</label>
-                <input id="email" type="email" autocomplete="off" placeholder="info@voorbeeld.nl" value="info@gbbc.nl">
+                <input id="email" type="email" autocomplete="off" placeholder="info@voorbeeld.nl">
               </div>
             </div>
           </div>
@@ -1168,27 +1304,37 @@
             <div class="grid">
               <div class="field">
                 <label for="naamHoogsteManager" class="required">Naam hoogste manager</label>
-                <input id="naamHoogsteManager" type="text" autocomplete="off" placeholder="Naam hoogste manager" value="Jan de Vries">
+                <input id="naamHoogsteManager" type="text" autocomplete="off" placeholder="Naam hoogste manager">
               </div>
 
               <div class="field">
                 <label for="functieNaamHoogsteManager" class="required">Functie</label>
-                <input id="functieNaamHoogsteManager" type="text" autocomplete="off" placeholder="Bijvoorbeeld directeur" value="Directeur">
+                <input id="functieNaamHoogsteManager" type="text" autocomplete="off" placeholder="Bijvoorbeeld directeur">
               </div>
 
               <div class="field">
-                <label for="naamHoofdBhv" class="required">Hoofd BHV</label>
-                <input id="naamHoofdBhv" type="text" autocomplete="off" placeholder="Naam hoofd BHV" value="Sanne Jansen">
+                <label for="naamHoofdBhv" class="label-with-info"><span class="required">Hoofd BHV</span>
+                  <span class="info-help">
+                    <button type="button" class="info-trigger" aria-label="Info over Hoofd BHV">i</button>
+                    <span class="info-popover">Het hoofd BHV kan een van de BHV-ers of ploegleider BHV zijn, zeker als er maar 1 of enkele BHV-ers in de organisatie zijn. Het hoofd BHV is verantwoordelijk voor het ontruimingsplan, de trainingen/oefeningen en het inrichten van de BHV-organisatie.</span>
+                  </span>
+                </label>
+                <input id="naamHoofdBhv" type="text" autocomplete="off" placeholder="Naam hoofd BHV">
               </div>
 
               <div class="field">
-                <label for="naamPloegleiderBhv" class="required">Ploegleider BHV</label>
-                <input id="naamPloegleiderBhv" type="text" autocomplete="off" placeholder="Naam ploegleider BHV" value="Mark Peters">
+                <label for="naamPloegleiderBhv" class="label-with-info"><span class="required">Ploegleider BHV</span>
+                  <span class="info-help">
+                    <button type="button" class="info-trigger" aria-label="Info over Ploegleider BHV">i</button>
+                    <span class="info-popover">De ploegleider BHV kan een van de BHV-ers zijn, zeker als er maar 1 of enkele BHV-ers in de organisatie zijn. Meerdere BHV-ers kunnen ploegleider zijn, maar per ontruiming is er maar 1 ploegleider. De ploegleider BHV neemt de leiding bij een ontruimingsoefening en een echte ontruiming.</span>
+                  </span>
+                </label>
+                <input id="naamPloegleiderBhv" type="text" autocomplete="off" placeholder="Naam ploegleider BHV">
               </div>
 
               <div class="field full">
                 <label for="namenBhvErs" class="required">Namen BHV-ers</label>
-                <input id="namenBhvErs" type="text" autocomplete="off" placeholder="Bijvoorbeeld: Anna van Dijk, Bram de Groot" value="Anna van Dijk, Bram de Groot">
+                <input id="namenBhvErs" type="text" autocomplete="off" placeholder="Bijvoorbeeld: Anna van Dijk, Bram de Groot">
               </div>
             </div>
           </div>
@@ -1225,6 +1371,15 @@
           </div>
 
           <div class="panel-card">
+            <h3>Invoer backup</h3>
+            <div class="panel-body">
+              <button id="saveFormBackupBtn" class="btn btn-secondary" type="button">Backup maken</button>
+              <button id="restoreFormBackupBtn" class="btn btn-secondary mt-8" type="button">Backup terugzetten</button>
+              <p id="formBackupHint" class="template-subline">Sla je invoer op en zet deze later met 1 klik terug.</p>
+            </div>
+          </div>
+
+          <div class="panel-card">
             <h3>Stappen</h3>
             <div class="panel-body">
               <ul class="steps-list" id="sidebarSteps">
@@ -1256,13 +1411,18 @@
 
       <div class="grid mb-4">
         <div class="field full">
-          <label for="naamVerzamelplaats" class="required">Naam verzamelplaats</label>
-          <input id="naamVerzamelplaats" type="text" autocomplete="off" placeholder="Bijv. parkeerterrein west" value="Parkeerterrein westzijde">
+          <label for="naamVerzamelplaats" class="label-with-info"><span class="required">Naam verzamelplaats</span>
+            <span class="info-help">
+              <button type="button" class="info-trigger" aria-label="Info over Naam verzamelplaats">i</button>
+              <span class="info-popover">Kies een plek in de buurt van het gebouw, maar ver genoeg om veilig te staan bij een uitslaande brand. Bij voorkeur een overdekte plaats.</span>
+            </span>
+          </label>
+          <input id="naamVerzamelplaats" type="text" autocomplete="off" placeholder="Bijv. parkeerterrein west">
         </div>
       </div>
 
       <div class="section-sub">
-        <h3><span class="section-icon" aria-hidden="true">🏢</span>Aanwezig in het gebouw *</h3>
+        <h3 class="required"><span class="section-icon" aria-hidden="true">🏢</span>Aanwezig in het gebouw</h3>
         <p class="help mb-8">Hoeveel personen zijn er gemiddeld aanwezig, op welke dag en tijdstip?</p>
         <table class="tijdvak-table">
           <thead>
@@ -1273,8 +1433,8 @@
           </thead>
           <tbody id="aanwezigRows">
             <tr class="tijdvak-row">
-              <td><input type="text" data-field="aanwezig_dag" data-row="1" placeholder="Bijv. ma&#8211;vr 08:00&#8211;17:00" value="ma-vr 08:00-17:00"></td>
-              <td><input type="number" data-field="aanwezig_aantal" data-row="1" placeholder="Bijv. 45" min="0" class="w-100" value="45"></td>
+              <td><input type="text" data-field="aanwezig_dag" data-row="1" placeholder="Bijv. ma&#8211;vr 08:00&#8211;17:00"></td>
+              <td><input type="number" data-field="aanwezig_aantal" data-row="1" placeholder="Bijv. 45" min="0" class="w-100"></td>
             </tr>
           </tbody>
         </table>
@@ -1282,7 +1442,7 @@
       </div>
 
       <div class="section-sub">
-        <h3><span class="section-icon" aria-hidden="true">🧍</span>Aantal niet of verminderd zelfredzame personen *</h3>
+        <h3><span class="section-icon" aria-hidden="true">🧍</span>Aantal niet of verminderd zelfredzame personen</h3>
         <p class="help mb-8">Bijvoorbeeld baby's, patienten, gevangenen e.d.</p>
         <table class="tijdvak-table">
           <thead>
@@ -1293,8 +1453,8 @@
           </thead>
           <tbody id="zelfredzameRows">
             <tr class="tijdvak-row">
-              <td><input type="text" data-field="zelfredzame_dag" data-row="1" placeholder="Bijv. ma-vr 08:00-17:00" value="ma-vr 08:00-17:00"></td>
-              <td><input type="number" data-field="zelfredzame_aantal" data-row="1" placeholder="Bijv. 5" min="0" class="w-100" value="5"></td>
+              <td><input type="text" data-field="zelfredzame_dag" data-row="1" placeholder="Bijv. ma-vr 08:00-17:00"></td>
+              <td><input type="number" data-field="zelfredzame_aantal" data-row="1" placeholder="Bijv. 5" min="0" class="w-100"></td>
             </tr>
           </tbody>
         </table>
@@ -1304,7 +1464,7 @@
 
       <div class="section-sub">
         <h3><span class="section-icon" aria-hidden="true">⚠️</span>Bijzondere kenmerken bij ontruiming</h3>
-        <p class="help mb-8">Bijvoorbeeld gevaarlijke stoffen of gevaarlijke technische ruimten.</p>
+        <p class="help mb-8">Bijvoorbeeld gevaarlijke stoffen of gevaarlijke technische ruimten. Als er geen bijzondere kenmerken zijn, dan hoef je hier niets in te vullen.</p>
         <div class="grid">
           <div class="field full" id="bijzonderKenmerkRow1">
             <label for="bijzonderKenmerk1">Kenmerk 1</label>
@@ -1336,7 +1496,7 @@
         <div class="grid">
           <div class="field full" id="organisatieNaamRow1">
             <label for="organisatieNaam1" class="required">Organisatie 1</label>
-            <input id="organisatieNaam1" type="text" autocomplete="off" placeholder="Bijv. Zorgorganisatie X" value="Test Organisatie">
+            <input id="organisatieNaam1" type="text" autocomplete="off" placeholder="Bijv. Zorgorganisatie X">
           </div>
           <div class="field full" id="organisatieNaamRow2" hidden>
             <label for="organisatieNaam2">Organisatie 2</label>
@@ -1385,10 +1545,11 @@
         <h3><span class="section-icon" aria-hidden="true">🚨</span>Brandmeldinstallatie</h3>
         <div class="grid">
           <div class="field full">
-            <label for="bmiKeuze">Brandmeldinstallatie (BMI)</label>
+            <label for="bmiKeuze" class="required">Brandmeldinstallatie (BMI)</label>
             <select id="bmiKeuze">
+              <option value="" selected>Kies ja of nee</option>
+              <option value="ja">Ja</option>
               <option value="nee">Nee</option>
-              <option value="ja" selected>Ja</option>
             </select>
           </div>
         </div>
@@ -1396,15 +1557,20 @@
           <div class="grid">
             <div class="field">
               <label for="bmiMerk" class="required">Merk BMI</label>
-              <input id="bmiMerk" type="text" autocomplete="off" placeholder="Bijv. Hertek" value="Hertek">
+              <input id="bmiMerk" type="text" autocomplete="off" placeholder="Bijv. Hertek">
             </div>
             <div class="field">
               <label for="bmiType" class="required">Type BMI</label>
-              <input id="bmiType" type="text" autocomplete="off" placeholder="Bijv. Penta 5000" value="Penta 5000">
+              <input id="bmiType" type="text" autocomplete="off" placeholder="Bijv. Penta 5000">
             </div>
             <div class="field full">
-              <label for="naamBeheerderBmi" class="required">Naam beheerder BMI</label>
-              <input id="naamBeheerderBmi" type="text" autocomplete="off" placeholder="Naam beheerder BMI" value="Test Beheerder BMI">
+              <label for="naamBeheerderBmi" class="label-with-info"><span>Naam beheerder BMI</span>
+                <span class="info-help">
+                  <button type="button" class="info-trigger" aria-label="Info over Naam beheerder BMI">i</button>
+                  <span class="info-popover">De beheerder BMI is binnen de organisatie verantwoordelijk voor de BMI. Als het alarm afgaat, dan bedient/reset hij de BMI. Hij is ook verantwoordelijk voor (het uitbesteden van) storingen en onderhoud. De beheerder BMI moet weten hoe de BMI werkt.</span>
+                </span>
+              </label>
+              <input id="naamBeheerderBmi" type="text" autocomplete="off" placeholder="Naam beheerder BMI">
             </div>
           </div>
         </div>
@@ -1414,42 +1580,67 @@
         <h3><span class="section-icon" aria-hidden="true">🧯</span>Overige technische installaties</h3>
         <div class="grid">
           <div class="field">
-            <label for="sprinklerInstallatie">Sprinklerinstallatie</label>
+            <label for="sprinklerInstallatie" class="label-with-info"><span class="required">Sprinklerinstallatie</span>
+              <span class="info-help">
+                <button type="button" class="info-trigger" aria-label="Info over Sprinklerinstallatie">i</button>
+                <span class="info-popover">Een sprinklerinstallatie is een automatisch brandblussysteem dat een beginnende brand detecteert en direct blust of beheerst. Het bestaat uit een netwerk van leidingen aan het plafond en sprinklerkoppen (sproeiers) met een smeltzekering die opengaat bij een vooraf ingestelde temperatuur.<img class="info-popover-image" src="Images/Sprinkler.jpeg" alt="Voorbeeld van een sprinklerkop"></span>
+              </span>
+            </label>
             <select id="sprinklerInstallatie">
               <option value="niet aanwezig">Niet aanwezig</option>
               <option value="ja" selected>Ja</option>
             </select>
           </div>
           <div class="field">
-            <label for="automatischeBlusinstallatie">Automatische blusinstallatie</label>
+            <label for="automatischeBlusinstallatie" class="label-with-info"><span class="required">Automatische blusinstallatie</span>
+              <span class="info-help">
+                <button type="button" class="info-trigger" aria-label="Info over Automatische blusinstallatie">i</button>
+                <span class="info-popover">Een automatische blusinstallatie is een systeem dat zonder menselijke tussenkomst een brand detecteert en blust met water, blusgas of schuim. Ze worden vaak ingezet in ruimtes waar snel moet worden ingegrepen om grote schade te voorkomen, zoals serverruimtes, archieven of installaties. Als dit niet bekend is binnen de organisatie, dan kun je er vanuit gaan dat er geen automatische blusinstallatie is. Een aanwezige sprinklerinstallatie moet je invullen bij het vorige veld.</span>
+              </span>
+            </label>
             <select id="automatischeBlusinstallatie">
               <option value="niet aanwezig">Niet aanwezig</option>
               <option value="ja" selected>Ja</option>
             </select>
           </div>
           <div class="field">
-            <label for="klimaatbeheerssysteem">Klimaatbeheerssysteem</label>
+            <label for="klimaatbeheerssysteem" class="label-with-info"><span class="required">Klimaatbeheerssysteem</span>
+              <span class="info-help">
+                <button type="button" class="info-trigger" aria-label="Info over Klimaatbeheerssysteem">i</button>
+                <span class="info-popover">Klimaatbeheersingsysteem is het systeem dat luchtkwaliteit, temperatuur en luchtvochtigheid in gebouw reguleert (bijv koeling, verwarming etc).</span>
+              </span>
+            </label>
             <select id="klimaatbeheerssysteem">
               <option value="niet aanwezig">Niet aanwezig</option>
               <option value="ja" selected>Ja</option>
             </select>
           </div>
           <div class="field">
-            <label for="personenzoekinstallatie">Personenzoekinstallatie (PZI)</label>
+            <label for="personenzoekinstallatie" class="label-with-info"><span class="required">Personenzoekinstallatie (PZI)</span>
+              <span class="info-help">
+                <button type="button" class="info-trigger" aria-label="Info over Personenzoekinstallatie">i</button>
+                <span class="info-popover">Met een PZI-installatie wordt uw personeel snel, stil en gericht gealarmeerd via draadloze alarmontvangers, zoals een pager of piepersysteem. Op het display van de ontvanger verschijnt direct een melding van de calamiteit, waardoor uw medewerkers snel en doeltreffend kunnen handelen.</span>
+              </span>
+            </label>
             <select id="personenzoekinstallatie">
               <option value="niet aanwezig">Niet aanwezig</option>
               <option value="ja" selected>Ja</option>
             </select>
           </div>
           <div class="field">
-            <label for="rookwarmteafvoerinstallatie">Rookwarmteafvoerinstallatie (RWA)</label>
+            <label for="rookwarmteafvoerinstallatie" class="label-with-info"><span class="required">Rook- en warmteafvoerinstallatie (RWA)</span>
+              <span class="info-help">
+                <button type="button" class="info-trigger" aria-label="Info over Rook- en warmteafvoerinstallatie">i</button>
+                <span class="info-popover">Een rook- en warmteafvoerinstallatie (RWA) wordt toegepast om in geval van een brand de vrijgekomen rook en hitte uit het gebouw weg te ventileren. Als dit niet bekend is binnen de organisatie, dan kun je er vanuit gaan dat er geen RWA is.</span>
+              </span>
+            </label>
             <select id="rookwarmteafvoerinstallatie">
               <option value="niet aanwezig">Niet aanwezig</option>
               <option value="ja" selected>Ja</option>
             </select>
           </div>
           <div class="field">
-            <label for="overigeTechnischeAndersKeuze">Anders</label>
+            <label for="overigeTechnischeAndersKeuze" class="required">Anders</label>
             <select id="overigeTechnischeAndersKeuze">
               <option value="niet aanwezig">Niet aanwezig</option>
               <option value="ja" selected>Ja</option>
@@ -1457,7 +1648,7 @@
           </div>
           <div class="field full" id="overigeTechnischeAndersTekstRow" hidden>
             <label for="overigeTechnischeAndersTekst">Omschrijf anders</label>
-            <input id="overigeTechnischeAndersTekst" type="text" autocomplete="off" placeholder="Bijv. Noodstroomaggregaat" value="Noodstroomaggregaat">
+            <input id="overigeTechnischeAndersTekst" type="text" autocomplete="off" placeholder="Bijv. Noodstroomaggregaat">
           </div>
         </div>
       </div>
@@ -1466,21 +1657,31 @@
         <h3><span class="section-icon" aria-hidden="true">🏗️</span>Andere relevante technische dan wel bouwtechnische voorzieningen</h3>
         <div class="grid">
           <div class="field">
-            <label for="brandwerendeDeurenScheidingen">Brandwerende deuren en scheidingen</label>
+            <label for="brandwerendeDeurenScheidingen" class="label-with-info"><span class="required">Brandwerende deuren en scheidingen</span>
+              <span class="info-help">
+                <button type="button" class="info-trigger" aria-label="Info over Brandwerende deuren en scheidingen">i</button>
+                <span class="info-popover">Brandwerende deuren en scheidingen zijn bouwkundige maatregelen (passieve brandbeveiliging) om de verspreiding van vuur en rook te vertragen. Ze verdelen een gebouw in brandcompartimenten. Hierdoor blijft de brand lichter beheersbaar en ontstaan er veilige vluchtroutes. De deuren zijn vaak gekoppeld aan de BMI en sluiten in dat geval automatisch als de BMI geactiveerd wordt door brandmelders.</span>
+              </span>
+            </label>
             <select id="brandwerendeDeurenScheidingen">
               <option value="niet aanwezig">Niet aanwezig</option>
               <option value="ja" selected>Ja</option>
             </select>
           </div>
           <div class="field">
-            <label for="brandweerlift">Brandweerlift</label>
+            <label for="brandweerlift" class="label-with-info"><span class="required">Brandweerlift</span>
+              <span class="info-help">
+                <button type="button" class="info-trigger" aria-label="Info over Brandweerlift">i</button>
+                <span class="info-popover">Een brandweerlift is een speciaal ontworpen lift in hoge gebouwen die de brandweer tijdens een calamiteit prioriteit geeft. Deze lift is uitgerust met een speciale sleutelschakelaar, waarmee brandweerlieden de controle overnemen om snel en veilig blusmaterieel naar hoger gelegen verdiepingen te brengen en mensen te evacueren. Het is dus GEEN gewone lift.</span>
+              </span>
+            </label>
             <select id="brandweerlift">
               <option value="niet aanwezig">Niet aanwezig</option>
               <option value="ja" selected>Ja</option>
             </select>
           </div>
           <div class="field">
-            <label for="andereVoorzieningenAndersKeuze">Anders</label>
+            <label for="andereVoorzieningenAndersKeuze" class="required">Anders</label>
             <select id="andereVoorzieningenAndersKeuze">
               <option value="niet aanwezig">Niet aanwezig</option>
               <option value="ja" selected>Ja</option>
@@ -1488,7 +1689,7 @@
           </div>
           <div class="field full" id="andereVoorzieningenAndersTekstRow" hidden>
             <label for="andereVoorzieningenAndersTekst">Omschrijf anders</label>
-            <input id="andereVoorzieningenAndersTekst" type="text" autocomplete="off" placeholder="Bijv. Overdruksysteem trappenhuis" value="Overdruksysteem trappenhuis">
+            <input id="andereVoorzieningenAndersTekst" type="text" autocomplete="off" placeholder="Bijv. Overdruksysteem trappenhuis">
           </div>
         </div>
       </div>
@@ -1509,42 +1710,57 @@
             </select>
           </div>
           <div class="field">
-            <label for="whatsappGroepBhv">Whatsappgroep voor BHV-communicatie</label>
+            <label for="whatsappGroepBhv" class="required">Whatsappgroep voor BHV-communicatie</label>
             <select id="whatsappGroepBhv">
               <option value="niet aanwezig">Niet aanwezig</option>
               <option value="ja" selected>Ja</option>
             </select>
           </div>
           <div class="field">
-            <label for="portofoons">Portofoons</label>
+            <label for="portofoons" class="label-with-info"><span class="required">Portofoons</span>
+              <span class="info-help">
+                <button type="button" class="info-trigger" aria-label="Info over Portofoons">i</button>
+                <span class="info-popover">Voorbeeld portofoonsysteem.<img class="info-popover-image" src="Images/Portofoons.avif" alt="Voorbeeld van portofoons"></span>
+              </span>
+            </label>
             <select id="portofoons">
               <option value="niet aanwezig">Niet aanwezig</option>
               <option value="ja" selected>Ja</option>
             </select>
           </div>
           <div class="field">
-            <label for="bhvApp">BHV-app</label>
+            <label for="bhvApp" class="label-with-info"><span class="required">BHV-app</span>
+              <span class="info-help">
+                <button type="button" class="info-trigger" aria-label="Info over BHV-app">i</button>
+                <span class="info-popover">Een BHV-app is een mobiele applicatie voor smartphones die is ontworpen om tijdens calamiteiten (zoals brand of een ongeval) snel de juiste hulpverleners op te roepen, te coordineren en te communiceren. Dit zijn commerciele apps die online gekocht en daarna ingericht moeten worden.</span>
+              </span>
+            </label>
             <select id="bhvApp">
               <option value="niet aanwezig">Niet aanwezig</option>
               <option value="ja" selected>Ja</option>
             </select>
           </div>
           <div class="field">
-            <label for="megafoon">Megafoon</label>
+            <label for="megafoon" class="label-with-info"><span class="required">Megafoon</span>
+              <span class="info-help">
+                <button type="button" class="info-trigger" aria-label="Info over Megafoon">i</button>
+                <span class="info-popover">Voorbeeld megafoon.<img class="info-popover-image" src="Images/Megafoon.jpeg" alt="Voorbeeld van een megafoon"></span>
+              </span>
+            </label>
             <select id="megafoon">
               <option value="niet aanwezig">Niet aanwezig</option>
               <option value="ja" selected>Ja</option>
             </select>
           </div>
           <div class="field">
-            <label for="bhvHesjes">BHV-hesjes</label>
+            <label for="bhvHesjes" class="required">BHV-hesjes</label>
             <select id="bhvHesjes">
               <option value="niet aanwezig">Niet aanwezig</option>
               <option value="ja" selected>Ja</option>
             </select>
           </div>
           <div class="field">
-            <label for="communicatiemiddelenAndersKeuze">Anders</label>
+            <label for="communicatiemiddelenAndersKeuze" class="required">Anders</label>
             <select id="communicatiemiddelenAndersKeuze">
               <option value="niet aanwezig">Niet aanwezig</option>
               <option value="ja" selected>Ja</option>
@@ -1552,7 +1768,7 @@
           </div>
           <div class="field full" id="communicatiemiddelenAndersTekstRow" hidden>
             <label for="communicatiemiddelenAndersTekst">Omschrijf anders</label>
-            <input id="communicatiemiddelenAndersTekst" type="text" autocomplete="off" placeholder="Bijv. DECT noodtoestellen" value="DECT noodtoestellen">
+            <input id="communicatiemiddelenAndersTekst" type="text" autocomplete="off" placeholder="Bijv. DECT noodtoestellen">
           </div>
         </div>
       </div>
@@ -1580,53 +1796,76 @@
         <h3><span class="section-icon" aria-hidden="true">🏥</span>Medische contactgegevens (verplicht)</h3>
         <div class="grid">
           <div class="field">
-            <label for="naamHuisartsenpraktijk" class="required">Naam huisartsenpraktijk</label>
-            <input id="naamHuisartsenpraktijk" type="text" autocomplete="off" placeholder="Bijv. Huisartsenpraktijk Tolkamer" value="Huisartsenpraktijk Tolkamer">
+            <label for="naamHuisartsenpraktijk" class="label-with-info"><span class="required">Naam huisartsenpraktijk</span>
+              <span class="info-help">
+                <button type="button" class="info-trigger" aria-label="Info over Naam huisartsenpraktijk">i</button>
+                <span class="info-popover">Schrijf hier de naam en het telefoonnummer van de dichtsbijzijnde huisarts op. Hier ga je naar toe als het spoedeisend is en er geen tijd is om naar de huisarts van de patient. Het verdient aanbeveling om dit vooraf met de betreffende huisarts te communiceren.</span>
+              </span>
+            </label>
+            <input id="naamHuisartsenpraktijk" type="text" autocomplete="off" placeholder="Bijv. Huisartsenpraktijk Tolkamer">
           </div>
           <div class="field">
             <label for="telHuisartsenpraktijk" class="required">Telefoonnummer huisartsenpraktijk</label>
-            <input id="telHuisartsenpraktijk" type="text" autocomplete="off" placeholder="Bijv. 0316-123456" value="0316-5894400">
+            <input id="telHuisartsenpraktijk" type="text" autocomplete="off" placeholder="Bijv. 0316-123456">
           </div>
           <div class="field">
-            <label for="telefoonnummerHuisartsenspoedpost" class="required">Telefoonnummer huisartsenspoedpost</label>
-            <input id="telefoonnummerHuisartsenspoedpost" type="text" autocomplete="off" placeholder="Bijv. 0900-8888" value="0900-8888">
+            <label for="telefoonnummerHuisartsenspoedpost" class="label-with-info"><span class="required">Telefoonnummer huisartsenspoedpost</span>
+              <span class="info-help">
+                <button type="button" class="info-trigger" aria-label="Info over Telefoonnummer huisartsenspoedpost">i</button>
+                <span class="info-popover">Dit nummer vind je door op google of ai te zoeken naar huisartsenspoedpost in de dichtstbijzijnde grote plaats. Let op: het is geen huisartsenpraktijk.</span>
+              </span>
+            </label>
+            <input id="telefoonnummerHuisartsenspoedpost" type="text" autocomplete="off" placeholder="Bijv. 0900-8888">
           </div>
         </div>
       </div>
 
       <div class="section-sub">
+        <p class="step4-text-ok-help">Pas de tekst van de onderstaande tekstblokken aan en klik op OK-button. Deze aangepaste tekst komt in het Word-document.</p>
         <h3><span class="section-icon" aria-hidden="true">📣</span>Interne en externe alarmering</h3>
         <div class="grid">
           <div class="field full">
-            <label for="alarmOngevalTekst">Ongeval</label>
+            <label for="alarmOngevalTekst" class="required">Ongeval</label>
             <textarea id="alarmOngevalTekst" rows="6">Roep een of meerdere BHV-ers op.
 Bij levensbedreigend ongevallen of twijfel: bel 112.
 Bij spoedeisende ongevallen (geen levensbedreiging, maar kan niet wachten tot de volgende dag):
 ** werkdagen 08.00-17.00: bel huisartsenpraktijk {naam_huisartsenpraktijk},  {tel_huisartsenpraktijk}
 ** overige tijden: bel huisartsenspoedpost {telefoonnummer_huisartsenspoedpost}
 Bij niet-spoedeisende ongevallen (kan wachten tot de volgende dag): gebruik EHBO-app 112-4U.</textarea>
+            <div class="text-ok-row">
+              <button type="button" class="btn text-ok-btn" data-target="alarmOngevalTekst">Klik hier als tekst OK is</button>
+            </div>
           </div>
           <div class="field full">
-            <label for="alarmBrandTekst">Brand</label>
+            <label for="alarmBrandTekst" class="required">Brand</label>
             <textarea id="alarmBrandTekst" rows="5">Roep een of meerdere BHV-ers op.
 Indien een Brandmeldinstallatie{Brandmeldinstallatie_(BMI)} aanwezig is: druk een handbrandmelder in, rookmelding gaat automatisch via een rookmelder. (*)
 Doe één bluspoging met een handbrandblusser. Als hij leeg is en de brand is niet uit: verlaat pand.
 Ga naar verzamelplaats.
 Bel 112 (of laat de BHV-er dit doen).</textarea>
+            <div class="text-ok-row">
+              <button type="button" class="btn text-ok-btn" data-target="alarmBrandTekst">Klik hier als tekst OK is</button>
+            </div>
           </div>
           <div class="field full">
-            <label for="alarmExterneTekst">Overige calamiteiten</label>
+            <label for="alarmExterneTekst" class="required">Overige calamiteiten</label>
             <textarea id="alarmExterneTekst" rows="3">Roep een of meerdere BHV-ers op.
 Bel 112 (of laat de BHV-er dit doen).</textarea>
+            <div class="text-ok-row">
+              <button type="button" class="btn text-ok-btn" data-target="alarmExterneTekst">Klik hier als tekst OK is</button>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="section-sub">
-        <h3><span class="section-icon" aria-hidden="true">✅</span>Be&#235;indiging alarmtoestand</h3>
+        <h3 class="required"><span class="section-icon" aria-hidden="true">✅</span>Be&#235;indiging alarmtoestand</h3>
         <div class="grid">
           <div class="field full">
             <textarea id="alarmBeeindigingTekst" rows="4">Als het pand door de brandweer veilig is verklaard na een brand met ontruiming, wordt door de ploegleider BHV aan de medewerkers medegedeeld dat men het pand weer kan betreden.</textarea>
+            <div class="text-ok-row">
+              <button type="button" class="btn text-ok-btn" data-target="alarmBeeindigingTekst">Klik hier als tekst OK is</button>
+            </div>
           </div>
         </div>
       </div>
@@ -1654,16 +1893,12 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
         <div class="grid">
 
           <div class="field full">
-            <label for="stap5BrandwerendeDeurenScheidingen">Brandwerende deuren/scheidingen aanwezig?</label>
-            <select id="stap5BrandwerendeDeurenScheidingen">
-              <option value="nee" selected>Nee</option>
-              <option value="ja">Ja</option>
-            </select>
-            <p class="help" id="stap5BrandwerendeHelpText" hidden>Er zijn brandwerende deuren/scheidingen aanwezig. Er kan een gedeeltelijke of gefaseerde ontruiming worden gedaan indien nodig. De ploegleider beslist dit.</p>
-          </div>
-
-          <div class="field full">
-            <label for="stap5Verzamelgebouw">Verzamelgebouw?</label>
+            <label for="stap5Verzamelgebouw" class="label-with-info"><span class="required">Verzamelgebouw?</span>
+              <span class="info-help">
+                <button type="button" class="info-trigger" aria-label="Info over Verzamelgebouw">i</button>
+                <span class="info-popover">Een verzamelgebouw (ook wel bedrijfsverzamelgebouw of kantoorverzamelgebouw genoemd) is een pand waarin meerdere, vaak uiteenlopende bedrijven of organisaties zijn gevestigd.</span>
+              </span>
+            </label>
             <select id="stap5Verzamelgebouw">
               <option value="nee" selected>Nee</option>
               <option value="ja">Ja</option>
@@ -1672,7 +1907,12 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
           </div>
 
           <div class="field full">
-            <label for="stap5MeerdereGebouwen">Meerdere gebouwen tegen elkaar aan?</label>
+            <label for="stap5MeerdereGebouwen" class="label-with-info"><span class="required">Meerdere gebouwen tegen elkaar aan?</span>
+              <span class="info-help">
+                <button type="button" class="info-trigger" aria-label="Info over Meerdere gebouwen tegen elkaar aan">i</button>
+                <span class="info-popover">Vul hier ja in als de gebouwen fysiek tegen elkaar aan zijn gebouwd. Je moet hier ook ja invullen als het risico van overslaan van de brand groot is (in het geval de panden dicht op elkaar staan).</span>
+              </span>
+            </label>
             <p class="help">Ieder gebouw heeft een aparte ingang en er is geen doorgang.</p>
             <select id="stap5MeerdereGebouwen">
               <option value="nee" selected>Nee</option>
@@ -1681,7 +1921,12 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
           </div>
 
           <div class="field full" id="stap5BmiGekoppeldRow" hidden>
-            <label for="stap5BmiGekoppeld">Zijn de BMI&#8217;s met elkaar gekoppeld?</label>
+            <label for="stap5BmiGekoppeld" class="label-with-info">Zijn de BMI&#8217;s met elkaar gekoppeld?
+              <span class="info-help">
+                <button type="button" class="info-trigger" aria-label="Info over gekoppelde BMI's">i</button>
+                <span class="info-popover"><strong>BMI's niet gekoppeld:</strong> Als de scheidingswand of gezamenlijke gevel tussen de gebouwen wel voldoet aan de zogeheten WBDBO-eis (Weerstand bij Branddoorslag en Brandoverslag), zijn de gebouwen bouwkundig volledig van elkaar gescheiden. Een brand in Gebouw A zorgt alleen voor een alarm in Gebouw A. Gebouw B blijft in principe stil en operationeel. Het is wel aan te raden om onderling af te spreken hoe je elkaar alarmeert.<br><br><strong>BMI's wel gekoppeld:</strong> Wanneer gebouwen bouwkundig niet voldoende gescheiden zijn (bijvoorbeeld door grote openingen of onvoldoende brandwerende gevels), worden ze als een groot compartiment of risicogebied gezien. Er is dan een gekoppelde BMI: Een rookmelder of brandmelder in Gebouw A activeert direct ook de sirenes en ontruiming in Gebouw B.</span>
+              </span>
+            </label>
             <select id="stap5BmiGekoppeld">
               <option value="ja" selected>Ja</option>
               <option value="nee">Nee</option>
@@ -1713,6 +1958,7 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
     const PRESENCE_TOKEN = "__GBBC_PRESENT__";
     const ALARM_DRAFT_STORAGE_KEY = "gbbc-step4-alarm-draft";
     const ALARM_DRAFT_CLEANUP_FLAG_KEY = "gbbc-step4-alarm-draft-cleared-v1";
+    const FORM_BACKUP_STORAGE_KEY = "gbbc-form-backup-v1";
     const AUTO_FILL_STEP4_FROM_TEMPLATE = false;
     const REQUIRED_FIELDS = [
       "naamGebouw",
@@ -1747,7 +1993,10 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
       status: document.getElementById("status"),
       templateFileAuto: document.getElementById("templateFileAuto"),
       templateName: document.getElementById("templateName"),
-      templateMode: document.getElementById("templateMode")
+      templateMode: document.getElementById("templateMode"),
+      saveFormBackupBtn: document.getElementById("saveFormBackupBtn"),
+      restoreFormBackupBtn: document.getElementById("restoreFormBackupBtn"),
+      formBackupHint: document.getElementById("formBackupHint")
     };
 
     const state = {
@@ -1873,6 +2122,7 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
     }
 
     function readData() {
+      const reportDate = todayLabel();
       const toTemplatePresenceValue = (rawValue) => {
         const normalized = String(rawValue || "").toLowerCase().trim();
         if (normalized === "ja") return PRESENCE_TOKEN;
@@ -1917,6 +2167,12 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
         email: elements.email.value.trim(),
         naam_hoogste_manager: elements.naamHoogsteManager.value.trim(),
         functienaam_hoogste_manager: elements.functieNaamHoogsteManager.value.trim(),
+        datum_rapport: reportDate,
+        datum_versie: reportDate,
+        versiedatum: reportDate,
+        datum_document: reportDate,
+        datum: reportDate,
+        goedgekeurd_op: reportDate,
         naam_hoofd_bhv: elements.naamHoofdBhv.value.trim(),
         naam_ploegleider_bhv: elements.naamPloegleiderBhv.value.trim(),
         namen_bhv_ers: elements.namenBhvErs.value.trim(),
@@ -1970,7 +2226,7 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
         alarm_brand_tekst: alarmProcedureData.brandTekst,
         alarm_externe_alarmering: alarmProcedureData.externeTekst,
         alarm_beeindiging_alarmtoestand: alarmProcedureData.beeindigingAlarmtoestand,
-        grote_gebouwen_brandwerende_deuren: document.getElementById("stap5BrandwerendeDeurenScheidingen")?.value || "nee",
+        grote_gebouwen_brandwerende_deuren: document.getElementById("brandwerendeDeurenScheidingen")?.value === "ja" ? "ja" : "nee",
         grote_gebouwen_verzamelgebouw: document.getElementById("stap5Verzamelgebouw")?.value || "nee",
         grote_gebouwen_meerdere_gebouwen: document.getElementById("stap5MeerdereGebouwen")?.value || "nee",
         grote_gebouwen_bmi_gekoppeld: document.getElementById("stap5BmiGekoppeld")?.value || "ja",
@@ -1984,8 +2240,6 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
         document.getElementById("naamVerzamelplaats"),
         document.querySelector('#aanwezigRows .tijdvak-row [data-field="aanwezig_dag"]'),
         document.querySelector('#aanwezigRows .tijdvak-row [data-field="aanwezig_aantal"]'),
-        document.querySelector('#zelfredzameRows .tijdvak-row [data-field="zelfredzame_dag"]'),
-        document.querySelector('#zelfredzameRows .tijdvak-row [data-field="zelfredzame_aantal"]'),
         document.getElementById("organisatieNaam1")
       ].filter(Boolean);
     }
@@ -2031,16 +2285,23 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
       ];
     }
 
+    function getStep3RequiredSelects() {
+      return Array.from(document.querySelectorAll("#stap3Card select")).filter((select) =>
+        !!select && !select.disabled
+      );
+    }
+
     function isStep3Complete() {
+      const allStep3SelectsChosen = getStep3RequiredSelects().every((select) => !!String(select.value || "").trim());
+      if (!allStep3SelectsChosen) return false;
+
       const bmiJa = (document.getElementById("bmiKeuze")?.value || "nee") === "ja";
       const bmiMerk = document.getElementById("bmiMerk");
       const bmiType = document.getElementById("bmiType");
-      const naamBeheerderBmi = document.getElementById("naamBeheerderBmi");
 
       const bmiComplete = !bmiJa || (
         !!bmiMerk && !!bmiMerk.value.trim() &&
-        !!bmiType && !!bmiType.value.trim() &&
-        !!naamBeheerderBmi && !!naamBeheerderBmi.value.trim()
+        !!bmiType && !!bmiType.value.trim()
       );
 
       const andersComplete = getAndersRequirements().every(({ select, input }) => {
@@ -2053,12 +2314,21 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
     }
 
     function isStep5Complete() {
-      const meerdereGebouwen = document.getElementById("stap5MeerdereGebouwen")?.value || "nee";
+      const verzamelgebouw = document.getElementById("stap5Verzamelgebouw")?.value || "";
+      const meerdereGebouwen = document.getElementById("stap5MeerdereGebouwen")?.value || "";
+      if (!verzamelgebouw || !meerdereGebouwen) return false;
       if (meerdereGebouwen !== "ja") return true;
-      const bmiGekoppeld = document.getElementById("stap5BmiGekoppeld")?.value || "ja";
+      const bmiGekoppeld = document.getElementById("stap5BmiGekoppeld")?.value || "";
+      if (!bmiGekoppeld) return false;
       if (bmiGekoppeld !== "nee") return true;
       const hoeAlarmeren = document.getElementById("stap5HoeAlarmeren")?.value.trim() || "";
       return !!hoeAlarmeren;
+    }
+
+    function areStep4TextBlocksConfirmed() {
+      const okButtons = Array.from(document.querySelectorAll('#stap4Card .text-ok-btn[data-target]'));
+      if (!okButtons.length) return false;
+      return okButtons.every((btn) => btn.classList.contains('is-confirmed'));
     }
 
     function isStep4Complete() {
@@ -2070,7 +2340,8 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
       const hasBrand = !!alarm.brandTekst.trim();
       const hasExterne = !!alarm.externeTekst.trim();
       const hasBeeindiging = !!alarm.beeindigingAlarmtoestand.trim();
-      return hasHuisartsenpraktijk && hasTelHuisarts && hasTelSpoed && hasOngeval && hasBrand && hasExterne && hasBeeindiging;
+      const allTextBlocksConfirmed = areStep4TextBlocksConfirmed();
+      return hasHuisartsenpraktijk && hasTelHuisarts && hasTelSpoed && hasOngeval && hasBrand && hasExterne && hasBeeindiging && allTextBlocksConfirmed;
     }
 
     function updateNextButtonsState() {
@@ -2150,6 +2421,12 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
     function validateStep3Required() {
       let firstInvalid = null;
 
+      for (const select of getStep3RequiredSelects()) {
+        const invalid = !String(select.value || "").trim();
+        setFieldInvalid(select, invalid);
+        if (invalid && !firstInvalid) firstInvalid = select;
+      }
+
       const bmiJa = (document.getElementById("bmiKeuze")?.value || "nee") === "ja";
       const bmiMerk = document.getElementById("bmiMerk");
       const bmiType = document.getElementById("bmiType");
@@ -2157,13 +2434,11 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
       if (bmiJa) {
         const bmiMerkInvalid = !bmiMerk || !bmiMerk.value.trim();
         const bmiTypeInvalid = !bmiType || !bmiType.value.trim();
-        const naamBeheerderInvalid = !naamBeheerderBmi || !naamBeheerderBmi.value.trim();
         if (bmiMerk) setFieldInvalid(bmiMerk, bmiMerkInvalid);
         if (bmiType) setFieldInvalid(bmiType, bmiTypeInvalid);
-        if (naamBeheerderBmi) setFieldInvalid(naamBeheerderBmi, naamBeheerderInvalid);
+        if (naamBeheerderBmi) setFieldInvalid(naamBeheerderBmi, false);
         if (bmiMerkInvalid && !firstInvalid && bmiMerk) firstInvalid = bmiMerk;
         if (bmiTypeInvalid && !firstInvalid && bmiType) firstInvalid = bmiType;
-        if (naamBeheerderInvalid && !firstInvalid && naamBeheerderBmi) firstInvalid = naamBeheerderBmi;
       } else {
         if (bmiMerk) setFieldInvalid(bmiMerk, false);
         if (bmiType) setFieldInvalid(bmiType, false);
@@ -2248,9 +2523,35 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
     }
 
     function validateStep5Required() {
-      const meerdereGebouwen = document.getElementById("stap5MeerdereGebouwen")?.value || "nee";
+      const verzamelgebouwInput = document.getElementById("stap5Verzamelgebouw");
+      const meerdereGebouwenInput = document.getElementById("stap5MeerdereGebouwen");
+      const bmiGekoppeldInput = document.getElementById("stap5BmiGekoppeld");
+
+      const verzamelgebouw = verzamelgebouwInput?.value || "";
+      const meerdereGebouwen = meerdereGebouwenInput?.value || "";
+      const verzamelgebouwInvalid = !verzamelgebouw;
+      const meerdereGebouwenInvalid = !meerdereGebouwen;
+      if (verzamelgebouwInput) setFieldInvalid(verzamelgebouwInput, verzamelgebouwInvalid);
+      if (meerdereGebouwenInput) setFieldInvalid(meerdereGebouwenInput, meerdereGebouwenInvalid);
+
+      if (verzamelgebouwInvalid) {
+        verzamelgebouwInput?.focus();
+        return false;
+      }
+      if (meerdereGebouwenInvalid) {
+        meerdereGebouwenInput?.focus();
+        return false;
+      }
+
       if (meerdereGebouwen !== "ja") return true;
-      const bmiGekoppeld = document.getElementById("stap5BmiGekoppeld")?.value || "ja";
+      const bmiGekoppeld = bmiGekoppeldInput?.value || "";
+      const bmiGekoppeldInvalid = !bmiGekoppeld;
+      if (bmiGekoppeldInput) setFieldInvalid(bmiGekoppeldInput, bmiGekoppeldInvalid);
+      if (bmiGekoppeldInvalid) {
+        bmiGekoppeldInput?.focus();
+        return false;
+      }
+
       if (bmiGekoppeld !== "nee") return true;
       const hoeAlarmInput = document.getElementById("stap5HoeAlarmeren");
       const invalid = !hoeAlarmInput?.value.trim();
@@ -2686,6 +2987,11 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
       const bijzondereKenmerkenAllEmpty = [1, 2, 3, 4, 5].every(
         (i) => !String(data[`bijzondere_kenmerk_${i}`] || "").trim()
       );
+      const zelfredzameAllEmpty = Array.from({ length: 6 }, (_, index) => index + 1).every((i) => {
+        const dag = String(data[`zelfredzame_dag_${i}`] || "").trim();
+        const aantal = String(data[`zelfredzame_aantal_${i}`] || "").trim();
+        return !dag && !aantal;
+      });
 
       for (const partPath of partPaths) {
         const partFile = zip.file(partPath);
@@ -2764,10 +3070,6 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
             "rookwarmteafvoerinstallatie_rwa",
             "personenzoekinstallatie"
           ].includes(name));
-          const hasAndereVoorzieningenTags = names.some((name) => [
-            "brandwerende_deuren_scheidingen",
-            "brandweerlift"
-          ].includes(name));
           const hasCommunicatieTags = names.some((name) => [
             "whatsappgroep_voor_onderlinge_communicatie_met_mobiele_telefoons_tussen_bhv_ers",
             "whatsappgroep_voor_onderlinge_communicatie_met_mobiele_telefoons_tussen_bhv-ers",
@@ -2780,7 +3082,7 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
           const keepMeerdereGebouwen =
             names.includes("hoe_alarmeren_de_verschillende_organisaties_elkaar_bij_een_calamiteit") &&
             (data.grote_gebouwen_meerdere_gebouwen || "nee") === "ja";
-          const keepSectionContainer = hasOverigeTechnischeTags || hasAndereVoorzieningenTags || hasCommunicatieTags || keepMeerdereGebouwen;
+          const keepSectionContainer = hasCommunicatieTags || keepMeerdereGebouwen;
 
           if (!blockAllNonApplicable || keepSectionContainer) continue;
 
@@ -2830,6 +3132,15 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
             continue;
           }
 
+          if (
+            zelfredzameAllEmpty &&
+            normalizedText.includes("aantal niet") &&
+            normalizedText.includes("zelfredzame")
+          ) {
+            paragraph.parentNode?.removeChild(paragraph);
+            continue;
+          }
+
           const tagNames = [];
           tagRegex.lastIndex = 0;
           let match;
@@ -2840,17 +3151,12 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
           const bmiTagNames = ["bmi", "bmi_merk", "bmi_type", "naam_beheerder_bmi"];
           const hasBmiTags = tagNames.some((name) => bmiTagNames.includes(name));
           if (hasBmiTags) {
-            const allBmiEmpty = bmiTagNames.every((name) => isNonApplicableValue(data[name]));
-            if (allBmiEmpty) {
-              const next = paragraph.nextSibling;
+            const paragraphBmiTagNames = tagNames.filter((name) => bmiTagNames.includes(name));
+            const allParagraphBmiTagsEmpty =
+              paragraphBmiTagNames.length > 0 &&
+              paragraphBmiTagNames.every((name) => isNonApplicableValue(data[name]));
+            if (allParagraphBmiTagsEmpty) {
               paragraph.parentNode?.removeChild(paragraph);
-              if (next && next.nodeName === "w:p") {
-                const nextTextNodes = Array.from(next.getElementsByTagName("w:t"));
-                const nextText = nextTextNodes.map((n) => n.textContent || "").join("").replace(/\u00a0/g, " ").trim();
-                if (!nextText) {
-                  next.parentNode?.removeChild(next);
-                }
-              }
               continue;
             }
           }
@@ -2918,6 +3224,203 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
         if (!xml.includes(PRESENCE_TOKEN)) continue;
         zip.file(partPath, xml.replaceAll(PRESENCE_TOKEN, ""));
       }
+    }
+
+    function injectVersieDatumFallback(zip, reportDate) {
+      const wordXmlParts = Object.keys(zip.files).filter((name) => /^word\/(document|header\d+)\.xml$/.test(name));
+      for (const partPath of wordXmlParts) {
+        const partFile = zip.file(partPath);
+        if (!partFile) continue;
+        const xml = partFile.asText();
+        const patched = xml.replace(/(goedgekeurd\s+op\s*),/gi, `$1 ${reportDate},`);
+        if (patched !== xml) {
+          zip.file(partPath, patched);
+        }
+      }
+    }
+
+    function injectTijdvakBullets(zip, data) {
+      const documentFile = zip.file("word/document.xml");
+      if (!documentFile) return;
+
+      const xml = documentFile.asText();
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xml, "application/xml");
+      if (xmlDoc.getElementsByTagName("parsererror").length) return;
+
+      const wNs = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+      const getParagraphText = (paragraph) =>
+        Array.from(paragraph.getElementsByTagName("w:t"))
+          .map((n) => n.textContent || "")
+          .join("")
+          .replace(/\s+/g, " ")
+          .trim();
+      const hasNumbering = (paragraph) =>
+        paragraph.getElementsByTagName("w:numPr").length > 0 ||
+        paragraph.getElementsByTagName("numPr").length > 0 ||
+        paragraph.getElementsByTagNameNS(wNs, "numPr").length > 0;
+
+      const createParagraphLike = (prototype, text) => {
+        const paragraph = xmlDoc.createElementNS(wNs, "w:p");
+        const prototypePPr = prototype?.getElementsByTagName("w:pPr")[0] || null;
+        if (prototypePPr) {
+          paragraph.appendChild(prototypePPr.cloneNode(true));
+        }
+
+        const run = xmlDoc.createElementNS(wNs, "w:r");
+        const prototypeRun = prototype?.getElementsByTagName("w:r")[0] || null;
+        const prototypeRPr = prototypeRun?.getElementsByTagName("w:rPr")[0] || null;
+        if (prototypeRPr) {
+          run.appendChild(prototypeRPr.cloneNode(true));
+        }
+
+        const textNode = xmlDoc.createElementNS(wNs, "w:t");
+        textNode.textContent = text;
+        run.appendChild(textNode);
+        paragraph.appendChild(run);
+        return paragraph;
+      };
+
+      const buildRows = (prefix) => {
+        const rows = [];
+        for (let i = 1; i <= 6; i += 1) {
+          const dag = String(data[`${prefix}_dag_${i}`] || "").trim();
+          const aantal = String(data[`${prefix}_aantal_${i}`] || "").trim();
+          if (!dag || !aantal) continue;
+          rows.push(`${dag}: ${aantal}`);
+        }
+        return rows;
+      };
+
+      const specs = [
+        {
+          heading: /het aantal personen dat naar verwachting aanwezig is op welke tijden/i,
+          nextHeadings: [/aantal niet of verminderd zelfredzame personen/i],
+          rows: buildRows("aanwezig")
+        },
+        {
+          heading: /aantal niet of verminderd zelfredzame personen/i,
+          nextHeadings: [/bijzondere kenmerken/i, /het gebouw wordt door de volgende organisatie/i, /gebruikers van het gebouw/i],
+          rows: buildRows("zelfredzame")
+        }
+      ];
+
+      for (const spec of specs) {
+        const paragraphs = Array.from(xmlDoc.getElementsByTagName("w:p"));
+        const headingIndex = paragraphs.findIndex((p) => spec.heading.test(getParagraphText(p)));
+        if (headingIndex < 0) continue;
+
+        let endIndex = paragraphs.length;
+        for (let i = headingIndex + 1; i < paragraphs.length; i += 1) {
+          const text = getParagraphText(paragraphs[i]);
+          const isNextHeading = (spec.nextHeadings || []).some((re) => re.test(text));
+          if (isNextHeading) {
+            endIndex = i;
+            break;
+          }
+        }
+
+        const sectionParagraphs = paragraphs.slice(headingIndex + 1, endIndex);
+        const bulletParagraphs = sectionParagraphs.filter((p) => hasNumbering(p));
+        const prototype = bulletParagraphs[0] || sectionParagraphs.find((p) => getParagraphText(p)) || paragraphs[headingIndex];
+
+        bulletParagraphs.forEach((p) => p.parentNode?.removeChild(p));
+
+        if (!spec.rows.length || !prototype || !paragraphs[headingIndex]?.parentNode) continue;
+
+        const parent = paragraphs[headingIndex].parentNode;
+        let anchor = paragraphs[headingIndex];
+        for (const rowText of spec.rows) {
+          const newParagraph = createParagraphLike(prototype, rowText);
+          parent.insertBefore(newParagraph, anchor.nextSibling);
+          anchor = newParagraph;
+        }
+      }
+
+      zip.file("word/document.xml", new XMLSerializer().serializeToString(xmlDoc));
+    }
+
+    function injectOrganisatieBullets(zip, data) {
+      const documentFile = zip.file("word/document.xml");
+      if (!documentFile) return;
+
+      const xml = documentFile.asText();
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xml, "application/xml");
+      if (xmlDoc.getElementsByTagName("parsererror").length) return;
+
+      const wNs = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+      const paragraphs = Array.from(xmlDoc.getElementsByTagName("w:p"));
+      const getParagraphText = (paragraph) =>
+        Array.from(paragraph.getElementsByTagName("w:t"))
+          .map((n) => n.textContent || "")
+          .join("")
+          .replace(/\s+/g, " ")
+          .trim();
+      const hasNumbering = (paragraph) =>
+        paragraph.getElementsByTagName("w:numPr").length > 0 ||
+        paragraph.getElementsByTagName("numPr").length > 0 ||
+        paragraph.getElementsByTagNameNS(wNs, "numPr").length > 0;
+
+      const orgRows = [1, 2, 3, 4, 5, 6]
+        .map((i) => String(data[`naam_organisatie_${i}`] || "").trim())
+        .filter(Boolean);
+      if (!orgRows.length) {
+        zip.file("word/document.xml", new XMLSerializer().serializeToString(xmlDoc));
+        return;
+      }
+
+      const headingIndex = paragraphs.findIndex((p) => /het gebouw wordt door de volgende organisatie/i.test(getParagraphText(p)));
+      if (headingIndex < 0) {
+        zip.file("word/document.xml", new XMLSerializer().serializeToString(xmlDoc));
+        return;
+      }
+
+      let endIndex = paragraphs.length;
+      for (let i = headingIndex + 1; i < paragraphs.length; i += 1) {
+        const t = getParagraphText(paragraphs[i]);
+        if (/brandmeldinstallatie|technische installaties|alarmeringsprocedure|interne en externe alarmering|ontruimingsorganisatie/i.test(t)) {
+          endIndex = i;
+          break;
+        }
+      }
+
+      const sectionParagraphs = paragraphs.slice(headingIndex + 1, endIndex);
+      const sectionBullets = sectionParagraphs.filter((p) => hasNumbering(p));
+      const prototype = sectionBullets[0] || paragraphs.find((p) => hasNumbering(p) && getParagraphText(p)) || paragraphs[headingIndex];
+
+      sectionBullets.forEach((p) => p.parentNode?.removeChild(p));
+      if (!prototype || !paragraphs[headingIndex]?.parentNode) {
+        zip.file("word/document.xml", new XMLSerializer().serializeToString(xmlDoc));
+        return;
+      }
+
+      const createParagraphLike = (source, text) => {
+        const paragraph = xmlDoc.createElementNS(wNs, "w:p");
+        const sourcePPr = source?.getElementsByTagName("w:pPr")[0] || null;
+        if (sourcePPr) paragraph.appendChild(sourcePPr.cloneNode(true));
+
+        const run = xmlDoc.createElementNS(wNs, "w:r");
+        const sourceRun = source?.getElementsByTagName("w:r")[0] || null;
+        const sourceRPr = sourceRun?.getElementsByTagName("w:rPr")[0] || null;
+        if (sourceRPr) run.appendChild(sourceRPr.cloneNode(true));
+
+        const textNode = xmlDoc.createElementNS(wNs, "w:t");
+        textNode.textContent = text;
+        run.appendChild(textNode);
+        paragraph.appendChild(run);
+        return paragraph;
+      };
+
+      const parent = paragraphs[headingIndex].parentNode;
+      let anchor = paragraphs[headingIndex];
+      for (const row of orgRows) {
+        const p = createParagraphLike(prototype, row);
+        parent.insertBefore(p, anchor.nextSibling);
+        anchor = p;
+      }
+
+      zip.file("word/document.xml", new XMLSerializer().serializeToString(xmlDoc));
     }
 
     function injectCustomAndersBullets(zip, data) {
@@ -4126,6 +4629,8 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
         injectAlarmProcedure(doc.getZip(), renderData);
         injectGroteGebouwen(doc.getZip(), renderData);
         injectCustomAndersBullets(doc.getZip(), renderData);
+        injectTijdvakBullets(doc.getZip(), renderData);
+        injectOrganisatieBullets(doc.getZip(), renderData);
         enforceCommunicatiemiddelenWhatsappLine(doc.getZip(), renderData);
         const noodinstructieImageMeta = await createNoodinstructieImageMeta(renderData);
         appendNoodinstructieLastSection(doc.getZip(), renderData, noodinstructieImageMeta);
@@ -4139,6 +4644,7 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
           );
         }
         stripPresenceTokenFromZip(doc.getZip());
+        injectVersieDatumFallback(doc.getZip(), todayLabel());
 
         const blob = doc.getZip().generate({
           type: "blob",
@@ -4306,6 +4812,12 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
       document.getElementById("backBtn5").click();
     });
     elements.generateBtnFinal.addEventListener("click", generateDocument);
+    if (elements.saveFormBackupBtn) {
+      elements.saveFormBackupBtn.addEventListener("click", saveFormBackup);
+    }
+    if (elements.restoreFormBackupBtn) {
+      elements.restoreFormBackupBtn.addEventListener("click", restoreFormBackup);
+    }
 
     for (const input of [
       elements.naamGebouw,
@@ -4395,6 +4907,153 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
         externeTekst: document.getElementById("alarmExterneTekst")?.value.trim() || "",
         beeindigingAlarmtoestand: document.getElementById("alarmBeeindigingTekst")?.value.trim() || ""
       };
+    }
+
+    function collectTijdvakRows(tbodyId, dagField, aantalField) {
+      const rows = document.querySelectorAll(`#${tbodyId} .tijdvak-row`);
+      const values = [];
+      rows.forEach((row) => {
+        const dagInput = row.querySelector(`[data-field="${dagField}"]`);
+        const aantalInput = row.querySelector(`[data-field="${aantalField}"]`);
+        const dag = dagInput?.value.trim() || "";
+        const aantal = aantalInput?.value.trim() || "";
+        if (!dag && !aantal) return;
+        values.push({ dag, aantal });
+      });
+      return values;
+    }
+
+    function ensureTijdvakRowCount(tbodyId, addBtnId, requiredCount) {
+      const tbody = document.getElementById(tbodyId);
+      const addBtn = document.getElementById(addBtnId);
+      if (!tbody || !addBtn) return;
+      while (tbody.querySelectorAll(".tijdvak-row").length < requiredCount && !addBtn.disabled) {
+        addBtn.click();
+      }
+    }
+
+    function dispatchFieldEvents(field) {
+      field.dispatchEvent(new Event("input", { bubbles: true }));
+      field.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+
+    function getStoredFormBackupRaw() {
+      return localStorage.getItem(FORM_BACKUP_STORAGE_KEY) || sessionStorage.getItem(FORM_BACKUP_STORAGE_KEY) || "";
+    }
+
+    function parseStoredFormBackup() {
+      const raw = getStoredFormBackupRaw();
+      if (!raw) return null;
+      try {
+        return JSON.parse(raw);
+      } catch (_) {
+        return null;
+      }
+    }
+
+    function updateFormBackupUiState() {
+      const payload = parseStoredFormBackup();
+      const hasBackup = !!payload;
+      if (elements.restoreFormBackupBtn) {
+        elements.restoreFormBackupBtn.disabled = !hasBackup;
+      }
+      if (elements.formBackupHint) {
+        if (!hasBackup) {
+          elements.formBackupHint.textContent = "Geen backup gevonden. Klik eerst op Backup maken.";
+        } else if (payload.createdAt) {
+          const stamp = new Date(payload.createdAt);
+          const readable = Number.isNaN(stamp.getTime())
+            ? todayLabel()
+            : `${pad2(stamp.getDate())}-${pad2(stamp.getMonth() + 1)}-${stamp.getFullYear()} ${pad2(stamp.getHours())}:${pad2(stamp.getMinutes())}`;
+          elements.formBackupHint.textContent = `Laatste backup: ${readable}`;
+        } else {
+          elements.formBackupHint.textContent = "Backup gevonden. Klik op Backup terugzetten.";
+        }
+      }
+    }
+
+    function saveFormBackup() {
+      try {
+        const valuesById = {};
+        const fields = document.querySelectorAll("input[id], select[id], textarea[id]");
+        fields.forEach((field) => {
+          if (field.type === "file") return;
+          if (field.id === "templateFileAuto") return;
+          valuesById[field.id] = field.value;
+        });
+
+        const payload = {
+          createdAt: new Date().toISOString(),
+          valuesById,
+          tijdvakAanwezig: collectTijdvakRows("aanwezigRows", "aanwezig_dag", "aanwezig_aantal"),
+          tijdvakZelfredzame: collectTijdvakRows("zelfredzameRows", "zelfredzame_dag", "zelfredzame_aantal")
+        };
+
+        const serialized = JSON.stringify(payload);
+        localStorage.setItem(FORM_BACKUP_STORAGE_KEY, serialized);
+        sessionStorage.setItem(FORM_BACKUP_STORAGE_KEY, serialized);
+        updateFormBackupUiState();
+        setStatus("Invoervelden opgeslagen. Je kunt deze later met 1 klik terugzetten.");
+      } catch (error) {
+        if (elements.formBackupHint) {
+          elements.formBackupHint.textContent = "Opslaan mislukt. Controleer of opslag is toegestaan in je browser.";
+        }
+        setStatus(`Opslaan van invoervelden mislukt: ${error && error.message ? error.message : error}`, "error");
+      }
+    }
+
+    function restoreFormBackup() {
+      try {
+        const payload = parseStoredFormBackup();
+        if (!payload) {
+          updateFormBackupUiState();
+          setStatus("Geen opgeslagen invoer gevonden om terug te zetten.", "warn");
+          return;
+        }
+        const valuesById = payload?.valuesById || {};
+
+        Object.keys(valuesById).forEach((id) => {
+          const field = document.getElementById(id);
+          if (!field || field.type === "file") return;
+          field.value = valuesById[id] || "";
+          dispatchFieldEvents(field);
+        });
+
+        const aanwezigRows = Array.isArray(payload?.tijdvakAanwezig) ? payload.tijdvakAanwezig : [];
+        const zelfredzameRows = Array.isArray(payload?.tijdvakZelfredzame) ? payload.tijdvakZelfredzame : [];
+
+        ensureTijdvakRowCount("aanwezigRows", "addAanwezigRowBtn", Math.max(1, aanwezigRows.length));
+        ensureTijdvakRowCount("zelfredzameRows", "addZelfredzameRowBtn", Math.max(1, zelfredzameRows.length));
+
+        const setTijdvakRows = (tbodyId, dagField, aantalField, rows) => {
+          const domRows = document.querySelectorAll(`#${tbodyId} .tijdvak-row`);
+          domRows.forEach((row, idx) => {
+            const dagInput = row.querySelector(`[data-field="${dagField}"]`);
+            const aantalInput = row.querySelector(`[data-field="${aantalField}"]`);
+            const source = rows[idx] || { dag: "", aantal: "" };
+            if (dagInput) {
+              dagInput.value = source.dag || "";
+              dispatchFieldEvents(dagInput);
+            }
+            if (aantalInput) {
+              aantalInput.value = source.aantal || "";
+              dispatchFieldEvents(aantalInput);
+            }
+          });
+        };
+
+        setTijdvakRows("aanwezigRows", "aanwezig_dag", "aanwezig_aantal", aanwezigRows);
+        setTijdvakRows("zelfredzameRows", "zelfredzame_dag", "zelfredzame_aantal", zelfredzameRows);
+
+        updateNextButtonsState();
+        updateFormBackupUiState();
+        setStatus("Invoervelden teruggezet vanuit backup.");
+      } catch (error) {
+        if (elements.formBackupHint) {
+          elements.formBackupHint.textContent = "Terugzetten mislukt. Maak eventueel opnieuw een backup.";
+        }
+        setStatus(`Terugzetten van invoervelden mislukt: ${error && error.message ? error.message : error}`, "error");
+      }
     }
 
     function syncOngevalMedicalLines() {
@@ -4679,6 +5338,28 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
       }
     }
 
+    function initEmptyOptionForAllSelects() {
+      const selects = document.querySelectorAll("select");
+      selects.forEach((select) => {
+        if (!select || select.disabled) return;
+
+        const hasJa = Array.from(select.options).some((opt) => String(opt.value || "").toLowerCase() === "ja");
+        const hasNee = Array.from(select.options).some((opt) => String(opt.value || "").toLowerCase() === "nee");
+        const placeholderText = hasJa && hasNee ? "Kies ja of nee" : "Kies een optie";
+
+        if (!select.options.length || String(select.options[0].value || "") !== "") {
+          const emptyOption = document.createElement("option");
+          emptyOption.value = "";
+          emptyOption.textContent = placeholderText;
+          select.insertBefore(emptyOption, select.firstChild || null);
+        } else {
+          select.options[0].textContent = placeholderText;
+        }
+
+        select.value = "";
+      });
+    }
+
     function initAlarmProcedureDynamic() {
       const naamHuisartsenpraktijk = document.getElementById("naamHuisartsenpraktijk");
       const telHuisartsenpraktijk = document.getElementById("telHuisartsenpraktijk");
@@ -4722,6 +5403,37 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
 
       syncOngevalMedicalLines();
       renderAlarmWordPreview();
+    }
+
+    function initStep4TextOkButtons() {
+      const okButtons = document.querySelectorAll('#stap4Card .text-ok-btn[data-target]');
+      okButtons.forEach((btn) => {
+        const targetId = btn.getAttribute('data-target') || '';
+        const textarea = document.getElementById(targetId);
+        if (!textarea) return;
+        const field = textarea.closest('.field');
+
+        const resetConfirmedState = () => {
+          btn.classList.remove('is-confirmed');
+          field?.classList.remove('text-ok-confirmed');
+          updateNextButtonsState();
+        };
+
+        textarea.addEventListener('input', resetConfirmedState);
+
+        btn.addEventListener('click', () => {
+          if (!textarea.value.trim()) {
+            textarea.classList.add('invalid');
+            textarea.focus();
+            return;
+          }
+          textarea.classList.remove('invalid');
+          btn.classList.add('is-confirmed');
+          field?.classList.add('text-ok-confirmed');
+          updateFilledFieldStates(field || document);
+          updateNextButtonsState();
+        });
+      });
     }
 
     function initAndersVisibility() {
@@ -4771,47 +5483,10 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
       }
     }
 
-    function fillAllFieldsForTesting() {
-      const fields = document.querySelectorAll("input, select, textarea");
-      fields.forEach((field) => {
-        if (!field || field.disabled) return;
-        const tag = (field.tagName || "").toLowerCase();
-        const id = (field.id || "").toLowerCase();
-
-        if (tag === "input") {
-          const type = (field.type || "text").toLowerCase();
-          if (["hidden", "file", "button", "submit", "reset", "image"].includes(type)) return;
-          if (["checkbox", "radio", "range"].includes(type)) return;
-          if (String(field.value || "").trim()) return;
-
-          if (type === "email" || id.includes("mail")) {
-            field.value = "test@gbbc.nl";
-            return;
-          }
-          if (type === "tel" || id.includes("tel") || id.includes("telefoon")) {
-            field.value = "0316-123456";
-            return;
-          }
-          if (id.includes("postcode")) {
-            field.value = "1234 AB";
-            return;
-          }
-          field.value = "Testwaarde";
-          return;
-        }
-
-        if (tag === "textarea") {
-          if (String(field.value || "").trim()) return;
-          field.value = "Testtekst voor validatie.";
-          return;
-        }
-
-        if (tag === "select") {
-          if (String(field.value || "").trim()) return;
-          const options = Array.from(field.options || []);
-          const preferred = options.find((opt) => String(opt.value || "").trim());
-          if (preferred) field.value = preferred.value;
-        }
+    function initInfoButtonsTabBehavior() {
+      const infoButtons = document.querySelectorAll(".info-trigger");
+      infoButtons.forEach((button) => {
+        button.setAttribute("tabindex", "-1");
       });
     }
 
@@ -4819,14 +5494,16 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
     initTijdvakDynamic();
     initBijzondereKenmerkenDynamic();
     initOrganisatiesDynamic();
+    initEmptyOptionForAllSelects();
     initBmiVisibility();
     initAndersVisibility();
+    initInfoButtonsTabBehavior();
+    updateFormBackupUiState();
     clearOldAlarmDraftFromLocalStorage();
     initAlarmProcedureDynamic();
+    initStep4TextOkButtons();
 
     (function initStap5Dynamic() {
-      const brandwerendeSelect = document.getElementById("stap5BrandwerendeDeurenScheidingen");
-      const brandwerendeHelp = document.getElementById("stap5BrandwerendeHelpText");
       const verzamelgebouwSelect = document.getElementById("stap5Verzamelgebouw");
       const verzamelgebouwHelp = document.getElementById("stap5VerzamelgebouwHelpText");
       const meerdereSelect = document.getElementById("stap5MeerdereGebouwen");
@@ -4839,7 +5516,6 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
         const meerdereJa = meerdereSelect?.value === "ja";
         const bmiNee = bmiSelect?.value === "nee";
 
-        if (brandwerendeHelp) brandwerendeHelp.hidden = brandwerendeSelect?.value !== "ja";
         if (verzamelgebouwHelp) verzamelgebouwHelp.hidden = verzamelgebouwSelect?.value !== "ja";
         if (bmiRow) bmiRow.hidden = !meerdereJa;
         if (hoeRow) hoeRow.hidden = !(meerdereJa && bmiNee);
@@ -4849,7 +5525,7 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
         updateNextButtonsState();
       };
 
-      [brandwerendeSelect, verzamelgebouwSelect, meerdereSelect, bmiSelect].forEach((el) => {
+      [verzamelgebouwSelect, meerdereSelect, bmiSelect].forEach((el) => {
         el?.addEventListener("change", updateVisibility);
       });
       hoeInput?.addEventListener("input", () => {
@@ -4872,7 +5548,6 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
       updateFilledFieldStates(target.parentElement || document);
     });
 
-    fillAllFieldsForTesting();
     updateNextButtonsState();
     setActiveStep(1);
     loadDefaultTemplate();
