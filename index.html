@@ -598,7 +598,7 @@
 
     .step-tabs {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 2px;
       padding: 0 14px 0;
       margin: 0;
@@ -863,6 +863,62 @@
       opacity: 1;
       visibility: visible;
       transform: translateY(0);
+    }
+
+    #stap6Card .info-help.step6-info .info-trigger {
+      width: 28px;
+      height: 28px;
+      font-size: .96rem;
+      font-weight: 900;
+      border-width: 2px;
+      box-shadow: 0 6px 14px rgba(17, 58, 110, .22);
+    }
+
+    #stap6Card .info-help.step6-info .info-popover.step6-info-popover {
+      min-width: 600px;
+      max-width: min(76vw, 700px);
+      max-height: min(70vh, 560px);
+      overflow: auto;
+      padding: 14px 16px;
+      font-size: .9rem;
+      line-height: 1.5;
+      border-radius: 12px;
+    }
+
+    #stap6Card .info-help.step6-info .info-popover.step6-info-popover strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: .98rem;
+      color: #173f71;
+    }
+
+    #stap6Card .info-help.step6-info .info-popover.step6-info-popover ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+    }
+
+    #stap6Card .info-help.step6-info .info-popover.step6-info-popover li + li {
+      margin-top: 6px;
+    }
+
+    @media (max-width: 860px) {
+      #stap6Card .info-help.step6-info .info-popover.step6-info-popover {
+        left: -14px;
+        min-width: min(90vw, 420px);
+        max-width: min(90vw, 420px);
+        max-height: min(62vh, 420px);
+        padding: 12px 14px;
+        font-size: .87rem;
+      }
+    }
+
+    @media (max-width: 540px) {
+      #stap6Card .info-help.step6-info .info-popover.step6-info-popover {
+        left: -18px;
+        min-width: min(92vw, 360px);
+        max-width: min(92vw, 360px);
+        max-height: min(58vh, 360px);
+      }
     }
 
     .sidebar-stack {
@@ -1167,7 +1223,8 @@
     #stap2Card .section-sub,
     #stap3Card .section-sub,
     #stap4Card .section-sub,
-    #stap5Card .section-sub {
+    #stap5Card .section-sub,
+    #stap6Card .section-sub {
       margin-top: 18px;
       padding: 16px;
       border: 1px solid #d8e4f3;
@@ -1178,13 +1235,15 @@
     #stap2Card .section-sub + .section-sub,
     #stap3Card .section-sub + .section-sub,
     #stap4Card .section-sub + .section-sub,
-    #stap5Card .section-sub + .section-sub {
+    #stap5Card .section-sub + .section-sub,
+    #stap6Card .section-sub + .section-sub {
       margin-top: 14px;
     }
     #stap2Card .section-sub h3,
     #stap3Card .section-sub h3,
     #stap4Card .section-sub h3,
-    #stap5Card .section-sub h3 {
+    #stap5Card .section-sub h3,
+    #stap6Card .section-sub h3 {
       font-size: 1.05rem;
       margin-bottom: 6px;
       color: #1a4474;
@@ -1193,8 +1252,51 @@
     #stap2Card .section-sub .help,
     #stap3Card .section-sub .help,
     #stap4Card .section-sub .help,
-    #stap5Card .section-sub .help {
+    #stap5Card .section-sub .help,
+    #stap6Card .section-sub .help {
       color: #425469;
+    }
+
+    .file-list {
+      margin: 8px 0 0;
+      padding-left: 18px;
+      color: #2b3f57;
+      font-size: 0.95rem;
+    }
+
+    .file-list li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .file-list li + li {
+      margin-top: 4px;
+    }
+
+    .file-list-remove-btn {
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #a0382a;
+      font-size: 0.85rem;
+      line-height: 1;
+      padding: 1px 4px;
+      border-radius: 4px;
+      opacity: 0.65;
+      transition: opacity 0.15s, background 0.15s;
+    }
+
+    .file-list-remove-btn:hover {
+      opacity: 1;
+      background: #fde8e5;
+    }
+
+    .file-list-empty {
+      margin-top: 8px;
+      color: #6d7f94;
+      font-size: 0.92rem;
     }
 
     .tijdvak-table {
@@ -1227,9 +1329,9 @@
           <div class="hero-progress-label">Voortgang</div>
           <div class="hero-progress-row">
             <div class="hero-progress-bars" id="heroProgressBars">
-              <span class="active"></span><span></span><span></span><span></span><span></span>
+              <span class="active"></span><span></span><span></span><span></span><span></span><span></span>
             </div>
-            <span id="heroProgressValue">1/5</span>
+            <span id="heroProgressValue">1/6</span>
           </div>
         </div>
       </div>
@@ -1239,7 +1341,8 @@
         <div class="step-tab" data-step="2"><span class="dot">2</span>Gebouw</div>
         <div class="step-tab" data-step="3"><span class="dot">3</span>Installaties</div>
         <div class="step-tab" data-step="4"><span class="dot">4</span>Alarmering</div>
-        <div class="step-tab" data-step="5"><span class="dot">5</span>Genereren</div>
+        <div class="step-tab" data-step="5"><span class="dot">5</span>Verzamelgebouw</div>
+        <div class="step-tab" data-step="6"><span class="dot">6</span>Tekeningen</div>
       </div>
     </section>
 
@@ -1384,10 +1487,11 @@
             <div class="panel-body">
               <ul class="steps-list" id="sidebarSteps">
                 <li data-step="1" class="active"><span class="num">1</span>Organisatie</li>
-                <li data-step="2"><span class="num">2</span>Gebouwgegevens</li>
+                <li data-step="2"><span class="num">2</span>Gebouw</li>
                 <li data-step="3"><span class="num">3</span>Installaties</li>
                 <li data-step="4"><span class="num">4</span>Alarmering</li>
-                <li data-step="5"><span class="num">5</span>Genereren</li>
+                <li data-step="5"><span class="num">5</span>Verzamelgebouw</li>
+                <li data-step="6"><span class="num">6</span>Tekeningen</li>
               </ul>
             </div>
           </div>
@@ -1880,10 +1984,11 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
     <section class="card" id="stap5Card" hidden>
       <div class="actions top-nav">
         <button id="topBackBtn5" class="btn btn-secondary" type="button">&#8592; Vorige stap</button>
+        <button id="topNextBtn5" class="btn btn-secondary" type="button">Volgende stap &rarr;</button>
       </div>
       <div class="section-head">
         <div>
-          <h2>Stap 5 &#8212; Ontruimingsorganisatie</h2>
+          <h2>Stap 5 &#8212; Verzamelgebouw en meerdere gebouwen aan elkaar</h2>
           <p>Geef aan welke situaties van toepassing zijn op uw gebouw.</p>
         </div>
       </div>
@@ -1943,15 +2048,90 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
 
       <div class="actions mt-20">
         <button id="backBtn5" class="btn btn-secondary" type="button">&#8592; Vorige stap</button>
+        <button id="nextBtn5" class="btn btn-secondary" type="button">Volgende stap &rarr;</button>
+      </div>
+      <div class="footer-note">Ga verder naar stap 6 om tekeningen toe te voegen en te genereren.</div>
+    </section>
+
+    <section class="card" id="stap6Card" hidden>
+      <div class="actions top-nav">
+        <button id="topBackBtn6" class="btn btn-secondary" type="button">&#8592; Vorige stap</button>
+      </div>
+      <div class="section-head">
+        <div>
+          <h2>Stap 6 &#8212; Tekeningen</h2>
+          <p>Voeg optioneel PDF-bestanden toe. Deze worden na de noodinstructie als pagina&#8217;s opgenomen in hetzelfde Word-document.</p>
+        </div>
+      </div>
+
+      <div class="section-sub section-sub-top">
+        <h3><span class="section-icon" aria-hidden="true">📍</span>Situatietekening(en) (optioneel)</h3>
+        <div class="grid">
+          <div class="field full">
+            <label for="pdfSituatietekening" class="label-with-info"><span>Upload PDF-situatietekening(en)</span>
+              <span class="info-help step6-info">
+                <button type="button" class="info-trigger" aria-label="Info over situatietekeningen">i</button>
+                <span class="info-popover step6-info-popover">
+                  <strong>Eisen voor de Situatietekening</strong>
+                  De situatietekening geeft een helikopterview van het gebouw en de direct aangrenzende omgeving. Deze tekening is cruciaal voor de aanrijroute en opstelling van de brandweer.
+                  <ul>
+                    <li>Schaalgrootte: Moet getekend zijn op een duidelijke schaal die de hele omgeving omvat (meestal 1:500 of 1:1000).</li>
+                    <li>Noordpijl: Een duidelijke windroos of noordpijl is verplicht om de geografische ligging te bepalen.</li>
+                    <li>Toegangswegen: Alle omliggende openbare wegen, hekken, slagbomen en toegangspoorten moeten inclusief breedtes zijn aangegeven.</li>
+                    <li>Verzamelplaats: De exacte en veilige verzamelplaats voor geëvacueerde personen moet buiten de gevarenzone zijn ingetekend.</li>
+                    <li>Brandweervoorzieningen: De brandweeringang, opstelplaatsen voor brandweervoertuigen en nabijgelegen bluswatervoorzieningen (zoals ondergrondse brandkranen of open water) moeten direct zichtbaar zijn.</li>
+                    <li>Gevaarlijke stoffen: Eventuele externe opslagplekken van gevaarlijke stoffen (zoals gasflonscatogorieën of CPR-15 loodsen) moeten buiten het hoofdgebouw gemarkeerd staan.</li>
+                  </ul>
+                </span>
+              </span>
+            </label>
+            <input id="pdfSituatietekening" type="file" accept="application/pdf" multiple>
+            <div id="pdfSituatietekeningEmpty" class="file-list-empty">Geen bestanden gekozen.</div>
+            <ul id="pdfSituatietekeningList" class="file-list" hidden></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-sub">
+        <h3><span class="section-icon" aria-hidden="true">🗺️</span>Plattegrondtekeningen (optioneel)</h3>
+        <div class="grid">
+          <div class="field full">
+            <label for="pdfPlattegronden" class="label-with-info"><span>Upload PDF-plattegrondtekeningen</span>
+              <span class="info-help step6-info">
+                <button type="button" class="info-trigger" aria-label="Info over plattegronden">i</button>
+                <span class="info-popover step6-info-popover">
+                  <strong>Eisen voor de Plattegrondtekeningen</strong>
+                  Plattegrondtekeningen (ontruimingsplattegronden) zijn bedoeld voor de aanwezigen in het pand om in &#233;&#233;n oogopslag de weg naar buiten te vinden. Er gelden strikte grafische eisen volgens de NEN-EN-ISO 7010.
+                  <ul>
+                    <li>Schaalgrootte: Moet gedetailleerd van binnen zijn, vaak op schaal 1:100 of 1:200.</li>
+                    <li>Kijkrichting (&quot;U bent hier&quot;): De plattegrond moet fysiek zo zijn gedraaid (geori&#235;nteerd) dat de lay-out overeenkomt met de kijkrichting van de persoon die voor de tekening staat.</li>
+                    <li>Vluchtwegen en Nooduitgangen: Primaire vluchtwegen (groen, doorlopende lijn) en secundaire vluchtwegen (groen, gestreepte lijn) moeten logisch naar de nooduitgangen leiden.</li>
+                    <li>Veiligheidsmiddelen: Pictogrammen voor brandslanghaspels, handbrandmelders, blustoestellen, EHBO-koffers en AED&#39;s moeten exact op de juiste positie staan.</li>
+                    <li>Overzichtelijkheid: Bouwkundige details die niet relevant zijn voor een ontruiming (zoals meubels, bureaus en exacte kastindelingen) moeten worden weggelaten om de kaart scannabaar te houden.</li>
+                    <li>Verdiepingsaanduiding: Elke specifieke bouwlaag (kelder, begane grond, 1e verdieping) behoeft een eigen, aparte plattegrondtekening.</li>
+                  </ul>
+                </span>
+              </span>
+            </label>
+            <input id="pdfPlattegronden" type="file" accept="application/pdf" multiple>
+            <div id="pdfPlattegrondenEmpty" class="file-list-empty">Geen bestanden gekozen.</div>
+            <ul id="pdfPlattegrondenList" class="file-list" hidden></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions mt-20">
+        <button id="backBtn6" class="btn btn-secondary" type="button">&#8592; Vorige stap</button>
         <button id="generateBtnFinal" class="btn btn-primary" type="button">Genereer Ontruimingsplan</button>
       </div>
-      <div class="footer-note">Controleer stap 5 en genereer daarna het Word-document.</div>
+      <div class="footer-note">De PDF&#8217;s zijn optioneel. Zonder upload wordt een regulier Word-document gegenereerd.</div>
     </section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/pizzip@3.2.0/dist/pizzip.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/docxtemplater@3.68.7/build/docxtemplater.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
   <script src="template-embedded.js"></script>
   <script>
     const TEMPLATE_FILE_NAME = "OntruimingsplanConformNEN8112 260610.docx";
@@ -1960,6 +2140,14 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
     const ALARM_DRAFT_CLEANUP_FLAG_KEY = "gbbc-step4-alarm-draft-cleared-v1";
     const FORM_BACKUP_STORAGE_KEY = "gbbc-form-backup-v1";
     const AUTO_FILL_STEP4_FROM_TEMPLATE = false;
+    const MAX_PDF_FILE_SIZE_MB = 30;
+    const MAX_TOTAL_PDF_PAGES = 60;
+    const TWIPS_PER_CM = 1440 / 2.54;
+    const TWIPS_TO_PX = 1 / 15;
+    const PDF_SECTION_MARGIN_LEFT_RIGHT_TWIPS = Math.round(0.4 * TWIPS_PER_CM);
+    const PDF_SECTION_MARGIN_TOP_BOTTOM_TWIPS = Math.round(0.45 * TWIPS_PER_CM);
+    const PDF_RENDER_TARGET_LONGEST_EDGE = 1800;
+    const PDF_RENDER_MAX_SCALE = 2.4;
     const REQUIRED_FIELDS = [
       "naamGebouw",
       "adres",
@@ -1989,6 +2177,7 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
       naamPloegleiderBhv: document.getElementById("naamPloegleiderBhv"),
       namenBhvErs: document.getElementById("namenBhvErs"),
       generateBtnFinal: document.getElementById("generateBtnFinal"),
+      nextBtn5: document.getElementById("nextBtn5"),
       nextBtn: document.getElementById("nextBtn"),
       status: document.getElementById("status"),
       templateFileAuto: document.getElementById("templateFileAuto"),
@@ -1996,13 +2185,23 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
       templateMode: document.getElementById("templateMode"),
       saveFormBackupBtn: document.getElementById("saveFormBackupBtn"),
       restoreFormBackupBtn: document.getElementById("restoreFormBackupBtn"),
-      formBackupHint: document.getElementById("formBackupHint")
+      formBackupHint: document.getElementById("formBackupHint"),
+      pdfSituatietekening: document.getElementById("pdfSituatietekening"),
+      pdfPlattegronden: document.getElementById("pdfPlattegronden"),
+      pdfSituatietekeningList: document.getElementById("pdfSituatietekeningList"),
+      pdfPlattegrondenList: document.getElementById("pdfPlattegrondenList"),
+      pdfSituatietekeningEmpty: document.getElementById("pdfSituatietekeningEmpty"),
+      pdfPlattegrondenEmpty: document.getElementById("pdfPlattegrondenEmpty")
     };
 
     const state = {
       templateBuffer: null,
       logo: null,
-      pendingGenerateAfterTemplatePick: false
+      pendingGenerateAfterTemplatePick: false,
+      step6Pdfs: {
+        situatietekening: [],
+        plattegronden: []
+      }
     };
 
     function setStatus(message, type) {
@@ -2056,14 +2255,16 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
           heroLead.textContent = "Stap 3: vul technische installaties in.";
         } else if (stepNumber === 4) {
           heroLead.textContent = "Stap 4: pas de alarmeringsprocedure aan.";
+        } else if (stepNumber === 5) {
+          heroLead.textContent = "Stap 5: vul de ontruimingsorganisatie aan.";
         } else {
-          heroLead.textContent = "Stap 5: geef de situaties van toepassing op het gebouw aan en genereer het ontruimingsplan.";
+          heroLead.textContent = "Stap 6: voeg tekeningen toe en genereer het ontruimingsplan.";
         }
       }
 
       const progressValue = document.getElementById("heroProgressValue");
       if (progressValue) {
-        progressValue.textContent = `${stepNumber}/5`;
+        progressValue.textContent = `${stepNumber}/6`;
       }
 
       const progressBars = document.querySelectorAll("#heroProgressBars span");
@@ -2088,7 +2289,7 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
     }
 
     function showOnlyStep(stepId) {
-      const stepIds = ["stap1Card", "stap2Card", "stap3Card", "stap4Card", "stap5Card"];
+      const stepIds = ["stap1Card", "stap2Card", "stap3Card", "stap4Card", "stap5Card", "stap6Card"];
       stepIds.forEach((id) => {
         const section = document.getElementById(id);
         if (!section) return;
@@ -2325,6 +2526,10 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
       return !!hoeAlarmeren;
     }
 
+    function isStep6Complete() {
+      return true;
+    }
+
     function areStep4TextBlocksConfirmed() {
       const okButtons = Array.from(document.querySelectorAll('#stap4Card .text-ok-btn[data-target]'));
       if (!okButtons.length) return false;
@@ -2372,8 +2577,15 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
       if (topNextBtn4) {
         topNextBtn4.disabled = !isStep4Complete();
       }
+      if (elements.nextBtn5) {
+        elements.nextBtn5.disabled = !isStep5Complete();
+      }
+      const topNextBtn5 = document.getElementById("topNextBtn5");
+      if (topNextBtn5) {
+        topNextBtn5.disabled = !isStep5Complete();
+      }
       if (elements.generateBtnFinal) {
-        elements.generateBtnFinal.disabled = !(isStep1Complete() && isStep2Complete() && isStep3Complete() && isStep4Complete() && isStep5Complete());
+        elements.generateBtnFinal.disabled = !(isStep1Complete() && isStep2Complete() && isStep3Complete() && isStep4Complete() && isStep5Complete() && isStep6Complete());
       }
       updateFilledFieldStates();
     }
@@ -2563,6 +2775,85 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
       return true;
     }
 
+    function formatFileSize(bytes) {
+      const size = Number(bytes || 0);
+      if (size < 1024) return `${size} B`;
+      const kb = size / 1024;
+      if (kb < 1024) return `${kb.toFixed(1)} KB`;
+      const mb = kb / 1024;
+      return `${mb.toFixed(1)} MB`;
+    }
+
+    function isPdfFile(file) {
+      if (!file) return false;
+      const byType = String(file.type || "").toLowerCase() === "application/pdf";
+      const byName = /\.pdf$/i.test(String(file.name || ""));
+      return byType || byName;
+    }
+
+    function renderPdfFileLists() {
+      const renderList = (kind, files, listEl, emptyEl) => {
+        if (!listEl || !emptyEl) return;
+        listEl.innerHTML = "";
+        if (!files.length) {
+          listEl.hidden = true;
+          emptyEl.hidden = false;
+          return;
+        }
+        emptyEl.hidden = true;
+        listEl.hidden = false;
+        files.forEach((file, index) => {
+          const li = document.createElement("li");
+          const nameSpan = document.createElement("span");
+          nameSpan.textContent = `${file.name} (${formatFileSize(file.size)})`;
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "file-list-remove-btn";
+          btn.title = "Verwijder dit bestand";
+          btn.textContent = "✕";
+          btn.addEventListener("click", () => {
+            state.step6Pdfs[kind] = state.step6Pdfs[kind].filter((_, i) => i !== index);
+            renderPdfFileLists();
+            updateNextButtonsState();
+          });
+          li.appendChild(nameSpan);
+          li.appendChild(btn);
+          listEl.appendChild(li);
+        });
+      };
+
+      renderList("situatietekening", state.step6Pdfs.situatietekening, elements.pdfSituatietekeningList, elements.pdfSituatietekeningEmpty);
+      renderList("plattegronden", state.step6Pdfs.plattegronden, elements.pdfPlattegrondenList, elements.pdfPlattegrondenEmpty);
+    }
+
+    function mergePdfFiles(existingFiles, nextFiles) {
+      const merged = [...existingFiles];
+      const seen = new Set(existingFiles.map((file) => `${file.name}::${file.size}::${file.lastModified}::${file.type || ""}`));
+      nextFiles.forEach((file) => {
+        const key = `${file.name}::${file.size}::${file.lastModified}::${file.type || ""}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+        merged.push(file);
+      });
+      return merged;
+    }
+
+    function setPdfFiles(kind, filesLike, mode = "replace") {
+      const valid = Array.from(filesLike || []).filter((file) => isPdfFile(file));
+      state.step6Pdfs[kind] = mode === "append"
+        ? mergePdfFiles(state.step6Pdfs[kind] || [], valid)
+        : valid;
+      renderPdfFileLists();
+      updateNextButtonsState();
+    }
+
+    function getUploadedPdfFiles() {
+      return [
+        ...state.step6Pdfs.situatietekening.map((file) => ({ category: "situatietekening", file })),
+        ...state.step6Pdfs.plattegronden.map((file) => ({ category: "plattegronden", file }))
+      ];
+    }
+
     function validateTijdvakRows() {
       let firstInvalid = null;
 
@@ -2607,6 +2898,56 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
       if (!width || !height) return [maxWidth, maxHeight];
       const scale = Math.min(maxWidth / width, maxHeight / height, 1);
       return [Math.max(1, Math.round(width * scale)), Math.max(1, Math.round(height * scale))];
+    }
+
+    function fitBoxWithRotation(width, height, maxWidth, maxHeight) {
+      const normal = fitBox(width, height, maxWidth, maxHeight);
+      const rotated = fitBox(height, width, maxWidth, maxHeight);
+      const normalArea = normal[0] * normal[1];
+      const rotatedArea = rotated[0] * rotated[1];
+
+      if (rotatedArea > normalArea) {
+        return {
+          width: rotated[0],
+          height: rotated[1],
+          rotated: true
+        };
+      }
+
+      return {
+        width: normal[0],
+        height: normal[1],
+        rotated: false
+      };
+    }
+
+    function twipsToPx(value) {
+      return Math.max(1, Math.round(Number(value || 0) * TWIPS_TO_PX));
+    }
+
+    function getSectionContentBoxPx(sectPr) {
+      const defaultPageWidthTwips = 11906;
+      const defaultPageHeightTwips = 16838;
+      const defaultMarginTwips = 1440;
+
+      const pgSz = sectPr ? sectPr.getElementsByTagName("w:pgSz")[0] : null;
+      const pgMar = sectPr ? sectPr.getElementsByTagName("w:pgMar")[0] : null;
+
+      const pageWidthTwips = Number(pgSz?.getAttribute("w:w") || defaultPageWidthTwips);
+      const pageHeightTwips = Number(pgSz?.getAttribute("w:h") || defaultPageHeightTwips);
+
+      const marginLeftTwips = Number(pgMar?.getAttribute("w:left") || defaultMarginTwips);
+      const marginRightTwips = Number(pgMar?.getAttribute("w:right") || defaultMarginTwips);
+      const marginTopTwips = Number(pgMar?.getAttribute("w:top") || defaultMarginTwips);
+      const marginBottomTwips = Number(pgMar?.getAttribute("w:bottom") || defaultMarginTwips);
+
+      const contentWidthTwips = Math.max(900, pageWidthTwips - marginLeftTwips - marginRightTwips);
+      const contentHeightTwips = Math.max(900, pageHeightTwips - marginTopTwips - marginBottomTwips);
+
+      return {
+        width: twipsToPx(contentWidthTwips),
+        height: twipsToPx(contentHeightTwips)
+      };
     }
 
     function fileToDataUrl(file) {
@@ -4306,10 +4647,11 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
         finalPgMar = xmlDoc.createElementNS(wNs, "w:pgMar");
         finalSectPr.appendChild(finalPgMar);
       }
-      finalPgMar.setAttribute("w:left", "851");
-      finalPgMar.setAttribute("w:right", "851");
-      finalPgMar.setAttribute("w:top", "1134");
-      finalPgMar.setAttribute("w:bottom", "1134");
+      // Keep a small safety margin to reduce clipping risk in Word/print pipelines.
+      finalPgMar.setAttribute("w:left", String(PDF_SECTION_MARGIN_LEFT_RIGHT_TWIPS));
+      finalPgMar.setAttribute("w:right", String(PDF_SECTION_MARGIN_LEFT_RIGHT_TWIPS));
+      finalPgMar.setAttribute("w:top", String(PDF_SECTION_MARGIN_TOP_BOTTOM_TWIPS));
+      finalPgMar.setAttribute("w:bottom", String(PDF_SECTION_MARGIN_TOP_BOTTOM_TWIPS));
       finalPgMar.setAttribute("w:header", "0");
 
       const ensureBlankHeaderRelId = () => {
@@ -4471,10 +4813,198 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
       };
     }
 
-    function buildDrawingXml(relId, pxWidth, pxHeight, docPrId) {
+    function buildDrawingXml(relId, pxWidth, pxHeight, docPrId, rotationDegrees = 0) {
       const cx = Math.max(1, Math.round(pxWidth * 9525));
       const cy = Math.max(1, Math.round(pxHeight * 9525));
-      return `<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"><wp:extent cx="${cx}" cy="${cy}"/><wp:effectExtent l="0" t="0" r="0" b="0"/><wp:docPr id="${docPrId}" name="GBBCLogo"/><wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"/></wp:cNvGraphicFramePr><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="0" name="GBBCLogo"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="${relId}" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`;
+      const rotation = Math.round(rotationDegrees * 60000);
+      const rotationAttr = rotation ? ` rot="${rotation}"` : "";
+      return `<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"><wp:extent cx="${cx}" cy="${cy}"/><wp:effectExtent l="0" t="0" r="0" b="0"/><wp:docPr id="${docPrId}" name="GBBCLogo"/><wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"/></wp:cNvGraphicFramePr><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="0" name="GBBCLogo"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="${relId}" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm${rotationAttr}><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`;
+    }
+
+    function configurePdfJs() {
+      if (!window.pdfjsLib || !window.pdfjsLib.GlobalWorkerOptions) return;
+      if (!window.pdfjsLib.GlobalWorkerOptions.workerSrc) {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+      }
+    }
+
+    async function convertPdfFilesToImagePages(uploadedItems) {
+      if (!uploadedItems.length) return [];
+      if (!window.pdfjsLib || typeof window.pdfjsLib.getDocument !== "function") {
+        throw new Error("PDF-verwerking is niet beschikbaar (pdf.js niet geladen).");
+      }
+
+      const maxBytes = MAX_PDF_FILE_SIZE_MB * 1024 * 1024;
+      const pages = [];
+      let totalPages = 0;
+      const warnings = [];
+
+      for (let index = 0; index < uploadedItems.length; index += 1) {
+        const item = uploadedItems[index];
+        const file = item.file;
+        if (file.size > maxBytes) {
+          warnings.push(`Bestand overgeslagen: ${file.name} is groter dan ${MAX_PDF_FILE_SIZE_MB} MB.`);
+          continue;
+        }
+
+        try {
+          setStatus(`PDF verwerken (${index + 1}/${uploadedItems.length}): ${file.name}...`);
+          const fileBuffer = await file.arrayBuffer();
+          const loadingTask = window.pdfjsLib.getDocument({ data: new Uint8Array(fileBuffer) });
+          const pdfDoc = await loadingTask.promise;
+
+          for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum += 1) {
+            totalPages += 1;
+            if (totalPages > MAX_TOTAL_PDF_PAGES) {
+              warnings.push(`Verdere PDF-pagina's overgeslagen: maximum van ${MAX_TOTAL_PDF_PAGES} pagina's bereikt.`);
+              return { pages, warnings };
+            }
+
+            try {
+              const page = await pdfDoc.getPage(pageNum);
+              const baseViewport = page.getViewport({ scale: 1 });
+              const longestEdge = Math.max(baseViewport.width, baseViewport.height, 1);
+              const scale = Math.max(1, Math.min(PDF_RENDER_MAX_SCALE, PDF_RENDER_TARGET_LONGEST_EDGE / longestEdge));
+              const viewport = page.getViewport({ scale });
+
+              const canvas = document.createElement("canvas");
+              const ctx = canvas.getContext("2d", { alpha: false });
+              if (!ctx) {
+                throw new Error("Canvas-context ontbreekt");
+              }
+              canvas.width = Math.ceil(viewport.width);
+              canvas.height = Math.ceil(viewport.height);
+
+              await page.render({ canvasContext: ctx, viewport }).promise;
+
+              let finalCanvas = canvas;
+              if (canvas.width > canvas.height) {
+                const rotated = document.createElement("canvas");
+                rotated.width = canvas.height;
+                rotated.height = canvas.width;
+                const rCtx = rotated.getContext("2d", { alpha: false });
+                if (rCtx) {
+                  rCtx.translate(rotated.width / 2, rotated.height / 2);
+                  rCtx.rotate(Math.PI / 2);
+                  rCtx.drawImage(canvas, -canvas.width / 2, -canvas.height / 2);
+                  finalCanvas = rotated;
+                }
+              }
+
+              pages.push({
+                dataUrl: finalCanvas.toDataURL("image/png"),
+                width: finalCanvas.width,
+                height: finalCanvas.height,
+                category: item.category,
+                fileName: file.name,
+                pageNumber: pageNum
+              });
+
+              canvas.width = 1;
+              canvas.height = 1;
+            } catch (pageError) {
+              warnings.push(`Pagina ${pageNum} uit ${file.name} overgeslagen: ${pageError && pageError.message ? pageError.message : pageError}`);
+            }
+          }
+        } catch (fileError) {
+          warnings.push(`Bestand overgeslagen: ${file.name}. ${fileError && fileError.message ? fileError.message : fileError}`);
+        }
+      }
+
+      return { pages, warnings };
+    }
+
+    function appendPdfPagesToDocument(zip, imagePages) {
+      if (!imagePages || !imagePages.length) return;
+
+      const extension = "png";
+      const contentType = "image/png";
+      const contentTypesFile = zip.file("[Content_Types].xml");
+      if (contentTypesFile) {
+        let contentTypesXml = contentTypesFile.asText();
+        contentTypesXml = addDefaultContentType(contentTypesXml, extension, contentType);
+        zip.file("[Content_Types].xml", contentTypesXml);
+      }
+
+      const relsPath = "word/_rels/document.xml.rels";
+      let relsXml = ensureRelsXml(zip, relsPath);
+      const imageDescriptors = [];
+
+      imagePages.forEach((page, idx) => {
+        const imageName = `gbbc-pdf-page-${String(idx + 1).padStart(4, "0")}.png`;
+        const imageTarget = `media/${imageName}`;
+        const mediaPath = `word/${imageTarget}`;
+        const imageBinary = dataUrlToArrayBuffer(page.dataUrl);
+        if (!imageBinary) return;
+        zip.file(mediaPath, imageBinary);
+
+        const relResult = addImageRelationship(relsXml, imageTarget);
+        relsXml = relResult.xml;
+        imageDescriptors.push({
+          relId: relResult.relId,
+          width: page.width,
+          height: page.height
+        });
+      });
+
+      zip.file(relsPath, relsXml);
+
+      const documentFile = zip.file("word/document.xml");
+      if (!documentFile || !imageDescriptors.length) return;
+
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(documentFile.asText(), "application/xml");
+      if (xmlDoc.getElementsByTagName("parsererror").length) return;
+
+      const wNs = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+      const body = xmlDoc.getElementsByTagName("w:body")[0];
+      if (!body) return;
+
+      let trailingSectPr = null;
+      for (let i = body.childNodes.length - 1; i >= 0; i -= 1) {
+        const node = body.childNodes[i];
+        if (node.nodeType === 1 && node.nodeName === "w:sectPr") {
+          trailingSectPr = node;
+          break;
+        }
+      }
+      const contentBox = getSectionContentBoxPx(trailingSectPr);
+
+      let docPrId = 10001;
+      imageDescriptors.forEach((image, idx) => {
+        const maxFitWidth = Math.max(100, contentBox.width - 24);
+        const maxFitHeight = Math.max(100, contentBox.height - 48);
+        const fittedArr = fitBox(image.width, image.height, maxFitWidth, maxFitHeight);
+        const drawingXml = buildDrawingXml(image.relId, fittedArr[0], fittedArr[1], docPrId++);
+        const fragmentDoc = parser.parseFromString(
+          `<root xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">${drawingXml}</root>`,
+          "application/xml"
+        );
+        const drawingRun = fragmentDoc.documentElement.firstChild;
+        if (!drawingRun) return;
+
+        const imageParagraph = xmlDoc.createElementNS(wNs, "w:p");
+        const pPr = xmlDoc.createElementNS(wNs, "w:pPr");
+        if (idx > 0) {
+          const pageBreakBefore = xmlDoc.createElementNS(wNs, "w:pageBreakBefore");
+          pPr.appendChild(pageBreakBefore);
+        }
+        const spacing = xmlDoc.createElementNS(wNs, "w:spacing");
+        spacing.setAttribute("w:before", "0");
+        spacing.setAttribute("w:after", "0");
+        spacing.setAttribute("w:line", "240");
+        spacing.setAttribute("w:lineRule", "auto");
+        pPr.appendChild(spacing);
+        const jc = xmlDoc.createElementNS(wNs, "w:jc");
+        jc.setAttribute("w:val", "center");
+        pPr.appendChild(jc);
+        imageParagraph.appendChild(pPr);
+        imageParagraph.appendChild(xmlDoc.importNode(drawingRun, true));
+        if (trailingSectPr) body.insertBefore(imageParagraph, trailingSectPr);
+        else body.appendChild(imageParagraph);
+      });
+
+      zip.file("word/document.xml", new XMLSerializer().serializeToString(xmlDoc));
     }
 
     function injectLogoIntoZip(zip, logoMeta) {
@@ -4596,6 +5126,7 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
 
       try {
         setStatus("Word-document wordt opgebouwd...");
+        const pdfWarnings = [];
 
         const renderData = readData();
         const zip = await prepareZip(state.templateBuffer);
@@ -4643,6 +5174,20 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
             900
           );
         }
+
+        const uploadedPdfItems = getUploadedPdfFiles();
+        if (uploadedPdfItems.length) {
+          setStatus("PDF-bijlagen worden omgezet en toegevoegd aan het Word-document...");
+          const pdfConversionResult = await convertPdfFilesToImagePages(uploadedPdfItems);
+          if (pdfConversionResult.pages.length) {
+            appendPdfPagesToDocument(doc.getZip(), pdfConversionResult.pages);
+          }
+          if (pdfConversionResult.warnings.length) {
+            pdfWarnings.push(...pdfConversionResult.warnings);
+            console.warn("PDF-conversiewaarschuwingen:", pdfConversionResult.warnings);
+          }
+        }
+
         stripPresenceTokenFromZip(doc.getZip());
         injectVersieDatumFallback(doc.getZip(), todayLabel());
 
@@ -4661,7 +5206,11 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
         link.remove();
         URL.revokeObjectURL(downloadUrl);
 
-        setStatus(`Klaar. Het document is gedownload als ${fileName}.`);
+        if (pdfWarnings.length) {
+          setStatus(`Klaar. Het document is gedownload als ${fileName}. ${pdfWarnings.length} PDF-onderdelen zijn overgeslagen; zie console voor details.`, "warn");
+        } else {
+          setStatus(`Klaar. Het document is gedownload als ${fileName}.`);
+        }
       } catch (error) {
         console.error(error);
         setStatus(`Genereren mislukt: ${error && error.message ? error.message : error}`, "error");
@@ -4808,8 +5357,29 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
       setActiveStep(4);
       window.scrollTo(0, 0);
     });
+    document.getElementById("nextBtn5").addEventListener("click", () => {
+      clearValidation();
+      if (!validateStep5Required()) {
+        setStatus("Vul eerst alle verplichte velden van stap 5 in.", "error");
+        return;
+      }
+      showOnlyStep("stap6Card");
+      setActiveStep(6);
+      window.scrollTo(0, 0);
+    });
     document.getElementById("topBackBtn5").addEventListener("click", () => {
       document.getElementById("backBtn5").click();
+    });
+    document.getElementById("topNextBtn5").addEventListener("click", () => {
+      document.getElementById("nextBtn5").click();
+    });
+    document.getElementById("backBtn6").addEventListener("click", () => {
+      showOnlyStep("stap5Card");
+      setActiveStep(5);
+      window.scrollTo(0, 0);
+    });
+    document.getElementById("topBackBtn6").addEventListener("click", () => {
+      document.getElementById("backBtn6").click();
     });
     elements.generateBtnFinal.addEventListener("click", generateDocument);
     if (elements.saveFormBackupBtn) {
@@ -5490,6 +6060,22 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
       });
     }
 
+    function initStep6PdfInputs() {
+      if (elements.pdfSituatietekening) {
+        elements.pdfSituatietekening.addEventListener("change", () => {
+          setPdfFiles("situatietekening", elements.pdfSituatietekening.files || [], "append");
+          elements.pdfSituatietekening.value = "";
+        });
+      }
+      if (elements.pdfPlattegronden) {
+        elements.pdfPlattegronden.addEventListener("change", () => {
+          setPdfFiles("plattegronden", elements.pdfPlattegronden.files || [], "append");
+          elements.pdfPlattegronden.value = "";
+        });
+      }
+      renderPdfFileLists();
+    }
+
     renderLogoPreview();
     initTijdvakDynamic();
     initBijzondereKenmerkenDynamic();
@@ -5498,6 +6084,8 @@ Bel 112 (of laat de BHV-er dit doen).</textarea>
     initBmiVisibility();
     initAndersVisibility();
     initInfoButtonsTabBehavior();
+    configurePdfJs();
+    initStep6PdfInputs();
     updateFormBackupUiState();
     clearOldAlarmDraftFromLocalStorage();
     initAlarmProcedureDynamic();
